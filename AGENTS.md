@@ -1,22 +1,32 @@
 # AGENTS.md — MotorAdaptationSBI
 
 Single source of agent instructions for this repo. `CLAUDE.md` only points here.
+This file holds slow-changing rules. Current goals and next steps live in
+[docs/plan.md](docs/plan.md).
 
-## What this project is
+## Purpose
 
-Simulation-based inference (BayesFlow, later HSSM/PyMC) for motor-adaptation models.
-Current goal: a quick win — BayesFlow recovers the parameters of a one-state
-state-space model (state + output noise), checked against an exact Kalman likelihood.
-Next quick win: the same learned likelihood consumed by HSSM.
+Turn motor-adaptation simulators into validated likelihoods or posteriors, using
+simulation-based inference (SBI), that can be used in hierarchical Bayesian analyses of
+real experiments.
+
+Progress is measured by:
+
+- **Accuracy:** parameter recovery and calibration, checked against exact references
+  wherever they exist.
+- **Reach:** the range of models handled, from linear state-space models toward
+  context-inference models (COIN-class).
+- **Use:** learned likelihoods that work inside hierarchical models (HSSM or PyMC).
+- **Understanding:** every result reproducible from a finalized notebook and explainable
+  by the humans on the team.
 
 `Resources/privileged_state_sbi_proposal_v2.md` is background for ideas only. It is
 neither a plan nor a guide; do not import its procedures unless asked.
 
 ## Startup
 
-- Read `docs/plan.md` (current state and next steps) and the latest `docs/journal/` entry.
-- Keep durable state in repo files, not chat. Record decisions, commitments and status
-  changes in the right file (see *Where things live*) as they happen.
+- Read [docs/plan.md](docs/plan.md) and the latest `docs/journal/` entry.
+- Keep durable state in repo files, not chat (see *Durable state files*).
 
 ## Where things live
 
@@ -31,19 +41,84 @@ simulators/                   # model simulators; separate from the package
 notebooks/                    # all work starts here (see *Notebooks*)
 analyses/sim/<study>/         # one folder per simulated-data analysis
 analyses/data/<dataset>/      # one folder per real-data analysis
-tests/                        # pytest code tests only
-docs/plan.md                  # the one living plan: current state + next steps
-docs/journal/YYYY-MM-DD.md    # session log: what we tried, results, open questions
-docs/decisions/NNNN-title.md  # short decision records (context, choice, why)
+tests/                        # pytest code tests (repo root, standard for a src layout)
+docs/plan.md                  # the one living plan: current goals + next steps
+docs/journal/YYYY-MM-DD.md    # session log
+docs/decisions/NNNN-title.md  # decision records
 docs/models/                  # model math; must match the code
-Resources/                    # external background material
+Resources/                    # external background material (see #2)
 ```
 
 - Large or regenerable outputs (simulation banks, trained networks, traces, figures from
   exploratory runs) go inside their analysis folder under `analyses/` and are
   gitignored. Each saved output records the root seed and git commit that produced it.
-- Findings go in the journal or in a finalized notebook — not in ad hoc report files.
-- There is one plan file. Rewrite it in place; git history is the archive.
+- Findings go in the journal or in a finalized notebook, not in ad hoc report files.
+
+## Durable state files
+
+### Plan — `docs/plan.md`
+
+- **What:** current goals, current state, and the ordered next steps. Nothing else.
+- **When to update:** whenever a goal, the state, or the next steps change; check it at the
+  end of every session.
+- **How:** rewrite in place; git history is the archive.
+- **When to read:** at the start of every session.
+
+### Journal — `docs/journal/YYYY-MM-DD.md`
+
+- **What:** a factual log of each working session. One file per day; a second session on
+  the same day adds a new `## Session N` section.
+- **When to update:** at the end of each session, and immediately after any significant
+  result or dead end (so it is not lost if the session breaks).
+- **Format:**
+
+  ```markdown
+  # YYYY-MM-DD
+
+  ## Session 1 — <topic>
+
+  **Goal:** what we set out to do.
+  **Done:** what changed, with links to commits, PRs, notebooks (and cell labels).
+  **Results:** numbers and figures, each with the notebook/command that produced it.
+  **Decisions:** one line each, linking to `docs/decisions/` records where one exists.
+  **Permission points:** (independent work only) where permission would normally have
+  been asked, and what was decided.
+  **Open questions / next:** what is unresolved; update docs/plan.md to match.
+  ```
+
+- **When to read:** the latest entry at startup; earlier entries when resuming a thread
+  of work (search by topic).
+- Entries are history: do not rewrite past entries except to fix errors, and say so.
+
+### Decision records — `docs/decisions/NNNN-short-title.md`
+
+- **What:** choices that constrain future work and are not obvious from the code: tools,
+  model formulations, conventions, rejected alternatives worth remembering.
+- **When to write:** when the decision is made (drafted by the agent, accepted by Opher).
+  Small choices go in the journal's *Decisions* line instead.
+- **Format:**
+
+  ```markdown
+  # NNNN — <title>
+
+  **Date:** YYYY-MM-DD · **Status:** Proposed | Accepted | Superseded by NNNN
+
+  **Context:** the problem and constraints.
+  **Decision:** what we chose.
+  **Why:** the reasons, including alternatives considered.
+  **Consequences:** what this commits us to or rules out.
+  ```
+
+- **Superseding:** write a new record and set the old one's status to `Superseded by
+  NNNN`. Decision records are the one exception to "delete superseded files": the
+  history of why is the point.
+- **When to read:** before changing anything in an area a record covers (check titles
+  with `ls docs/decisions`).
+
+### Model math — `docs/models/`
+
+- One file per model: equations, parameter meanings, units, domains, and the parameter
+  order used in code. Update in the same change as the code it describes.
 
 ## Notebooks
 
@@ -52,6 +127,12 @@ Resources/                    # external background material
 - Every success becomes a finalized notebook: well documented, easy to read, runs top to
   bottom from a clean kernel, no hidden state.
 - Notebooks also document feature usage (how to use a simulator or wrapper).
+- **Cell labels.** Every code cell starts with a comment label: a short, stable slug in
+  brackets, e.g. `# [sim-train-bank] Simulate the training bank`. Section headings in
+  markdown cells carry a label the same way. Refer to cells as
+  `notebook.ipynb#[label]` in chat, journal and PRs. Labels are unique within a notebook
+  and never renumbered; when a cell's purpose changes, change its label. (Jupyter's
+  built-in cell ids are random and hidden in most editors, so they are not used for this.)
 - When editing `.ipynb`, preserve outputs and execution counts of unedited cells. Do not
   save validation-run outputs unless asked.
 - Math: `$$ ... $$` for display, `$ ... $` inline.
@@ -90,8 +171,6 @@ Pytest code tests (`tests/`) are separate and can be written freely.
 ## Working style
 
 - Small, reviewable changes. Commit after each successful sub-step.
-- Fail fast. Validate once at a clear boundary, then trust the result; no defensive code
-  for what the caller already guarantees.
 - Parameter order and transforms (e.g. constrained ↔ unconstrained) are defined in
   exactly one place.
 - Prefer flat data structures and vectorized array operations over Python loops.
@@ -99,14 +178,45 @@ Pytest code tests (`tests/`) are separate and can be written freely.
 - Plain code first; no abstraction until there is a second use (see above).
 - If an approach starts conflicting with these principles, stop and realign.
 
+## Input checking (evolving policy)
+
+This section grows as cases come up; add each new rule with a one-line reason.
+
+- Check inputs once, at the public boundary of a module (a simulator or likelihood entry
+  point): shapes, parameter domains, schedule lengths. Inside, trust them.
+- Invalid input raises immediately with a message naming the argument and the violated
+  condition. Never clip, fill, or silently repair.
+- No defensive checks for what the calling layer already guarantees.
+
+## Use native tools
+
+- Use the native approach of PyMC, ArviZ, PyTensor, BayesFlow and HSSM rather than
+  handwritten code or other toolboxes.
+- Research the current native way to do something (current docs, the skills below)
+  before writing it. Do not rely on habit or memory of how it used to be done. The aim
+  is a compact, self-contained code base.
+- Pin fast-moving Bayesian/ML packages (BayesFlow, Keras, JAX, PyMC, HSSM) and update
+  pins deliberately as a repo-wide task.
+
+## Skills
+
+- BayesFlow code: consult `amortized-workflow` before writing it.
+- PyMC/ArviZ: `pymc-modeling`, `bayesian-workflow`, `arviz-diagnostics`,
+  `prior-elicitation`.
+- Figures: `dataviz`.
+
 ## Autonomy
 
 - Proceed without asking on routine work: reads, searches, local edits, running
-  notebooks and tests, normal git on a working branch.
+  notebooks and tests, normal git.
 - Ask before: new classes or helpers (above), new directories or auxiliary file kinds,
   dependency changes, anything destructive or hard to undo, anything with external side
   effects (the GitHub repo is **public**).
 - For non-obvious tradeoffs, explain briefly and choose the simpler, less stateful option.
+- **Independent work.** When asked to work independently, keep going without asking for
+  any permission, including destructive changes within the repo. Record every point where
+  permission would normally have been asked, and what was decided, in the journal's
+  *Permission points*.
 
 ## Git and GitHub
 
@@ -114,28 +224,24 @@ Pytest code tests (`tests/`) are separate and can be written freely.
   any pending work before starting.
 - Branch names are descriptive and easy to find: `<area>/<short-description>`, e.g.
   `setup/agent-instructions`, `sim/one-state-kalman`.
-- Changes reach `main` through pull requests. Opher reviews and merges; never merge or
-  push to `main`.
+- Work done on `main` may be committed and pushed to `main`. Branches merge into `main`
+  only with Opher's approval, through a pull request.
+- Never stop work while waiting for a merge: continue on the branch, or start the next
+  piece of work.
 - PR descriptions say what changed, why, how it was verified, and what to look at.
 - Commit messages explain why, not just what.
+- All work must be recoverable on another machine: push working branches at least at the
+  end of every session.
 - Git history is the archive: delete superseded files rather than keeping `old` copies.
   Update or remove references in the same change.
-- Never commit large data, trained weights, credentials, or regenerable outputs.
+- Never commit large data, trained weights, credentials, or regenerable outputs. How to
+  store outputs that are too expensive to regenerate is an open question (#3).
 
 ## Environment
 
 - pixi, Python 3.12, manifest in `pyproject.toml`. Run everything through `pixi run`.
   Never install into system Python. Re-lock after dependency changes.
-- Pin fast-moving Bayesian/ML packages (BayesFlow, Keras, JAX, PyMC, HSSM) and update
-  pins deliberately as a repo-wide task.
 - Keras backend: JAX.
-
-## Skills
-
-- BayesFlow code: consult `amortized-workflow` before writing it.
-- PyMC/ArviZ: `pymc-modeling`, `bayesian-workflow`, `arviz-diagnostics`,
-  `prior-elicitation`. Prefer current native APIs over custom code.
-- Figures: `dataviz`.
 
 ## Data and provenance
 
