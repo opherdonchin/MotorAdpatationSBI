@@ -180,7 +180,8 @@ Pytest code tests (`tests/`) are separate and can be written freely.
 
 ## Input checking (evolving policy)
 
-This section grows as cases come up; add each new rule with a one-line reason.
+This section grows as cases come up. New rules are discussed with Opher first, then
+added here with a one-line reason as soon as they are decided.
 
 - Check inputs once, at the public boundary of a module (a simulator or likelihood entry
   point): shapes, parameter domains, schedule lengths. Inside, trust them.
@@ -212,6 +213,7 @@ This section grows as cases come up; add each new rule with a one-line reason.
 - Ask before: new classes or helpers (above), new directories or auxiliary file kinds,
   dependency changes, anything destructive or hard to undo, anything with external side
   effects (the GitHub repo is **public**).
+- Creating, commenting on and closing issues in this repo is routine; no need to ask.
 - For non-obvious tradeoffs, explain briefly and choose the simpler, less stateful option.
 - **Independent work.** When asked to work independently, keep going without asking for
   any permission, including destructive changes within the repo. Record every point where
