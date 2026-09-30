@@ -29,8 +29,8 @@ pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
 src/motor_sbi/                # reusable, tested code: likelihoods, SBI wrappers, diagnostics
 simulators/                   # model simulators; separate from the package
 notebooks/                    # all work starts here (see *Notebooks*)
-data/simulations/<study>/     # one folder per simulated-data study
-data/experiments/<dataset>/   # one folder per real experimental dataset
+analyses/sim/<study>/         # one folder per simulated-data analysis
+analyses/data/<dataset>/      # one folder per real-data analysis
 tests/                        # pytest code tests only
 docs/plan.md                  # the one living plan: current state + next steps
 docs/journal/YYYY-MM-DD.md    # session log: what we tried, results, open questions
@@ -40,7 +40,7 @@ Resources/                    # external background material
 ```
 
 - Large or regenerable outputs (simulation banks, trained networks, traces, figures from
-  exploratory runs) go inside their study folder under `data/.../<study>/` and are
+  exploratory runs) go inside their analysis folder under `analyses/` and are
   gitignored. Each saved output records the root seed and git commit that produced it.
 - Findings go in the journal or in a finalized notebook — not in ad hoc report files.
 - There is one plan file. Rewrite it in place; git history is the archive.
