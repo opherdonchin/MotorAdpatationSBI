@@ -20,14 +20,16 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Current state
 
-- Agent instructions: [AGENTS.md](../AGENTS.md) (PR #1).
-- Open issues: background resources (#2), large-data storage policy (#3).
+- Agent instructions: [AGENTS.md](../AGENTS.md).
+- Environment built and tested on `main` (pixi, GPU JAX, BayesFlow, PyMC); see
+  [journal 2026-09-30](journal/2026-09-30.md).
+- Open issues: background resources (#2), large-data storage policy (#3),
+  BayesFlow/HSSM numpy conflict (#4).
 
 ## Next steps
 
-1. Environment PR: pixi, Python 3.12, BayesFlow, Keras (JAX backend), PyMC; register
-   `simulators/` as importable alongside `src/motor_sbi/`.
-2. Human-in-the-loop PR: `docs/process.md`, first journal entry and decision records
-   (pixi, model choice), project skills `new-experiment`, `explain-pr`, `journal`.
-3. One-state study: agree on correctness checks, then an `explore_` notebook in
+1. Human-in-the-loop PR: `docs/process.md`, first decision records (pixi, model
+   choice), project skills `new-experiment`, `explain-pr`, `journal`.
+2. One-state study: agree on correctness checks, then an `explore_` notebook in
    `notebooks/` with outputs under `analyses/sim/one_state/`.
+3. Decide the PyMC sampler setup for notebooks (fork warning with JAX; nutpie?).
