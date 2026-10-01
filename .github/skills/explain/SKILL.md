@@ -32,8 +32,12 @@ the commit message on `main`.
 ## After the reviewer responds
 
 - **Review comments:** reply in each comment's own thread, with a permalink to the fix.
-  General comments get one reply comment. If commits were added, move the description's
-  permalinks to the new head commit and add a *Changes after review* section.
+  General comments get one reply comment.
+- **If commits were added, redo the description:** rewrite it in place so that every
+  section describes the PR as it now stands, with permalinks at the new head commit.
+  Then append a `## Changes after review — <date and time>` section at the very end
+  (`date '+%Y-%m-%d %H:%M'`), saying what changed in response to which comment. Later
+  rounds append further sections; earlier ones are left as they are.
 - **Full track:** reply to their explain-back, comparing it with what the code does.
 - **Fast track:** add the `understanding-debt` label; after merge, open an issue to work
   through the change, and mark related wiki pages `needs-review`.

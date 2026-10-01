@@ -43,3 +43,10 @@ Anything that does not work the way one would expect.
 ## Approval track
 
 Proposed: trivial | read | full | fast, with one line of why.
+
+<!-- After a review round only. Rewrite everything above so it describes the PR as it
+now stands, then append one section per round, newest last. Never put these first. -->
+
+## Changes after review — YYYY-MM-DD HH:MM
+
+What changed in response to which comment, with a link to the commit.

@@ -75,6 +75,11 @@ real check of the reviewer's understanding rather than a request for an OK.
    a backslash before punctuation (`\,` `\;` `\!` `\{` become `,` `;` `!` `{`) and
    mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`). Check rendering
    with `gh api markdown` when in doubt.
+9. **An explanation always describes the change as it now stands.** After review, the
+   explanation is rewritten in place, not patched: a reader should never have to combine
+   an old description with a list of amendments. What changed in response to review is
+   recorded at the very end, in a dated *Changes after review* section; each later round
+   appends another.
 
 | Presentation | When | Where |
 |---|---|---|
