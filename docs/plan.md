@@ -30,21 +30,21 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   no understanding debt.
 - Decision [0002](decisions/0002-one-state-model.md) (one-state model, priors, random
   schedules) is accepted.
-- Scope issue #12 for the `one_state` analysis is drafted and waits for Opher's
-  agreement, including its correctness checks.
+- Scope #12 (`one_state` analysis) is agreed. PR 1 is in progress as draft PR #13 on
+  `sim/one-state-kalman`: exploration notebook written, model math in
+  [docs/models/one_state.md](models/one_state.md).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher agrees or edits scope #12.
-2. PR 1 of #12 (`sim/one-state-kalman`): `notebooks/explore_one_state.ipynb` with the
+1. PR 1 of #12, draft PR #13 (`sim/one-state-kalman`): `notebooks/explore_one_state.ipynb` with the
    simulator, the exact Kalman likelihood and the exact posterior; outputs under
    `analyses/sim/one_state/`.
-3. PR 2 of #12 (`sbi/one-state-nre`): the BayesFlow ratio estimator, checked against
+2. PR 2 of #12 (`sbi/one-state-nre`): the BayesFlow ratio estimator, checked against
    the exact reference.
-4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+3. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
-5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+4. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+5. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
