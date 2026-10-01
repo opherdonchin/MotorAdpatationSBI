@@ -4,8 +4,10 @@ A one-state linear-Gaussian model of motor adaptation with state noise and outpu
 Why this formulation, and where the prior ranges come from:
 [decision 0002](../decisions/0002-one-state-model.md).
 
-Code: [notebooks/explore_one_state.ipynb](../../notebooks/explore_one_state.ipynb)
-(`#[sample-prior]`, `#[sample-schedule]`, `#[simulate-sitting]`, `#[kalman-logp]`).
+Code: [simulators/one_state.py](../../simulators/one_state.py) (prior, schedules,
+simulator) and [src/motor_sbi/one_state.py](../../src/motor_sbi/one_state.py) (the
+likelihood). The checks are in
+[notebooks/one_state_exact.ipynb](../../notebooks/one_state_exact.ipynb).
 
 ## Words and units
 
@@ -46,7 +48,7 @@ Order used in code: $\theta = (A, B, \sigma_x, \sigma_y)$.
 ## Priors
 
 Each prior is normal on an unbounded scale. The range is the central 95% interval, and
-the constants follow from it (computed in the notebook's `#[config]`).
+the constants follow from it (computed in `one_state_exact.ipynb#[config]`).
 
 | Quantity | Range (95%) | Prior |
 |---|---|---|

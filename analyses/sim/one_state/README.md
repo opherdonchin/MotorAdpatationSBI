@@ -8,10 +8,11 @@ its parameters, judged against the exact Kalman likelihood?
 lists the agreed correctness checks (1 to 4 for the exact reference, 5 to 8 for the
 learned likelihood).
 
-**Notebook.** [notebooks/explore_one_state.ipynb](../../../notebooks/explore_one_state.ipynb).
+**Notebooks.** [notebooks/one_state_exact.ipynb](../../../notebooks/one_state_exact.ipynb):
+the simulator and the exact reference (checks 1 to 4).
 
 **Outputs** (gitignored; each records the root seed and git commit that produced it):
 
 | File | Produced by | Contents |
 |---|---|---|
-| `exact_sbc.npz` | `explore_one_state.ipynb#[sbc-run]` | True parameters, sitting lengths, posterior draws and sampler diagnostics for the SBC sittings fitted with the exact likelihood |
+| `exact_sbc.npz` | `one_state_exact.ipynb#[sbc-run]` | True parameters, sitting lengths, posterior draws and sampler diagnostics for the SBC sittings fitted with the exact likelihood |
