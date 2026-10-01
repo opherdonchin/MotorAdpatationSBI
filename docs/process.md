@@ -132,6 +132,20 @@ gitignored `wiki/` folder in the repo.
 - Code pages record `main` commits (code as it stands); journals and explanations may
   link to branch commits.
 
+## Skills
+
+The process is carried by skills in `.github/skills/` (one copy, readable by Claude
+Code, GitHub Copilot and other agents that support Agent Skills):
+
+| Skill | When |
+|---|---|
+| `orient` | Start of every session; "where are we?" |
+| `scope` | Before any nontrivial development |
+| `explain` | A PR is ready for review; something needs explaining |
+| `journal` | At every milestone |
+| `understood` | After a merge; a wiki page needs drafting or updating |
+| `digest` | Periodically; when the repo starts to feel unwieldy |
+
 ## Durable state files
 
 State lives in files, not in chat.
@@ -143,7 +157,8 @@ The agent cannot tell when a session will end, so the plan and journal are updat
 - a PR is opened, marked ready, or merged;
 - a significant result, finding or dead end;
 - a decision is made;
-- before context is compacted (a hook reminds the agent);
+- context is compacted: hooks ask the summary to keep unrecorded milestones and remind
+  the agent to record them straight afterwards;
 - at the start of a session, if orientation finds the last session's work missing from
   the journal, the agent fills it in from git history before anything else.
 

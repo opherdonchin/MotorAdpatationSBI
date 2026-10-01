@@ -62,6 +62,10 @@ to say (no math in a docs change), rather than filling it.
 - Render the description with GitHub's own renderer and look for mangled math:
   `gh api markdown -f mode=gfm -f text="$(cat description.md)"`.
 - Every permalink points at the head commit and the line range it claims.
+- GitHub closes an issue on merge whenever the description has a closing keyword
+  (`close`, `closes`, `fix`, `fixes`, `resolve`, `resolves`...) directly before `#<n>`,
+  in any sentence. Write `Closes #<n>` only for the PR that finishes the scope; otherwise
+  write `Part of #<n>` and keep closing keywords away from issue numbers.
 - Publish with `gh pr edit <n> --body-file description.md`, then `gh pr ready <n>`.
 
 ## After the reviewer responds

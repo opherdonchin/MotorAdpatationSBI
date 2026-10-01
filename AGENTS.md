@@ -45,6 +45,8 @@ auxiliary files (plans, reports, exports, debug dumps), without asking.
 
 ```
 AGENTS.md, CLAUDE.md, README.md
+.github/skills/                # project skills (cross-agent); .claude/skills links here
+.claude/settings.json         # Claude Code hooks: session orientation, compaction reminders
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
 src/motor_sbi/                # reusable, tested code: likelihoods, SBI wrappers, diagnostics
 simulators/                   # model simulators; separate from the package
@@ -152,6 +154,9 @@ added here with a one-line reason as soon as they are decided.
 
 ## Skills
 
+- Process skills (`orient`, `scope`, `explain`, `journal`, `understood`, `digest`) are
+  described in [docs/process.md](docs/process.md).
+- Starting an analysis: `new-analysis`.
 - BayesFlow code: consult `amortized-workflow` before writing it.
 - PyMC/ArviZ: `pymc-modeling`, `bayesian-workflow`, `arviz-diagnostics`,
   `prior-elicitation`.
