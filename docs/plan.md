@@ -24,16 +24,17 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 - Process: [docs/process.md](process.md); project rules: [AGENTS.md](../AGENTS.md).
 - Environment built and tested (pixi, GPU JAX, BayesFlow, PyMC).
-- Human-in-the-loop toolkit: scope #5; PR A (#6) in review; PR B not started.
+- Human-in-the-loop toolkit (scope #5): PR A merged (#6); PR B (#7) in review.
+- Wiki: skeleton and one draft code page (`Code-environment`) waiting for Opher.
 - Open issues: background resources (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4).
 
 ## Next steps
 
-1. Review and merge PR A (#6).
-2. PR B of #5: skills in `.github/skills/`, startup orientation hook, wiki skeleton and
-   status board, staleness check.
+1. Review and merge PR B (#7); then close #5.
+2. Opher reads and edits the draft wiki page `Code-environment`.
 3. Confirm the open points of decision 0002 (initial state, parameter domains, schedule).
-4. One-state study: scope issue, agree correctness checks, then an `explore_` notebook in
-   `notebooks/` with outputs under `analyses/sim/one_state/`.
+4. One-state analysis: scope issue with agreed correctness checks (`new-analysis`
+   skill), then `notebooks/explore_one_state.ipynb` with outputs under
+   `analyses/sim/one_state/`.
 5. Decide the PyMC sampler setup for notebooks (fork warning with JAX; nutpie?).
