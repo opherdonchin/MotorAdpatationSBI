@@ -237,3 +237,6 @@ The agent cannot tell when a session will end, so the plan and journal are updat
     the archive. Update or remove references in the same change.
   - Exception: decision records are kept and marked superseded.
 - Commit messages explain why, not just what.
+- When the agent acts through the reviewer's GitHub account, its comments start with
+  **🤖 Claude:** (or the agent's name) so it is clear who wrote what.
+- Replies to review comments go in the comment's own thread, with permalinks to the fix.
