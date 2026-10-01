@@ -33,7 +33,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   four points remain, listed in the record.
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), understanding debt for `wiki_status.py` (#8),
-  multicore PyMC sampling across platforms (#9).
+  multicore PyMC sampling across platforms (#9), live test of the compaction hooks
+  (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
@@ -45,3 +46,5 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
    `analyses/sim/one_state/`.
 4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
+5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
