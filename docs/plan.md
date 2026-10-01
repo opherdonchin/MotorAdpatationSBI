@@ -20,16 +20,18 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Current state
 
-- Agent instructions: [AGENTS.md](../AGENTS.md).
-- Environment built and tested on `main` (pixi, GPU JAX, BayesFlow, PyMC); see
-  [journal 2026-09-30](journal/2026-09-30.md).
+- Process: [docs/process.md](process.md); project rules: [AGENTS.md](../AGENTS.md).
+- Environment built and tested (pixi, GPU JAX, BayesFlow, PyMC).
+- Human-in-the-loop toolkit: scope #5; PR A (#6) in review; PR B not started.
 - Open issues: background resources (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4).
 
 ## Next steps
 
-1. Human-in-the-loop PR: `docs/process.md`, first decision records (pixi, model
-   choice), project skills `new-experiment`, `explain-pr`, `journal`.
-2. One-state study: agree on correctness checks, then an `explore_` notebook in
+1. Review and merge PR A (#6).
+2. PR B of #5: skills in `.github/skills/`, startup orientation hook, wiki skeleton and
+   status board, staleness check.
+3. Confirm the open points of decision 0002 (initial state, parameter domains, schedule).
+4. One-state study: scope issue, agree correctness checks, then an `explore_` notebook in
    `notebooks/` with outputs under `analyses/sim/one_state/`.
-3. Decide the PyMC sampler setup for notebooks (fork warning with JAX; nutpie?).
+5. Decide the PyMC sampler setup for notebooks (fork warning with JAX; nutpie?).
