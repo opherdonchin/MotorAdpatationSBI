@@ -9,7 +9,7 @@ import os
 import numpy as np
 import pytest
 
-ROOT_SEED = 0x5EED_E4B1_7A3C_91D2_6F08_C4A5_B3E7_1D29
+ROOT_SEED = 251525203680830972288814009319100955402  # secrets.randbits(128)
 
 
 @pytest.fixture
