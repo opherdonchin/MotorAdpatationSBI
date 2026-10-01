@@ -32,7 +32,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   domains, the form of the priors on $A$ and $B$, and random schedules are confirmed;
   four points remain, listed in the record.
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
-  BayesFlow/HSSM numpy conflict (#4), understanding debt for `wiki_status.py` (#8).
+  BayesFlow/HSSM numpy conflict (#4), understanding debt for `wiki_status.py` (#8),
+  multicore PyMC sampling across platforms (#9).
 
 ## Next steps
 
@@ -42,4 +43,5 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 3. One-state analysis: scope issue with agreed correctness checks (`new-analysis`
    skill), then `notebooks/explore_one_state.ipynb` with outputs under
    `analyses/sim/one_state/`.
-4. Decide the PyMC sampler setup for notebooks (fork warning with JAX; nutpie?).
+4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+   on each platform (Linux with GPUs, Windows without) (#9).
