@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Wiki clone (separate git repo: MotorAdpatationSBI.wiki)
+wiki/
