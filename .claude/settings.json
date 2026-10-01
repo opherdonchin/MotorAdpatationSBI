@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.github/skills/orient/scripts/session_context.sh 2>/dev/null || true",
-            "timeout": 30,
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.github/skills/scripts/session_context.sh 2>/dev/null || true",
+            "timeout": 40,
             "statusMessage": "Gathering orientation data..."
           }
         ]
@@ -17,8 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.github/skills/journal/scripts/compaction_reminder.sh post 2>/dev/null || true",
-            "timeout": 10
+            "command": "echo 'Context was just compacted. Before continuing, record any milestone that docs/journal/ and docs/plan.md do not yet show (journal skill), using the summary and git log.'"
           }
         ]
       }
@@ -28,8 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.github/skills/journal/scripts/compaction_reminder.sh pre 2>/dev/null || true",
-            "timeout": 10
+            "command": "echo 'When summarizing, keep every milestone not yet recorded in docs/journal/ or docs/plan.md: finished sub-steps, PR state changes, results, findings, decisions, and open questions for the reviewer.'"
           }
         ]
       }

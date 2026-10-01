@@ -45,8 +45,8 @@ auxiliary files (plans, reports, exports, debug dumps), without asking.
 
 ```
 AGENTS.md, CLAUDE.md, README.md
-.github/skills/               # project skills (cross-agent); .claude/skills links here
-.claude/settings.json         # Claude Code hooks: session orientation, compaction reminders
+.github/skills/               # skills, templates and scripts (see docs/process.md)
+.claude/                      # Claude Code: hooks, and a link to .github/skills
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
 src/motor_sbi/                # reusable, tested code: likelihoods, SBI wrappers, diagnostics
 simulators/                   # model simulators; separate from the package
@@ -59,7 +59,7 @@ docs/plan.md                  # the one living plan: current goals + next steps
 docs/journal/YYYY-MM-DD.md    # session log
 docs/decisions/NNNN-title.md  # decision records
 docs/models/                  # model math; must match the code
-Resources/                    # external background material (see #2)
+Resources/                    # background material; moving to the wiki (#2)
 wiki/                         # gitignored clone of the GitHub wiki
 ```
 
@@ -121,8 +121,16 @@ Pytest code tests (`tests/`) are separate and can be written freely.
   root stream. GPU training is reproducible to tolerance, not bit for bit.
 - PyMC: pass the generator, `pm.sample(random_seed=rng)`.
 
-## Working style
+## Working style and repo hygiene
 
+What keeps the repo possible to hold in one's head. The `digest` skill audits the repo
+against this section and against *Where things live*, *Notebooks*, *Code rules that
+need discussion first* and *Data and provenance*. A new habit is added to whichever of
+those sections it belongs to, and nowhere else.
+
+- No stale files: nothing superseded, unreferenced, or describing a state that no
+  longer holds. That includes documents.
+- What code does must be visible without digging through boilerplate.
 - Small, reviewable changes. Commit after each successful sub-step.
 - Parameter order and transforms (e.g. constrained ↔ unconstrained) are defined in
   exactly one place.
@@ -154,9 +162,8 @@ added here with a one-line reason as soon as they are decided.
 
 ## Skills
 
-- Process skills (`orient`, `scope`, `explain`, `journal`, `understood`, `digest`) are
-  described in [docs/process.md](docs/process.md).
-- Starting an analysis: `new-analysis`.
+- Process skills: see [docs/process.md](docs/process.md), *How the tooling works*.
+- Starting an analysis: `new-analysis` (project-specific; lives with the others).
 - BayesFlow code: consult `amortized-workflow` before writing it.
 - PyMC/ArviZ: `pymc-modeling`, `bayesian-workflow`, `arviz-diagnostics`,
   `prior-elicitation`.

@@ -1,4 +1,4 @@
-"""Tests for the wiki staleness check (.github/skills/digest/scripts/wiki_status.py)."""
+"""Tests for the wiki staleness check (.github/skills/scripts/wiki_status.py)."""
 
 import importlib.util
 import subprocess
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-SCRIPT = Path(__file__).parents[1] / ".github/skills/digest/scripts/wiki_status.py"
+SCRIPT = Path(__file__).parents[1] / ".github/skills/scripts/wiki_status.py"
 spec = importlib.util.spec_from_file_location("wiki_status", SCRIPT)
 wiki_status = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(wiki_status)

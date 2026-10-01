@@ -5,48 +5,26 @@ description: Review the state of the repository for the reviewer - what exists, 
 
 # Digest
 
-The aim is a repo the reviewer can hold in their head. This is a report with
-proposals; it changes nothing by itself except refreshing the wiki status board.
+The aim is a repo the reviewer can hold in their head. This produces a report with
+proposals; it changes nothing except refreshing the wiki status board.
 
-## 1. Understanding map
+The standards are not listed here. They are the rules in `AGENTS.md` (*Working style and
+repo hygiene* names the sections to audit against) and in `docs/process.md`. A new
+habit worth checking is added there, and the digest then checks it.
 
-```bash
-python3 .github/skills/digest/scripts/wiki_status.py --write
-```
-
-- For each page newly marked `stale`, open an issue: `Review wiki page <name>: <n>
-  lines changed since <commit>`.
-- List load-bearing modules and finalized notebooks that have **no** code page.
-- List open `understanding-debt` issues.
-- Commit and push the wiki if the board changed.
-
-## 2. Inventory
-
-Go through the tracked files (`git ls-files`) against the layout in `AGENTS.md`.
-
-- **Stale files:** not referenced by anything, superseded, or describing a state that
-  no longer holds (documents included).
-- **Misplaced or badly named files:** a name that promises more or something other
-  than the content; a file outside its home.
-- **Abstraction without a second use:** helpers, wrappers, classes or parameters that
-  only one caller needs.
-- **Hard-to-follow code:** where what the code is doing is hidden behind boilerplate.
-  Say which function and why.
-- **Drifting notebooks:** exploration notebooks whose result has been captured
-  elsewhere; finalized notebooks that no longer run from a clean kernel.
-- **Unclear currency:** results or figures where it is not obvious which commit, seed
-  or notebook produced them.
-- **Record drift:** places where the plan, decision records, model docs and code
-  disagree.
-
-## 3. Report
-
-In chat, shortest first:
-
-1. One-paragraph verdict: is the repo getting easier or harder to hold in the head?
-2. A table of findings: what, where (linked), why it matters, proposed action.
-3. Proposed cuts, most valuable first.
-
-Do not fix anything beyond trivial changes. Each proposed fix the reviewer accepts
-becomes a scope issue or is added to an existing one. Record the digest as a
-milestone (`journal` skill).
+1. **Understanding map.** `git -C wiki pull --ff-only`, then
+   `python3 .github/skills/scripts/wiki_status.py --write`.
+   - For each page newly `stale`, open an issue: `Review wiki page <name>: <n> lines
+     changed since <commit>`.
+   - List load-bearing modules and finalized notebooks with no code page.
+   - List open `understanding-debt` issues.
+   - Commit and push the wiki if anything changed.
+2. **Audit.** Go through the tracked files (`git ls-files`) and check the repo against
+   each rule in those sections. Also check the record against itself: plan,
+   decision records, model docs, wiki and code should not disagree, and no rule should
+   be stated in more than one place (`docs/process.md`, *Where each thing lives*).
+3. **Report** in chat, shortest first: a one-paragraph verdict (is the repo getting
+   easier or harder to hold in the head?); a table of findings (what, where, which rule,
+   proposed action); proposed cuts, most valuable first.
+4. **Follow up.** Fix nothing beyond trivial changes. Each accepted proposal becomes a
+   scope issue or joins one. Record the digest as a milestone (`journal` skill).

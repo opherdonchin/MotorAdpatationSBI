@@ -1,13 +1,8 @@
 """Report on the understanding-map wiki and flag code pages whose code has moved on.
 
-A wiki page declares itself with a small table at the top:
-
-    | | |
-    |---|---|
-    | **Kind** | code |
-    | **Status** | understood |
-    | **Covers** | `simulators/one_state.py`, `tests/test_one_state.py` |
-    | **As of** | `a91c808` |
+A wiki page declares itself with a small table at the top (Kind, Status, and for code
+pages Covers and As of). The format is defined by the page templates in
+``.github/skills/templates/``; the statuses and their meaning by ``docs/process.md``.
 
 For every page of kind ``code``, this script counts the lines changed in the covered
 files between the page's ``As of`` commit and a reference (``origin/main`` by default,
@@ -16,8 +11,8 @@ reported as stale.
 
 Usage (from the repo root):
 
-    python .github/skills/digest/scripts/wiki_status.py              # report only
-    python .github/skills/digest/scripts/wiki_status.py --write      # also update the wiki
+    python .github/skills/scripts/wiki_status.py              # report only
+    python .github/skills/scripts/wiki_status.py --write      # also update the wiki
 
 ``--write`` sets the status of stale pages to ``stale`` and regenerates
 ``Status-board.md``. It never commits or pushes the wiki.
@@ -31,6 +26,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Defined in docs/process.md (Understanding map); listed here in board order.
 STATUSES = ["stale", "needs-review", "stub", "draft", "understood"]
 HEADER_ROW = re.compile(r"^\|\s*\*\*(?P<key>[^*|]+)\*\*\s*\|\s*(?P<value>.*?)\s*\|\s*$")
 BOARD_NAME = "Status-board.md"

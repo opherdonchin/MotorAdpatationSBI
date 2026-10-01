@@ -49,8 +49,18 @@ if command -v gh >/dev/null 2>&1; then
     echo
 fi
 
-if [ -d wiki ]; then
+if [ -d wiki/.git ]; then
     echo "--- Understanding map (wiki) ---"
-    python3 .github/skills/digest/scripts/wiki_status.py 2>&1 | head -40
+    # Pick up pages the reviewer edited in the browser.
+    timeout 10 git -C wiki pull --ff-only --quiet 2>/dev/null \
+        || echo "(could not update the wiki clone)"
+    unpushed="$(git -C wiki status --short; git -C wiki log --oneline '@{u}..' 2>/dev/null)"
+    if [ -n "$unpushed" ]; then
+        echo "Wiki changes not yet committed or pushed:"
+        echo "$unpushed"
+    fi
+    echo "Last wiki changes:"
+    git -C wiki log -5 --format='%ad %an: %s' --date=short
+    python3 .github/skills/scripts/wiki_status.py 2>&1 | head -40
 fi
 exit 0

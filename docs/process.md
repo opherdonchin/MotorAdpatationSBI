@@ -43,14 +43,9 @@ asks for there) may be committed and pushed to `main`.
 
 ## Scope agreements
 
-A scope issue says:
-
-- **Goal:** what this development is for, and which goal in the plan it serves.
-- **In scope:** what gets built and which files or directories it touches.
-- **Out of scope:** what this work will not do.
-- **Stopping points:** which of the standing stopping points (below) are lifted for this
-  work, if any.
-- **Done when:** how we will know it is finished.
+A scope issue follows `.github/skills/templates/scope-issue.md`: the goal, what is in
+and out of scope, which standing stopping points are lifted, and how we will know the
+work is done.
 
 Work inside an agreed scope is pre-approved. Anything outside it, the agent stops and
 asks. If the scope turns out to be wrong, the agent proposes a change to the issue rather
@@ -65,10 +60,8 @@ real check of the reviewer's understanding rather than a request for an OK.
    goal, say so: that is a warning sign.
 2. **What you should understand.** Two or three things the reviewer should be able to
    explain by the end.
-3. **Layers:** a plain summary paragraph; the math; a code walkthrough; the evidence
-   (numbers and figures, each with the notebook or command that produced it); the
-   consequences (what this commits us to or rules out); and surprises (anything that does
-   not work the way one would expect).
+3. **Layers,** in the order of `.github/skills/templates/pr-explanation.md`: a plain
+   summary, the math, a code walkthrough, the evidence, the consequences, and surprises.
 4. **Permalinks.** Every claim about code links to the exact lines with a GitHub
    permalink (`https://github.com/<owner>/<repo>/blob/<commit>/<path>#L10-L20`).
 5. **Load-bearing vs boilerplate.** The walkthrough labels code as *load-bearing — read
@@ -113,29 +106,80 @@ list starts conservative and is calibrated over time.
 
 ## Understanding map
 
-The repo's GitHub wiki records what the reviewer understands. It is cloned into a
-gitignored `wiki/` folder in the repo.
+The repo's GitHub wiki records what the reviewer understands. It is a separate git
+repository, cloned into a gitignored `wiki/` folder in the repo.
 
-- **Code pages**, one per load-bearing module or finalized notebook, with four sections:
-  *What it does*, *How and why*, *How it fits the larger project*, *Invariants and
-  pitfalls* (what must stay true if the code changes, and the mistakes that are easy to
-  make). A header records which files the page covers, the `main` commit it was last
-  understood at, and its status.
-- **Concept pages** for the ideas the code relies on, linking code pages to the math.
-- **Status** of each page: `stub`, `draft`, `understood`, `needs-review`, `stale`. A
-  generated *Status board* page lists pages by status.
-- **Who writes:** the agent drafts pages and entries; the reviewer edits them. A page is
-  `understood` only when the reviewer says so.
-- **Staleness:** a check compares each code page's recorded commit with the current
-  code; pages whose code has changed materially become `stale`, and an issue is opened
-  to review them.
-- Code pages record `main` commits (code as it stands); journals and explanations may
-  link to branch commits.
+**Page kinds.** A page's name starts with its kind (`Code-environment`,
+`Concept-kalman-filter`), and `Home` and the sidebar group pages by kind.
 
-## Skills
+| Kind | What it holds |
+|---|---|
+| `code` | One load-bearing module or finalized notebook: *What it does*, *How and why*, *How it fits the larger project*, *Invariants and pitfalls* (what must stay true if the code changes, and the mistakes that are easy to make). Records the files it covers and the `main` commit it describes. |
+| `concept` | An idea the code relies on, linking code pages to the math. |
+| `process` | How we work and how the tooling works: explanation of the process, as opposed to the project's content. |
+| `guide` | A reading path: which pages to read, in what order, to understand an area. |
+| `resource` | A background source: what it is, a link, and why it matters here. |
 
-The process is carried by skills in `.github/skills/` (one copy, readable by Claude
-Code, GitHub Copilot and other agents that support Agent Skills):
+New kinds are added here, when a real page needs one. Formats:
+`.github/skills/templates/wiki-code-page.md` and `wiki-page.md`.
+
+**Statuses.**
+
+| Status | Set by | Meaning |
+|---|---|---|
+| `stub` | agent | A placeholder still to be written. |
+| `draft` | agent | Written by the agent; the reviewer has not confirmed it. |
+| `understood` | reviewer only | The reviewer has read, edited and confirmed it. |
+| `needs-review` | either | Merged on the fast track, or the reviewer is no longer sure. |
+| `stale` | script | The code changed materially since the commit the page describes. |
+
+A generated *Status board* page lists pages by status.
+
+**Who writes.** The agent drafts pages; the reviewer edits them, in the browser or
+through the agent.
+
+**Staleness.** A script compares the commit each code page describes with `main`;
+pages whose code has changed materially become `stale`, and an issue is opened to
+review them. Code pages record `main` commits (code as it stands); journals and
+explanations may link to branch commits.
+
+**When the wiki is committed and pushed.** The wiki has no pull requests; its history is
+its record. The agent pulls it before touching it (to pick up the reviewer's browser
+edits) and commits and pushes it straight after every change it makes. Nothing is left
+uncommitted in the local clone. The session-start data reports anything unpushed.
+
+## Where each thing lives, and how to change it
+
+Every rule, format and procedure has exactly one home. Other places point to it; they
+never restate it.
+
+| What | Home |
+|---|---|
+| Why the project exists; layout; coding, notebook and hygiene rules | `AGENTS.md` |
+| How reviewer and agent work together | `docs/process.md` (this file) |
+| Step-by-step procedures | `.github/skills/<name>/SKILL.md` |
+| Formats: scope issue, PR explanation, journal entry, decision record, wiki pages | `.github/skills/templates/` |
+| Machinery: scripts and hooks | `.github/skills/scripts/`, `.claude/settings.json` |
+| Current goals, state and next steps | `docs/plan.md` |
+| What happened | `docs/journal/` |
+| Why we chose what we chose | `docs/decisions/` |
+| What the reviewer understands | the wiki |
+
+To change something:
+
+1. Find its home in the table and change it there, and only there.
+2. A new coding or hygiene habit goes in `AGENTS.md`; a change to how we work goes here.
+   Skills rarely need editing for a rule change, because they point to the rules rather
+   than repeat them. A skill changes when the *steps* change.
+3. If something seems to need saying in two places, make one of them a pointer.
+4. Rule changes are agreed with the reviewer and arrive as a pull request on the *read*
+   track. The `digest` skill looks for rules that have crept into a second place.
+
+## How the tooling works
+
+**Skills** are short procedures an agent loads when its task matches. They live in
+`.github/skills/`, one copy for every agent (Claude Code reaches them through the
+`.claude/skills` link; `.github/skills/` is where GitHub documents that Copilot looks).
 
 | Skill | When |
 |---|---|
@@ -145,6 +189,27 @@ Code, GitHub Copilot and other agents that support Agent Skills):
 | `journal` | At every milestone |
 | `understood` | After a merge; a wiki page needs drafting or updating |
 | `digest` | Periodically; when the repo starts to feel unwieldy |
+
+Project-specific skills (starting an analysis, for instance) are listed in `AGENTS.md`.
+
+**Two scripts** do the mechanical work, in `.github/skills/scripts/`:
+
+- `session_context.sh` prints the facts an orientation needs: branch and uncommitted
+  files, the plan, the latest journal entry, commits since the journal was updated,
+  open PRs and issues, and the state of the wiki.
+- `wiki_status.py` reads each wiki page's header, counts the lines changed in a code
+  page's files since the commit it describes, marks stale pages and writes the status
+  board.
+
+**Three hooks** in `.claude/settings.json` run without anyone asking (Claude Code only):
+
+- at session start, `session_context.sh` runs and its output is placed in the agent's
+  context; the agent presents the orientation when the reviewer first writes;
+- before context is compacted, the summary is told to keep unrecorded milestones;
+- after compaction, the agent is reminded to record them.
+
+Nothing else runs automatically. Everything else happens because a rule here says so
+and the agent follows it.
 
 ## Durable state files
 
@@ -177,22 +242,7 @@ The agent cannot tell when a session will end, so the plan and journal are updat
   adds a new `## Session N` section.
 - **When to update:** at milestones (above). Each update adds to the current session's
   section, so the entry is always complete up to the last milestone.
-- **Format:**
-
-  ```markdown
-  # YYYY-MM-DD
-
-  ## Session 1 — <topic>
-
-  **Goal:** what we set out to do.
-  **Done:** what changed, with links to commits, PRs, notebooks (and cell labels).
-  **Results:** numbers and figures, each with the notebook/command that produced it.
-  **Decisions:** one line each, linking to `docs/decisions/` records where one exists.
-  **Permission points:** (independent work only) where permission would normally have
-  been asked, and what was decided.
-  **Open questions / next:** what is unresolved; update docs/plan.md to match.
-  ```
-
+- **Format:** `.github/skills/templates/journal-entry.md`.
 - **When to read:** the latest entry at startup; earlier entries when resuming a thread
   of work (search by topic).
 - Entries are history: do not rewrite past entries except to fix errors, and say so.
@@ -203,19 +253,7 @@ The agent cannot tell when a session will end, so the plan and journal are updat
   model formulations, conventions, rejected alternatives worth remembering.
 - **When to write:** when the decision is made (drafted by the agent, accepted by the
   reviewer). Small choices go in the journal's *Decisions* line instead.
-- **Format:**
-
-  ```markdown
-  # NNNN — <title>
-
-  **Date:** YYYY-MM-DD · **Status:** Proposed | Accepted | Superseded by NNNN
-
-  **Context:** the problem and constraints.
-  **Decision:** what we chose.
-  **Why:** the reasons, including alternatives considered.
-  **Consequences:** what this commits us to or rules out.
-  ```
-
+- **Format:** `.github/skills/templates/decision-record.md`.
 - **Superseding:** write a new record and set the old one's status to `Superseded by
   NNNN`. Decision records are kept, not deleted: the history of why is the point.
 - **When to read:** before changing anything in an area a record covers (check titles
