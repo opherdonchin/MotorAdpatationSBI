@@ -219,3 +219,8 @@ __marimo__/
 
 # Wiki clone (separate git repo: MotorAdpatationSBI.wiki)
 wiki/
+
+# Analysis outputs are regenerable; only each analysis's README is tracked
+analyses/**/*
+!analyses/**/
+!analyses/**/README.md
