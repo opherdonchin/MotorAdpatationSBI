@@ -26,24 +26,24 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 - Environment built and tested (pixi, GPU JAX, BayesFlow, PyMC).
 - Human-in-the-loop toolkit built (scope #5 closed): skills, templates, scripts and
   hooks in `.github/skills/` and `.claude/`; wiki skeleton live.
-- Wiki pages waiting for Opher: `Code-environment` (draft), `Code-process-scripts`
-  (needs-review; understanding debt #8).
-- Decision [0002](decisions/0002-one-state-model.md) (one-state model): initial state,
-  domains, the form of the priors on $A$ and $B$, and random schedules are confirmed;
-  four points remain, listed in the record.
+- Wiki: both code pages (`Code-environment`, `Code-process-scripts`) are `understood`;
+  no understanding debt.
+- Decision [0002](decisions/0002-one-state-model.md) (one-state model, priors, random
+  schedules) is accepted.
+- Scope issue #12 for the `one_state` analysis is drafted and waits for Opher's
+  agreement, including its correctness checks.
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
-  BayesFlow/HSSM numpy conflict (#4), understanding debt for `wiki_status.py` (#8),
-  multicore PyMC sampling across platforms (#9), live test of the compaction hooks
-  (#10), hooks for Copilot and Codex (#11).
+  BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
+  live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher reads and edits the two wiki pages; that clears #8.
-2. Confirm the remaining points of decision 0002 (what "the mass" means in numbers,
-   block boundaries, sitting length, priors on the noise SDs), then mark it Accepted.
-3. One-state analysis: scope issue with agreed correctness checks (`new-analysis`
-   skill), then `notebooks/explore_one_state.ipynb` with outputs under
+1. Opher agrees or edits scope #12.
+2. PR 1 of #12 (`sim/one-state-kalman`): `notebooks/explore_one_state.ipynb` with the
+   simulator, the exact Kalman likelihood and the exact posterior; outputs under
    `analyses/sim/one_state/`.
+3. PR 2 of #12 (`sbi/one-state-nre`): the BayesFlow ratio estimator, checked against
+   the exact reference.
 4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
 5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
