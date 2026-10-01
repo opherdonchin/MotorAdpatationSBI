@@ -9,9 +9,9 @@ yet realistic enough to matter.
 **Decision:** A one-state linear-Gaussian model with both state and output noise, where
 the learning signal is the error the subject actually observes:
 
-$$
-x_{t+1} = A\,x_t + B\,(p_t - y_t) + \eta_t, \qquad y_t = x_t + \varepsilon_t,
-$$
+```math
+x_{t+1} = A\, x_t + B\,(p_t - y_t) + \eta_t, \qquad y_t = x_t + \varepsilon_t,
+```
 
 with $\eta_t \sim \mathcal N(0,\sigma_x^2)$, $\varepsilon_t \sim \mathcal N(0,\sigma_y^2)$
 independent, $p_t$ a fixed perturbation schedule, and parameters
@@ -26,20 +26,21 @@ state-space problem rather than a deterministic curve plus noise. Using the obse
 $p_t - y_t$ is more realistic than a noiseless error, and it keeps an exact likelihood.
 
 The reference likelihood is a Kalman filter in which $y_t$ is both the observation and a
-known input. With $m_t, P_t$ the predicted mean and variance of $x_t$ given $y_{<t}$:
+known input. With $m_t, P_t$ the predicted mean and variance of $x_t$ given
+$y_{1:t-1}$:
 
-$$
-y_t \mid y_{<t} \sim \mathcal N(m_t,\ P_t + \sigma_y^2),
-$$
+```math
+y_t \mid y_{1:t-1} \sim \mathcal N\left(m_t,\ P_t + \sigma_y^2\right)
+```
 
-$$
+```math
 K_t = \frac{P_t}{P_t + \sigma_y^2},\quad m_{t\mid t} = m_t + K_t (y_t - m_t),\quad
-P_{t\mid t} = (1 - K_t) P_t,
-$$
+P_{t\mid t} = (1 - K_t)\, P_t
+```
 
-$$
-m_{t+1} = A\,m_{t\mid t} + B\,(p_t - y_t),\qquad P_{t+1} = A^2 P_{t\mid t} + \sigma_x^2 .
-$$
+```math
+m_{t+1} = A\, m_{t\mid t} + B\,(p_t - y_t),\qquad P_{t+1} = A^2 P_{t\mid t} + \sigma_x^2
+```
 
 The order matters: update on $y_t$ first, then predict $x_{t+1}$ using the same $y_t$.
 This is exact because, given $y_t$, the term $-B y_t$ is a known constant;

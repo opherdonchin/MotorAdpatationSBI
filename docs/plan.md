@@ -7,7 +7,9 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 1. **Quick win: BayesFlow parameter recovery on a one-state model.** A one-state
    motor-adaptation state-space model with state and output noise,
 
-   $$x_{t+1} = A\,x_t + B\,(p_t - y_t) + \eta_t,\qquad y_t = x_t + \varepsilon_t,$$
+   ```math
+   x_{t+1} = A\, x_t + B\,(p_t - y_t) + \eta_t,\qquad y_t = x_t + \varepsilon_t
+   ```
 
    with $\eta_t \sim \mathcal N(0,\sigma_x^2)$ and $\varepsilon_t \sim \mathcal N(0,\sigma_y^2)$,
    on a fixed perturbation schedule. BayesFlow learns a likelihood-to-evidence ratio

@@ -29,15 +29,14 @@ scope issue ─► branch + draft PR ─► work in small commits ─► explana
    `archive/` instead of being deleted, so it stays at hand while the work continues.
 4. **Explanation.** The agent writes the PR description as an explanation (see
    *Presentations*).
-5. **Approval.** The reviewer approves by explaining the change back, or uses the fast
-   track (see *Approval*).
+5. **Approval.** The reviewer approves on one of the tracks in *Approval*, in a PR
+   comment.
 6. **Final cleanup.** The last commit before merge deletes `archive/` and anything else
-   temporary. The full working history, archived material included, remains reachable
-   through the PR.
+   temporary (see *Superseded material* under *Git and GitHub*).
 7. **Squash merge.** The reviewer merges. `main` gets one commit per development, whose
    message is the PR's title and description: the explanation lives in `main`'s history.
-8. **Record.** The agent writes the journal entry, updates the plan, and drafts wiki
-   pages for anything new or changed (see *Understanding map*).
+8. **Record.** The agent brings the journal and plan up to date and drafts wiki pages for
+   anything new or changed (see *Understanding map*).
 
 Work done directly on `main` (small fixes, durable-state updates, anything the reviewer
 asks for there) may be committed and pushed to `main`.
@@ -78,26 +77,39 @@ real check of the reviewer's understanding rather than a request for an OK.
    big and gets split.
 7. **"I don't get it" is always a good answer.** It means the explanation or the code
    needs work, never that the reviewer failed.
+8. **Math that survives GitHub's markdown.** Display math goes in fenced ` ```math `
+   blocks, whose content markdown leaves alone. In `$...$` and `$$...$$`, markdown eats
+   a backslash before punctuation (`\,` `\;` `\!` `\{` become `,` `;` `!` `{`) and
+   mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`). Check rendering
+   with `gh api markdown` when in doubt.
 
 | Presentation | When | Where |
 |---|---|---|
 | Proposal | Before nontrivial work | The scope issue |
 | Explanation | Before merge | The PR description |
 | Orientation | Start of every session (automatic) | Chat |
-| Journal | End of session | `docs/journal/` |
+| Journal | At milestones | `docs/journal/` |
 
 ## Approval
 
-- **Full track.** The reviewer reads the explanation and explains the change back in a
-  sentence or two: what it does and why. The agent compares that with what the code does.
-  A mismatch is a found gap: the agent explains again or the code changes.
-- **Fast track,** when moving quickly. The reviewer confirms only the minimum: what the
-  change is for, what goes in and comes out, and what it affects. The PR gets the
-  `understanding-debt` label and, on merge, the agent opens an issue to work through it
-  properly; related wiki pages are marked `needs-review`.
-- **Trivial changes** need no explanation: typo and wording fixes, dependency bumps within
-  existing pins, and `explore_` notebooks. This list starts conservative and is
-  calibrated over time.
+Approval happens **in a PR comment**, so it is part of the PR's permanent record. (If it
+happens in chat, the agent posts a short summary of it as a PR comment.) The agent cannot
+merge, so approval is not enforced by the agent: it is the reviewer's own gate before
+pressing merge. The PR description ends by proposing a track; the reviewer may choose
+another.
+
+| Track | For | The reviewer's comment | After merge |
+|---|---|---|---|
+| **Trivial** | Typo and wording fixes, dependency bumps within existing pins, `explore_` notebooks | Nothing needed | — |
+| **Read** | Changes whose text *is* the content: documentation, process, decision records | "Read all changes", plus any questions | — |
+| **Full** | Code, and anything whose behaviour is not visible by reading it | Explains back in a sentence or two what the change does and why | Wiki pages drafted or updated |
+| **Fast** | Code, when moving quickly | Confirms the minimum: what it is for, what goes in and comes out, what it affects | `understanding-debt` label; an issue to work through it; related wiki pages `needs-review` |
+
+On the full track the agent replies to the explanation, comparing it with what the code
+does. A mismatch is a found gap: the agent explains again or the code changes. The
+reviewer chooses the fast track whenever a full explain-back would cost more than the
+change is worth right now; the debt it leaves is visible and gets scheduled. The trivial
+list starts conservative and is calibrated over time.
 
 ## Understanding map
 
@@ -105,8 +117,9 @@ The repo's GitHub wiki records what the reviewer understands. It is cloned into 
 gitignored `wiki/` folder in the repo.
 
 - **Code pages**, one per load-bearing module or finalized notebook, with four sections:
-  *What it does*, *How and why*, *How it fits the larger project*, *Keep in mind when
-  rewriting*. A header records which files the page covers, the `main` commit it was last
+  *What it does*, *How and why*, *How it fits the larger project*, *Invariants and
+  pitfalls* (what must stay true if the code changes, and the mistakes that are easy to
+  make). A header records which files the page covers, the `main` commit it was last
   understood at, and its status.
 - **Concept pages** for the ideas the code relies on, linking code pages to the math.
 - **Status** of each page: `stub`, `draft`, `understood`, `needs-review`, `stale`. A
@@ -123,20 +136,32 @@ gitignored `wiki/` folder in the repo.
 
 State lives in files, not in chat.
 
+The agent cannot tell when a session will end, so the plan and journal are updated at
+**milestones**, not at the end:
+
+- a sub-step of agreed work is finished and pushed;
+- a PR is opened, marked ready, or merged;
+- a significant result, finding or dead end;
+- a decision is made;
+- before context is compacted (a hook reminds the agent);
+- at the start of a session, if orientation finds the last session's work missing from
+  the journal, the agent fills it in from git history before anything else.
+
 ### Plan — `docs/plan.md`
 
 - **What:** current goals, current state, and the ordered next steps. Nothing else.
-- **When to update:** whenever a goal, the state, or the next steps change; check it at the
-  end of every session.
-- **How:** rewrite in place; git history is the archive.
+- **When to update:** at milestones (above), whenever a goal, the state, or the next steps
+  change.
+- **How:** rewrite in place; the old versions are in `main`'s history (see *Git and
+  GitHub*).
 - **When to read:** at the start of every session.
 
 ### Journal — `docs/journal/YYYY-MM-DD.md`
 
-- **What:** a factual log of each working session. One file per day; a second session on
-  the same day adds a new `## Session N` section.
-- **When to update:** at the end of each session, and immediately after any significant
-  result or dead end (so it is not lost if the session breaks).
+- **What:** a factual log of the work. One file per day; a second session on the same day
+  adds a new `## Session N` section.
+- **When to update:** at milestones (above). Each update adds to the current session's
+  section, so the entry is always complete up to the last milestone.
 - **Format:**
 
   ```markdown
@@ -203,8 +228,12 @@ State lives in files, not in chat.
   as a squash merge.
 - Never stop work while waiting for a merge: continue on the branch or start the next
   piece of work.
-- All work must be recoverable on another machine: push working branches at least at the
-  end of every session.
-- On `main`, git history is the archive: delete superseded files rather than keeping
-  `old` copies, and update or remove references in the same change.
+- All work must be recoverable on another machine: push at every milestone.
+- **Superseded material** — the one rule, referred to elsewhere:
+  - on a branch, move it to `archive/` so it stays at hand while the work continues;
+  - the final commit before merge deletes `archive/`; the material stays reachable
+    through the PR's commits;
+  - on `main`, delete superseded files rather than keeping `old` copies; git history is
+    the archive. Update or remove references in the same change.
+  - Exception: decision records are kept and marked superseded.
 - Commit messages explain why, not just what.
