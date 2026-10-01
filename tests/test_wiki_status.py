@@ -79,7 +79,7 @@ def test_large_change_is_stale_and_write_marks_it(repo):
     (page,) = wiki_status.read_pages(repo, repo / "wiki", threshold=10)
     assert page["stale"]
 
-    assert wiki_status.main(["--repo", str(repo), "--write"]) == 0
+    assert wiki_status.main(["--repo", str(repo), "--ref", "HEAD", "--write"]) == 0
     assert "| **Status** | stale |" in wiki_page.read_text()
     board = (repo / "wiki/Status-board.md").read_text()
     assert "## stale (1)" in board
@@ -121,7 +121,7 @@ def test_problems_are_reported(repo):
     assert pages["Code-no-header"]["problem"] == "no header table"
     assert "deadbee" in pages["Code-bad-commit"]["problem"]
     assert "unknown status" in pages["Code-bad-status"]["problem"]
-    assert wiki_status.main(["--repo", str(repo)]) == 1
+    assert wiki_status.main(["--repo", str(repo), "--ref", "HEAD"]) == 1
 
 
 def test_home_and_board_are_skipped(repo):

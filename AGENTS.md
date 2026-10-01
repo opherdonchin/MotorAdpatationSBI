@@ -45,7 +45,7 @@ auxiliary files (plans, reports, exports, debug dumps), without asking.
 
 ```
 AGENTS.md, CLAUDE.md, README.md
-.github/skills/                # project skills (cross-agent); .claude/skills links here
+.github/skills/               # project skills (cross-agent); .claude/skills links here
 .claude/settings.json         # Claude Code hooks: session orientation, compaction reminders
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
 src/motor_sbi/                # reusable, tested code: likelihoods, SBI wrappers, diagnostics
