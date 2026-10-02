@@ -38,17 +38,20 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   on the branch `sim/one-state-kalman`, unmerged. The scope was changed on the issue and
   agreed: one method per PR, background first; BayesFlow on the simulations before the
   exact machinery, which becomes a separate validation stage.
-- Open PRs: #14 (math fix in decision 0002, trivial track), #15 (rules from the review,
-  read track), #16 (decision 0005, which supersedes 0002: the model in the published
-  form of van der Vliet et al. 2018, with no-vision trials; read track).
+- Open PRs: #15 (rules from the review, read track; revised after one comment), #16
+  (decision 0005, which supersedes 0002: the model in the published form of van der
+  Vliet et al. 2018, with no-vision trials; read track).
+- Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
+  one-state likelihood in a one-off test; proposed to Opher as the exact reference for
+  stage 2 (a dependency and a class, so not added without his agreement).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher checks PR #14 (does the math in decision 0002 now draw?) and reads PRs #15
-   and #16. In #16 the rule for placing no-vision trials is a proposal for him to edit.
+1. Opher approves PR #15 and reads PR #16, where the rule for placing no-vision
+   trials is a proposal for him to edit.
 2. When #16 is merged: stage 1, step 1 of #12, the model and its simulator.
 3. Stage 1 of #12, one PR each, taking code from `sim/one-state-kalman`: the model and
    its simulator; priors and schedules; BayesFlow on the simulations (first settle
