@@ -78,8 +78,10 @@ real check of the reviewer's understanding rather than a request for an OK.
 8. **Math that survives GitHub's markdown.** Display math goes in fenced ` ```math `
    blocks, whose content markdown leaves alone. In `$...$` and `$$...$$`, markdown eats
    a backslash before punctuation (`\,` `\;` `\!` `\{` become `,` `;` `!` `{`) and
-   mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`). Check rendering
-   with `gh api markdown` when in doubt.
+   mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`, and `\lbrace`,
+   `\rbrace` for braces). Check that with `gh api markdown` when in doubt. GitHub also
+   refuses some macros, `\operatorname` among them (write `\mathrm{...}`); that error
+   appears only in the browser, so `gh api markdown` cannot show it.
 9. **An explanation always describes the change as it now stands.** After review, the
    explanation is rewritten in place, not patched: a reader should never have to combine
    an old description with a list of amendments. What changed in response to review is

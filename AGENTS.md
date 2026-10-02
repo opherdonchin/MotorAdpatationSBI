@@ -92,8 +92,9 @@ wiki/                         # gitignored clone of the GitHub wiki
 - Keep the statistical model visible: prior constants in a dedicated cell, named
   `{prior_param}_{likelihood_param}` (e.g. `mu_mu`, `sigma_mu`), ASCII names. Build the
   model in one cell and sample in a later cell.
-- Every constant in a config cell has a comment saying what it sets and why it has that
-  value. A comment that only names a section ("check 1") does not count.
+- A constant in a config cell is either self-documenting (its name and value say what it
+  sets) or has a comment saying what it sets and why it has that value. No comment that
+  only repeats the code, and none that only names a section ("check 1").
 
 ## Code rules that need discussion first
 
