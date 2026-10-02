@@ -28,23 +28,29 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   hooks in `.github/skills/` and `.claude/`; wiki skeleton live.
 - Wiki: both code pages (`Code-environment`, `Code-process-scripts`) are `understood`;
   no understanding debt.
-- Decision [0002](decisions/0002-one-state-model.md) (one-state model, priors, random
-  schedules) is accepted.
-- Scope issue #12 for the `one_state` analysis is drafted and waits for Opher's
-  agreement, including its correctness checks.
+- Decision [0002](decisions/0002-one-state-model.md) (one-state model) is marked
+  accepted but under revision: its math does not draw on GitHub, and Opher's review
+  raised the model form, the identifiability statement and the schedule design.
+- Scope #12 (`one_state` analysis): the first attempt, PR #13, was closed unmerged as too
+  large and too fast. Its code (simulator, Kalman likelihood, exact-posterior checks) is
+  on the branch `sim/one-state-kalman`, unmerged. A change to the scope is proposed on
+  the issue: one method per PR, background first.
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher agrees or edits scope #12.
-2. PR 1 of #12 (`sim/one-state-kalman`): `notebooks/explore_one_state.ipynb` with the
-   simulator, the exact Kalman likelihood and the exact posterior; outputs under
-   `analyses/sim/one_state/`.
-3. PR 2 of #12 (`sbi/one-state-nre`): the BayesFlow ratio estimator, checked against
-   the exact reference.
-4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+1. Opher agrees or edits the scope change proposed on #12.
+2. Housekeeping: the math fix in decision 0002; then the rules from the review (full
+   docstrings; decision records by pull request; `\operatorname` in the math rule).
+3. Revise decision 0002 with Opher: relation to van der Vliet et al. (2018) and the
+   lab's `state-space-models` code, sign convention, first state, no-vision trials and
+   sitting length.
+4. The science in six small PRs, taking code from `sim/one-state-kalman`: simulator;
+   priors and schedules; brute-force likelihood; Kalman filter; one exact fit; many
+   fits. Then the learned likelihood, split the same way.
+5. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
-5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+6. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+7. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
