@@ -17,7 +17,7 @@ with $\eta_t \sim \mathcal N(0,\sigma_x^2)$, $\varepsilon_t \sim \mathcal N(0,\s
 independent, $p_t$ the perturbation schedule, and parameters
 $\theta = (A, B, \sigma_x, \sigma_y)$.
 
-Everything is in units of the perturbation size: $p_t \in \{0, +1, -1\}$.
+Everything is in units of the perturbation size: $p_t \in \lbrace 0, +1, -1 \rbrace$.
 
 - **Initial state.** The state on the first trial is random, with the spread of the
   state noise: $x_1 \sim \mathcal N(0, \sigma_x^2)$. (Equivalently: the state is exactly
@@ -28,8 +28,8 @@ Everything is in units of the perturbation size: $p_t \in \{0, +1, -1\}$.
 
   | Quantity | Range (95%) | Prior | Median |
   |---|---|---|---|
-  | $A$ | 0.75 to 0.999 | $\operatorname{logit} A \sim \mathcal N(4.00, 1.48)$ | 0.982 |
-  | $B$ | 0.01 to 0.5 | $\operatorname{logit} B \sim \mathcal N(-2.30, 1.17)$ | 0.091 |
+  | $A$ | 0.75 to 0.999 | $\mathrm{logit}(A) \sim \mathcal N(4.00, 1.48)$ | 0.982 |
+  | $B$ | 0.01 to 0.5 | $\mathrm{logit}(B) \sim \mathcal N(-2.30, 1.17)$ | 0.091 |
   | $\sigma_y$ | 1/15 to 1/3 | $\log \sigma_y \sim \mathcal N(-1.90, 0.41)$ | 0.149 |
   | $\sigma_x / \sigma_y$ | 1/15 to 1/5 | $\log(\sigma_x/\sigma_y) \sim \mathcal N(-2.16, 0.28)$ | 0.115 |
 
