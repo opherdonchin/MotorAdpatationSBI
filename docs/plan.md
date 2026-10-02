@@ -33,23 +33,26 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   raised the model form, the identifiability statement and the schedule design.
 - Scope #12 (`one_state` analysis): the first attempt, PR #13, was closed unmerged as too
   large and too fast. Its code (simulator, Kalman likelihood, exact-posterior checks) is
-  on the branch `sim/one-state-kalman`, unmerged. A change to the scope is proposed on
-  the issue: one method per PR, background first.
+  on the branch `sim/one-state-kalman`, unmerged. The scope was changed on the issue and
+  agreed: one method per PR, background first; BayesFlow on the simulations before the
+  exact machinery, which becomes a separate validation stage.
+- Open PRs: #14 (math fix in decision 0002, trivial track), #15 (rules from the review,
+  read track).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher agrees or edits the scope change proposed on #12.
-2. Housekeeping: the math fix in decision 0002; then the rules from the review (full
-   docstrings; decision records by pull request; `\operatorname` in the math rule).
-3. Revise decision 0002 with Opher: relation to van der Vliet et al. (2018) and the
-   lab's `state-space-models` code, sign convention, first state, no-vision trials and
-   sitting length.
-4. The science in six small PRs, taking code from `sim/one-state-kalman`: simulator;
-   priors and schedules; brute-force likelihood; Kalman filter; one exact fit; many
-   fits. Then the learned likelihood, split the same way.
+1. Opher checks PR #14 (does the math in decision 0002 now draw?) and reads PR #15.
+2. Revise decision 0002 with Opher, as a pull request: relation to van der Vliet et al.
+   (2018) and the lab's `state-space-models` code, sign convention, first state,
+   no-vision trials and sitting length. The simulator waits for this.
+3. Stage 1 of #12, one PR each, taking code from `sim/one-state-kalman`: the model and
+   its simulator; priors and schedules; BayesFlow on the simulations (first settle
+   whether it learns the posterior or the likelihood ratio).
+4. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
+   filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
 5. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
 6. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
