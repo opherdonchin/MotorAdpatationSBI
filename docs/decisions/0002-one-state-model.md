@@ -28,8 +28,8 @@ Everything is in units of the perturbation size: $p_t \in \{0, +1, -1\}$.
 
   | Quantity | Range (95%) | Prior | Median |
   |---|---|---|---|
-  | $A$ | 0.75 to 0.999 | $\operatorname{logit} A \sim \mathcal N(4.00, 1.48)$ | 0.982 |
-  | $B$ | 0.01 to 0.5 | $\operatorname{logit} B \sim \mathcal N(-2.30, 1.17)$ | 0.091 |
+  | $A$ | 0.75 to 0.999 | $\mathrm{logit}(A) \sim \mathcal N(4.00, 1.48)$ | 0.982 |
+  | $B$ | 0.01 to 0.5 | $\mathrm{logit}(B) \sim \mathcal N(-2.30, 1.17)$ | 0.091 |
   | $\sigma_y$ | 1/15 to 1/3 | $\log \sigma_y \sim \mathcal N(-1.90, 0.41)$ | 0.149 |
   | $\sigma_x / \sigma_y$ | 1/15 to 1/5 | $\log(\sigma_x/\sigma_y) \sim \mathcal N(-2.16, 0.28)$ | 0.115 |
 
