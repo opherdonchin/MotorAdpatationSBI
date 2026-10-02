@@ -13,8 +13,10 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
    with $\eta_t \sim \mathcal N(0,\sigma_x^2)$ and $\varepsilon_t \sim \mathcal N(0,\sigma_y^2)$,
    on random perturbation schedules of varying length (blocks of 0, +1 or -1). BayesFlow
-   learns a likelihood-to-evidence ratio (NRE); success is agreement with the exact
-   Kalman likelihood and good parameter recovery and calibration.
+   first learns the posterior directly, to see early whether the parameters can be
+   recovered, and then a likelihood-to-evidence ratio (NRE), which is what hierarchical
+   models need. Success is good parameter recovery and calibration, and agreement with
+   the exact Kalman likelihood, which is built afterwards as an independent check.
 2. **Next quick win:** the same learned likelihood used inside HSSM for a small
    hierarchical fit.
 3. **Side project:** a working process that keeps the human fully in the loop and
@@ -37,17 +39,17 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   agreed: one method per PR, background first; BayesFlow on the simulations before the
   exact machinery, which becomes a separate validation stage.
 - Open PRs: #14 (math fix in decision 0002, trivial track), #15 (rules from the review,
-  read track).
+  read track), #16 (decision 0005, which supersedes 0002: the model in the published
+  form of van der Vliet et al. 2018, with no-vision trials; read track).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
 
 ## Next steps
 
-1. Opher checks PR #14 (does the math in decision 0002 now draw?) and reads PR #15.
-2. Revise decision 0002 with Opher, as a pull request: relation to van der Vliet et al.
-   (2018) and the lab's `state-space-models` code, sign convention, first state,
-   no-vision trials and sitting length. The simulator waits for this.
+1. Opher checks PR #14 (does the math in decision 0002 now draw?) and reads PRs #15
+   and #16. In #16 the rule for placing no-vision trials is a proposal for him to edit.
+2. When #16 is merged: stage 1, step 1 of #12, the model and its simulator.
 3. Stage 1 of #12, one PR each, taking code from `sim/one-state-kalman`: the model and
    its simulator; priors and schedules; BayesFlow on the simulations (first settle
    whether it learns the posterior or the likelihood ratio).
