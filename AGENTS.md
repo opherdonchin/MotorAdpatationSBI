@@ -92,6 +92,8 @@ wiki/                         # gitignored clone of the GitHub wiki
 - Keep the statistical model visible: prior constants in a dedicated cell, named
   `{prior_param}_{likelihood_param}` (e.g. `mu_mu`, `sigma_mu`), ASCII names. Build the
   model in one cell and sample in a later cell.
+- Every constant in a config cell has a comment saying what it sets and why it has that
+  value. A comment that only names a section ("check 1") does not count.
 
 ## Code rules that need discussion first
 
@@ -131,6 +133,10 @@ those sections it belongs to, and nowhere else.
 - No stale files: nothing superseded, unreferenced, or describing a state that no
   longer holds. That includes documents.
 - What code does must be visible without digging through boilerplate.
+- Every function has a full docstring: each input with its type, shape and meaning;
+  which inputs are optional and their defaults; each return value with its type, shape
+  and meaning; what the function does to get from one to the other; and whether it has
+  state or side effects (advancing a random generator it was given is one).
 - Small, reviewable changes. Commit after each successful sub-step.
 - Parameter order and transforms (e.g. constrained ↔ unconstrained) are defined in
   exactly one place.
