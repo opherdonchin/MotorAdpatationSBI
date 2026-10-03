@@ -31,8 +31,9 @@ def test_jax_sees_gpu():
 
 
 def test_project_packages_import():
+    import designs  # noqa: F401
+    import models  # noqa: F401
     import motor_sbi  # noqa: F401
-    import simulators  # noqa: F401
 
 
 def test_pymc_recovers_normal_mean(rng):

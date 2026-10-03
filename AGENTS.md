@@ -45,30 +45,35 @@ auxiliary files (plans, reports, exports, debug dumps), without asking.
 
 ```
 AGENTS.md, CLAUDE.md, README.md
-.github/skills/               # skills, templates and scripts (see docs/process.md)
-.claude/                      # Claude Code: hooks, and a link to .github/skills
-pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
-src/motor_sbi/                # reusable, tested code: Likelihood Functions, Inference Engines, diagnostics
-simulators/<model>.py         # Simulator, Prior Sampler and Schedule Generator of one Model
-notebooks/<model>_<topic>.ipynb  # finalized notebooks (see *Notebooks*)
-notebooks/working/            # notebooks in progress; committed, pruned when stale
-data/                         # Experiments: Schedules and Sittings; gitignored (storage: #3)
-  actual/<experiment>/        #   Actual Experiments
-  simulated/<experiment>/     #   Simulated Experiments, with their Ground Truth
-outputs/<model>/              # everything else notebooks save; gitignored, regenerable
-  engines/<name>/             #   trained Inference Engines
-  analyses/<name>/            #   results of Analyses
-tests/                        # pytest code tests (repo root, standard for a src layout)
-docs/                         # documentation: process, state, decisions, terms, models
-  process.md                  #   the working process (generic)
-  plan.md                     #   the one living plan: current goals + next steps
-  journal/YYYY-MM-DD.md       #   session log
-  decisions/NNNN-title.md     #   decision records
-  glossary.md                 #   the project's terms (Sitting, Experiment, Runnable...)
-  models/<model>.md           #   one page per Model (see *Model pages*)
-  experiments/<experiment>.md #   one page per Actual Experiment, when we have one
-Resources/                    # background material; moving to the wiki (#2)
-wiki/                         # gitignored clone of the GitHub wiki
+.github/skills/                  # skills, templates and scripts (see docs/process.md)
+.claude/                         # Claude Code: hooks, and a link to .github/skills
+pyproject.toml, pixi.lock        # environment (pixi); never hand-edit the lock
+src/                             # Where all importable source lives
+   motor_sbi/                    # the framework: code that works with any Model and design
+   models/<model>.py             # one Model: TASK, PARAMETERS, Prior Sampler, Simulator
+   designs/                      # all experimental designs from task specification through schedules
+      <task>_task.py             # a Task's contract: CONDITION_VARS, OBSERVATION_VARS
+      <task>_experiment.py       # Trial Types, Schedule Designs, Schedule Generators
+notebooks/                       # All .ipynb jupyter notebooks
+   <model>_<topic>.ipynb         # finalized notebooks (see *Notebooks*)
+   working/                      # notebooks in progress; committed, pruned when stale
+data/                            # Experiments: Schedules and Sittings; gitignored (storage: #3)
+  actual/<experiment>/           #   Actual Experiments
+  simulated/<experiment>/        #   Simulated Experiments, with their Ground Truth
+outputs/<model>/                 # everything else notebooks save; gitignored, regenerable
+  engines/<name>/                #   trained Inference Engines
+  analyses/<name>/               #   results of Analyses
+tests/                           # pytest code tests (repo root, standard for a src layout)
+docs/                            # documentation: process, state, decisions, terms, models
+  process.md                     #   the working process (generic)
+  plan.md                        #   the one living plan: current goals + next steps
+  journal/YYYY-MM-DD.md          #   session log
+  decisions/NNNN-title.md        #   decision records
+  glossary.md                    #   the project's terms (Sitting, Experiment, Runnable...)
+  models/<model>.md              #   one page per Model (see *Model pages*)
+  experiments/<experiment>.md    #   one page per Actual Experiment, when we have one
+Resources/                       # background material; moving to the wiki (#2)
+wiki/                            # gitignored clone of the GitHub wiki
 ```
 
 - Words: [docs/glossary.md](docs/glossary.md). `<model>` is a Model's short name
@@ -88,9 +93,11 @@ wiki/                         # gitignored clone of the GitHub wiki
   once there is more experience.
 - Folders under `data/` and `outputs/` have no README; the page that describes them
   says what is in them (a model page, or the page of an Actual Experiment).
-- Schedule Designs are Definitions: they are described on the page of the Model or
-  Actual Experiment they belong to (or in a decision record) and implemented by a
-  Schedule Generator in `simulators/`.
+- What goes in `src/designs/`, `src/models/` and `src/motor_sbi/`, and the names each
+  module provides: [decision 0006](docs/decisions/0006-models-tasks-and-designs.md).
+- Schedule Designs are Definitions: they are described on a model page or the page of
+  an Actual Experiment (or in a decision record) and implemented by a Schedule Generator
+  in `src/designs/`.
 - Findings go in the journal, a page in `docs/`, or a finalized notebook, not in ad hoc
   report files.
 
@@ -196,6 +203,13 @@ those sections it belongs to, and nowhere else.
   Model's equations keeps its case, alone or as a suffix (`A`, `mu_logit_A`), so code
   reads like the math. `ruff` enforces the rest; the exceptions are listed by name in
   `pyproject.toml`.
+- Import modules, not the names inside them, and call through the module, so that every
+  call shows where it comes from: `import numpy as np`, then `np.exp`;
+  `from scipy import special`, then `special.expit`; `from models import one_state as
+  mdl`, then `mdl.simulate_sitting`. Common libraries keep their usual aliases (`np`,
+  `pd`, `plt`, `pm`, `az`, `bf`). Our own modules are aliased by role: `mdl` for a Model,
+  `des` for an experiment design, `tsk` for a Task, so code reads the same whichever
+  Model or design it uses.
 - Plain code first; no abstraction until there is a second use (see above).
 - If an approach starts conflicting with these principles, stop and realign.
 
