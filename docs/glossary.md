@@ -13,23 +13,25 @@ and has no terms here.
 
 ## The task and its data
 
-**Task.** What a subject does and what can be manipulated. Here: reaching to a target
+**Task.** What a subject does and what can be manipulated. For example: reaching to a target
 with cursor feedback, where the cursor can be rotated (a perturbation) or hidden. The Task
 fixes what is recorded on each Trial and in what units.
 
-**Trial.** One movement, with the perturbation and the vision condition in force on it.
+**Trial.** One movement (or the smallest division of data collection) with the data relevant to it as defined by the Task. For instance: the hand deviation, the applied perturbation and the vision condition in force on it.
 
-**Block.** A run of consecutive Trials in the same condition.
+**Condition.** Everything about a Trial that is known before the Trial begins. That is, the parts of the trial that are parts of the experimental design as opposed to being collected data.
 
-**Schedule.** The condition on every Trial of one Sitting: for the one-state Model, the
-perturbation $p_t$ and the vision flag $v_t$, Trial by Trial.
+**Block.** A logical grouping of consecutive Trials. This may mean that the Conditions are fixed or that their distribution is fixed or that a specific part of the Condition is fixed. For instance, a gradually increasing perturbation or a randomly generated perturbations with a pre-defined distribution or a vision condition could all define Blocks. Blocks can also be defined without any specific defining feature in the Conditions for the convenience of specific analysis.
+
+**Schedule.** The condition on every Trial of one Sitting: for the one-state Model, this could be the
+perturbation $p_t$ and the vision flag $v_t$, Trial by Trial. Note that the Blocks are not part of the Schedule. They are a logical and convenience grouping that may affect how the Schedule is generated but they are irrelevant to the likelihood given the Schedule.
 
 **Sitting.** One session of one subject, actual or simulated: a Schedule and the movement
 recorded on every Trial. The unit a likelihood is computed for.
 
 **Experiment.** A collection of Schedules for a Task, with the Sittings done on them.
 An **Actual Experiment** was done by people. A **Simulated Experiment** has Sittings
-produced by a Simulator, each simulated subject with its own parameter values.
+produced by a Simulator, each simulated subject with its own parameter values. Schedules in an experiment may be meaningfully organized in Blocks in which case Blocks can be part of the definition of the Experiment.
 
 ## Definitions
 
