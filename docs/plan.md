@@ -40,9 +40,11 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   exact machinery, which becomes a separate validation stage.
 - Decision [0005](decisions/0005-one-state-model-published-form.md) (accepted) fixes the
   model, priors and schedules; it supersedes 0002.
-- Stage 1 of #12: step C1 (the Simulator) merged; step C2 (Prior and Schedule Design) in
-  review as PR #18, with the code in the layout of decision
+- Stage 1 of #12: steps C1 (the Simulator) and C2 (Prior and Schedule Design) merged,
+  with the code in the layout of decision
   [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
+- Wiki drafts waiting for Opher: `Code-one-state-model`,
+  `Code-visuomotor-adaptation-designs`, `Code-environment` (updated), `Concept-vocabulary`.
 - The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
   (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
@@ -54,13 +56,16 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher's final review of PR #18 (step C2, now in the layout of decision 0006).
-2. Step C3 of #12 then starts with `simulate_experiment` in `motor_sbi`, then BayesFlow on
-   the simulations, learning the posterior first,
-   with the output-provenance lines explained and given a wiki page.
-3. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
+1. Step C3 of #12, one method per PR:
+   - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
+     and Ground Truth apart) under `data/simulated/`; the provenance lines explained.
+   - C3b: background on amortized inference (concept page), then a BayesFlow posterior
+     estimator trained on a Simulated Experiment, with BayesFlow's own recovery and
+     calibration diagnostics.
+   - C3c: the likelihood-ratio estimator.
+2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
-4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+3. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
-5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+4. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+5. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
