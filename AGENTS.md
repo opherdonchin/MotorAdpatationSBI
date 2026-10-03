@@ -48,8 +48,10 @@ AGENTS.md, CLAUDE.md, README.md
 .github/skills/               # skills, templates and scripts (see docs/process.md)
 .claude/                      # Claude Code: hooks, and a link to .github/skills
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
-src/motor_sbi/                # reusable, tested code: Likelihood Functions, Inference Engines, diagnostics
-simulators/<model>.py         # Simulator, Prior Sampler and Schedule Generator of one Model
+src/motor_sbi/                # the framework: code that works with any Model and design
+src/models/<model>.py         # one Model: TASK, PARAMETERS, Prior Sampler, Simulator
+src/designs/<task>_task.py    # a Task's contract: CONDITION_VARS, OBSERVATION_VARS
+src/designs/<task>_experiment.py  # Trial Types, Schedule Designs, Schedule Generators
 notebooks/<model>_<topic>.ipynb  # finalized notebooks (see *Notebooks*)
 notebooks/working/            # notebooks in progress; committed, pruned when stale
 data/                         # Experiments: Schedules and Sittings; gitignored (storage: #3)
@@ -88,9 +90,11 @@ wiki/                         # gitignored clone of the GitHub wiki
   once there is more experience.
 - Folders under `data/` and `outputs/` have no README; the page that describes them
   says what is in them (a model page, or the page of an Actual Experiment).
-- Schedule Designs are Definitions: they are described on the page of the Model or
-  Actual Experiment they belong to (or in a decision record) and implemented by a
-  Schedule Generator in `simulators/`.
+- What goes in `src/designs/`, `src/models/` and `src/motor_sbi/`, and the names each
+  module provides: [decision 0006](docs/decisions/0006-models-tasks-and-designs.md).
+- Schedule Designs are Definitions: they are described on a model page or the page of
+  an Actual Experiment (or in a decision record) and implemented by a Schedule Generator
+  in `src/designs/`.
 - Findings go in the journal, a page in `docs/`, or a finalized notebook, not in ad hoc
   report files.
 

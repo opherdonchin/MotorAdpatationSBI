@@ -1,21 +1,15 @@
-"""Code tests for simulators/one_state.py: Simulator, Prior Sampler, Schedule Generator.
+"""Code tests for src/models/one_state.py: the Simulator and the Prior Sampler.
 
 The scientific checks are in notebooks/working/one_state_simulator.ipynb (the Simulator)
-and notebooks/working/one_state_priors.ipynb (Prior and Schedule Design); these are fast
-checks that the functions do what their docstrings say.
+and notebooks/working/one_state_priors.ipynb (the Prior); these are fast checks that the
+functions do what their docstrings say.
 """
 
 import numpy as np
 import pytest
 
-from simulators.one_state import (
-    CONDITION_NAMES,
-    PARAMETER_NAMES,
-    TRIAL_TYPES,
-    sample_prior,
-    sample_schedule,
-    simulate_sitting,
-)
+from designs.visuomotor_adaptation_experiment import sample_schedule
+from models.one_state import PARAMETERS, TASK, sample_prior, simulate_sitting
 
 root_seed = 68921609159653578200335664192142966917  # secrets.randbits(128)
 
@@ -44,28 +38,50 @@ def schedule_of(p, v):
     return {"p": np.asarray(p, dtype=float), "v": np.asarray(v)}
 
 
+def movements(rng, theta, schedule, size=()):
+    observations, _ = simulate_sitting(rng, theta, schedule, size)
+    return observations["y"]
+
+
 @pytest.fixture
 def rng():
     return np.random.default_rng(root_seed)
 
 
-def test_the_contract_names_match_the_model():
-    assert PARAMETER_NAMES == ("A", "B", "sigma_eta", "sigma_epsilon")
-    assert CONDITION_NAMES == ("p", "v")
-    assert all(set(c) == set(CONDITION_NAMES) for c in TRIAL_TYPES.values())
+def test_the_model_names_its_task_and_parameters():
+    assert PARAMETERS == ("A", "B", "sigma_eta", "sigma_epsilon")
+    assert TASK.CONDITION_VARS == ("p", "v")
+
+
+def test_the_simulator_returns_observations_and_ground_truth(rng):
+    schedule = schedule_of(np.zeros(30), np.ones(30))
+    observations, ground_truth = simulate_sitting(rng, theta, schedule, size=(4,))
+    assert set(observations) == set(TASK.OBSERVATION_VARS)
+    assert observations["y"].shape == (4, 30)
+    assert set(ground_truth) == {*PARAMETERS, "x"}
+    assert ground_truth["x"].shape == (4, 30)
+    assert [ground_truth[name] for name in PARAMETERS] == theta.tolist()
+
+
+def test_with_negligible_execution_noise_the_movement_is_the_plan(rng):
+    schedule = schedule_of(np.ones(30), np.ones(30))
+    observations, ground_truth = simulate_sitting(
+        rng, [0.95, 0.2, 0.05, tiny], schedule
+    )
+    np.testing.assert_allclose(observations["y"], ground_truth["x"], atol=1e-9)
 
 
 def test_one_sitting_and_many_sittings_have_the_documented_shapes(rng):
     schedule = schedule_of(np.zeros(30), np.ones(30))
-    assert simulate_sitting(rng, theta, schedule).shape == (30,)
-    assert simulate_sitting(rng, theta, schedule, size=(7,)).shape == (7, 30)
-    assert simulate_sitting(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
+    assert movements(rng, theta, schedule).shape == (30,)
+    assert movements(rng, theta, schedule, size=(7,)).shape == (7, 30)
+    assert movements(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
 
 
 def test_the_same_generator_state_gives_the_same_sitting():
     schedule = schedule_of(np.repeat([0.0, 1.0, -1.0], 10), np.ones(30))
-    y1 = simulate_sitting(np.random.default_rng(root_seed), theta, schedule)
-    y2 = simulate_sitting(np.random.default_rng(root_seed), theta, schedule)
+    y1 = movements(np.random.default_rng(root_seed), theta, schedule)
+    y2 = movements(np.random.default_rng(root_seed), theta, schedule)
     np.testing.assert_array_equal(y1, y2)
 
 
@@ -73,7 +89,7 @@ def test_without_noise_a_learner_moves_to_the_fixed_point_geometrically(rng):
     # With vision and a constant p, y[t+1] - y* = (A - B) (y[t] - y*),
     # where y* = -B p / (1 - A + B).
     A, B = 0.95, 0.2
-    y = simulate_sitting(rng, [A, B, tiny, tiny], schedule_of(np.ones(40), np.ones(40)))
+    y = movements(rng, [A, B, tiny, tiny], schedule_of(np.ones(40), np.ones(40)))
     y_star = -B / (1 - A + B)
     expected = y_star + (0.0 - y_star) * (A - B) ** np.arange(40)
     np.testing.assert_allclose(y, expected, atol=1e-9)
@@ -83,7 +99,7 @@ def test_without_vision_the_plan_only_decays(rng):
     # Adapt for 30 trials with vision, then 20 trials without: y[t+1] = A y[t].
     A, B = 0.95, 0.2
     schedule = schedule_of(np.ones(50), np.r_[np.ones(30), np.zeros(20)])
-    y = simulate_sitting(rng, [A, B, tiny, tiny], schedule)
+    y = movements(rng, [A, B, tiny, tiny], schedule)
     np.testing.assert_allclose(y[31:], A * y[30:-1], atol=1e-9)
 
 
@@ -121,7 +137,7 @@ def test_malformed_schedules_are_rejected(rng, schedule, message):
 def test_prior_draws_have_the_documented_shape_and_domains(rng):
     draws = sample_prior(rng, 1000, prior)
     A, B, sigma_eta, sigma_epsilon = draws.T
-    assert draws.shape == (1000, len(PARAMETER_NAMES))
+    assert draws.shape == (1000, len(PARAMETERS))
     assert np.all((A > 0) & (A < 1) & (B > 0) & (B < 1))
     assert np.all((sigma_eta > 0) & (sigma_epsilon > 0))
 
@@ -136,37 +152,4 @@ def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):
 def test_prior_draws_can_be_simulated(rng):
     schedule = sample_schedule(rng, schedule_design)
     for draw in sample_prior(rng, 5, prior):
-        assert np.all(np.isfinite(simulate_sitting(rng, draw, schedule)))
-
-
-def test_schedules_start_with_baseline_and_use_only_the_trial_types(rng):
-    trial_types = {(c["p"], c["v"]) for c in TRIAL_TYPES.values()}
-    baseline = (TRIAL_TYPES["baseline"]["p"], TRIAL_TYPES["baseline"]["v"])
-    for _ in range(200):
-        schedule = sample_schedule(rng, schedule_design)
-        assert set(schedule) == set(CONDITION_NAMES)
-        p, v = schedule["p"], schedule["v"]
-        assert p.shape == v.shape and p.ndim == 1
-        assert (p[0], v[0]) == baseline
-        assert set(zip(p, v)) <= trial_types
-
-
-def test_schedule_length_is_the_sum_of_its_blocks_within_the_block_counts(rng):
-    # With every Block exactly 20 Trials long, T / 20 is the number of Blocks.
-    fixed = {
-        **schedule_design,
-        "mu_log_block_len": np.log(20),
-        "sigma_log_block_len": 0,
-    }
-    n_blocks = [len(sample_schedule(rng, fixed)["p"]) // 20 for _ in range(300)]
-    assert min(n_blocks) >= schedule_design["n_blocks_min"]
-    assert max(n_blocks) <= schedule_design["n_blocks_max"]
-
-
-def test_schedule_design_errors_are_rejected(rng):
-    with pytest.raises(ValueError, match="n_blocks_min"):
-        sample_schedule(rng, {**schedule_design, "n_blocks_min": 0})
-    with pytest.raises(ValueError, match="n_blocks_min"):
-        sample_schedule(rng, {**schedule_design, "n_blocks_min": 17})
-    with pytest.raises(ValueError, match="exactly the keys"):
-        sample_schedule(rng, {**schedule_design, "kind_concentration": 3.0})
+        assert np.all(np.isfinite(movements(rng, draw, schedule)))

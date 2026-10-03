@@ -12,8 +12,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-# The simulators live outside the package but are installed alongside it.
-packages = ["src/motor_sbi", "simulators"]
+# The framework, the Models and the Task and experiment designs (decision 0006).
+packages = ["src/motor_sbi", "src/models", "src/designs"]
 
 # ---------------------------------------------------------------- pixi
 

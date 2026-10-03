@@ -41,11 +41,15 @@ The execution noise $\varepsilon_t$ is part of the movement, and so of the error
 fed back into the next plan. On a no-vision Trial ($v_t = 0$) there is no error to learn
 from: the plan decays by $A$ and picks up planning noise.
 
-**Code.** [simulators/one_state.py](../../simulators/one_state.py) states the Model's
-contract as three name lists: `PARAMETER_NAMES` (`A`, `B`, `sigma_eta`, `sigma_epsilon`,
-the order of $\theta$), `CONDITION_NAMES` (`p`, `v`: what a Schedule must hold) and
-`OBSERVATION_NAMES` (`y`). The Simulator, `simulate_sitting(rng, theta, schedule)`, takes a
-Schedule as a dict with exactly the keys `p` and `v`, and returns the movement angles.
+**Code.** [src/models/one_state.py](../../src/models/one_state.py) names the Task the Model
+is written for, `TASK`, the visuomotor adaptation Task of
+[src/designs/visuomotor_adaptation_task.py](../../src/designs/visuomotor_adaptation_task.py)
+(its Schedules hold `p` and `v`, its Sittings add `y`), and the Model's `PARAMETERS`
+(`A`, `B`, `sigma_eta`, `sigma_epsilon`, the order of $\theta$). The Simulator,
+`simulate_sitting(rng, theta, schedule)`, takes a Schedule as a dict with exactly the keys
+`p` and `v`, and returns the Observations (`y`) and, separately, the Ground Truth (the
+parameter values and the plans `x`). Where each piece lives:
+[decision 0006](../decisions/0006-models-tasks-and-designs.md).
 
 ## Derived properties
 
@@ -121,9 +125,12 @@ execution noise times the ratio.
 
 **Schedule Design.** There are four Trial Types: baseline ($p = 0$, $v = 1$), perturbation
 $+1$ or $-1$ ($v = 1$), and no vision ($v = 0$, $p$ set to 0). A Sitting is a sequence of
-Blocks, each a run of Trials of one Trial Type. Schedule Generator:
+Blocks, each a run of Trials of one Trial Type. Both belong to the Task, not the Model,
+and live in
+[src/designs/visuomotor_adaptation_experiment.py](../../src/designs/visuomotor_adaptation_experiment.py):
+the Trial Types in `TRIAL_TYPES`, and the Schedule Generator
 `sample_schedule(rng, schedule_design)`, which returns the Schedule as a dict of $p_t$ and
-$v_t$; the Trial Types are listed in `TRIAL_TYPES`.
+$v_t$.
 
 - 5 to 16 Blocks, equally likely.
 - Block lengths independent, $\log L \sim \mathcal N(3.91, 0.82)$ (central 95% interval

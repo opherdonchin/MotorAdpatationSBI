@@ -1,6 +1,6 @@
 # 0006 — Models, Tasks and Experiment designs: separate modules, named contracts, no classes
 
-**Date:** 2026-10-03 · **Status:** Proposed
+**Date:** 2026-10-03 · **Status:** Accepted
 
 **Context:** The one-state Runnables passed loosely related values: a Schedule as two
 arrays side by side, parameter values as a 4-column array whose meaning depended on a
