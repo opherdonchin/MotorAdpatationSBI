@@ -1,10 +1,17 @@
-"""Simulator of the one-state motor-adaptation model.
+"""Simulator of the one-state motor-adaptation model, with its prior and schedules.
 
-Model, symbols and sign convention: decision 0005 and docs/models/one_state.md.
-Parameter order everywhere: theta = (A, B, sigma_eta, sigma_epsilon).
+Model, symbols, sign convention, priors and schedules: decision 0005 and
+docs/models/one_state.md. Parameter order everywhere:
+theta = (A, B, sigma_eta, sigma_epsilon).
 """
 
 import numpy as np
+from scipy.special import expit
+
+# The four kinds of block, in this order: perturbation p and vision flag v of each.
+BLOCK_KINDS = ("baseline", "+1", "-1", "no vision")
+BLOCK_P = np.array([0.0, 1.0, -1.0, 0.0])
+BLOCK_V = np.array([1, 1, 1, 0])
 
 
 def simulate_sitting(rng, theta, p, v, size=()):
@@ -80,3 +87,115 @@ def simulate_sitting(rng, theta, p, v, size=()):
         e = y[..., t] + p[t]
         x = A * x - B * v[t] * e + rng.normal(0.0, sigma_eta, size)
     return y
+
+
+def sample_prior(
+    rng,
+    size,
+    *,
+    mu_logit_A,
+    sigma_logit_A,
+    mu_logit_B,
+    sigma_logit_B,
+    mu_log_sigma_epsilon,
+    sigma_log_sigma_epsilon,
+    mu_log_ratio,
+    sigma_log_ratio,
+):
+    """Draw parameter vectors from the prior of decision 0005.
+
+    Each prior is normal on an unbounded scale and is then transformed::
+
+        A             = expit(N(mu_logit_A, sigma_logit_A))
+        B             = expit(N(mu_logit_B, sigma_logit_B))
+        sigma_epsilon = exp(N(mu_log_sigma_epsilon, sigma_log_sigma_epsilon))
+        sigma_eta     = sigma_epsilon * exp(N(mu_log_ratio, sigma_log_ratio))
+
+    so the planning noise is given a prior through its ratio to the execution noise.
+    The four normal draws are independent.
+
+    Parameters
+    ----------
+    rng : numpy.random.Generator
+        Source of the draws. It is advanced (the only side effect).
+    size : int
+        Number of parameter vectors to draw.
+    mu_logit_A, sigma_logit_A : float
+        Mean and standard deviation of logit(A).
+    mu_logit_B, sigma_logit_B : float
+        Mean and standard deviation of logit(B).
+    mu_log_sigma_epsilon, sigma_log_sigma_epsilon : float
+        Mean and standard deviation of log(sigma_epsilon).
+    mu_log_ratio, sigma_log_ratio : float
+        Mean and standard deviation of log(sigma_eta / sigma_epsilon).
+
+    Returns
+    -------
+    theta : numpy.ndarray of float, shape (size, 4)
+        Columns (A, B, sigma_eta, sigma_epsilon), in the order `simulate_sitting`
+        takes them.
+    """
+    A = expit(rng.normal(mu_logit_A, sigma_logit_A, size))
+    B = expit(rng.normal(mu_logit_B, sigma_logit_B, size))
+    log_sigma_epsilon = rng.normal(mu_log_sigma_epsilon, sigma_log_sigma_epsilon, size)
+    log_ratio = rng.normal(mu_log_ratio, sigma_log_ratio, size)
+    sigma_epsilon = np.exp(log_sigma_epsilon)
+    sigma_eta = np.exp(log_sigma_epsilon + log_ratio)
+    return np.column_stack([A, B, sigma_eta, sigma_epsilon])
+
+
+def sample_schedule(
+    rng,
+    *,
+    n_blocks_min,
+    n_blocks_max,
+    mu_log_block_len,
+    sigma_log_block_len,
+    kind_concentration,
+):
+    """Draw the schedule of one sitting: perturbation and vision on every trial.
+
+    Following decision 0005: the number of blocks is uniform on
+    n_blocks_min..n_blocks_max; block lengths are independent and log-normal, rounded
+    to whole trials; the sitting's proportions of the four kinds of block
+    (`BLOCK_KINDS`) are drawn from a symmetric Dirichlet with the given concentration;
+    the first block is a baseline and every later block's kind is drawn independently
+    with those proportions. Two neighbouring blocks of the same kind are, in effect, one
+    longer block.
+
+    Parameters
+    ----------
+    rng : numpy.random.Generator
+        Source of the draws. It is advanced (the only side effect).
+    n_blocks_min, n_blocks_max : int
+        Smallest and largest number of blocks, both included; 1 <= min <= max.
+    mu_log_block_len, sigma_log_block_len : float
+        Mean and standard deviation of the log of a block's length in trials.
+    kind_concentration : float
+        Concentration of the symmetric Dirichlet over the four kinds, for each kind.
+        Larger values make the four proportions more alike.
+
+    Returns
+    -------
+    p : numpy.ndarray of float, shape (T,)
+        Perturbation on each trial: 0, +1 or -1 (0 on no-vision trials).
+    v : numpy.ndarray of int, shape (T,)
+        Vision flag on each trial: 1, or 0 in no-vision blocks.
+
+    Raises
+    ------
+    ValueError
+        If the block counts do not satisfy 1 <= n_blocks_min <= n_blocks_max.
+    """
+    if not 1 <= n_blocks_min <= n_blocks_max:
+        raise ValueError(
+            "need 1 <= n_blocks_min <= n_blocks_max, got "
+            f"n_blocks_min={n_blocks_min}, n_blocks_max={n_blocks_max}"
+        )
+    n_blocks = rng.integers(n_blocks_min, n_blocks_max + 1)
+    log_len = rng.normal(mu_log_block_len, sigma_log_block_len, n_blocks)
+    block_len = np.rint(np.exp(log_len)).astype(int)
+    proportions = rng.dirichlet(np.full(len(BLOCK_KINDS), kind_concentration))
+    later_kinds = rng.choice(len(BLOCK_KINDS), size=n_blocks - 1, p=proportions)
+    kind = np.concatenate([[0], later_kinds])  # the first block is a baseline
+    return np.repeat(BLOCK_P[kind], block_len), np.repeat(BLOCK_V[kind], block_len)

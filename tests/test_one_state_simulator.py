@@ -1,18 +1,41 @@
-"""Code tests for the one-state simulator (simulators/one_state.py).
+"""Code tests for simulators/one_state.py: the simulator, the prior and the schedules.
 
-The scientific checks (noise-free learning curves, steady-state statistics) are in
-notebooks/one_state_simulator.ipynb; these are fast checks that the function does what
-its docstring says.
+The scientific checks are in notebooks/one_state_simulator.ipynb (the simulator) and
+notebooks/one_state_priors.ipynb (prior and schedules); these are fast checks that the
+functions do what their docstrings say.
 """
 
 import numpy as np
 import pytest
 
-from simulators.one_state import simulate_sitting
+from simulators.one_state import (
+    BLOCK_P,
+    BLOCK_V,
+    sample_prior,
+    sample_schedule,
+    simulate_sitting,
+)
 
 ROOT_SEED = 68921609159653578200335664192142966917  # secrets.randbits(128)
 
 THETA = np.array([0.95, 0.2, 0.05, 0.15])  # A, B, sigma_eta, sigma_epsilon
+PRIOR = {
+    "mu_logit_A": 4.0,
+    "sigma_logit_A": 1.5,
+    "mu_logit_B": -2.3,
+    "sigma_logit_B": 1.2,
+    "mu_log_sigma_epsilon": -1.9,
+    "sigma_log_sigma_epsilon": 0.4,
+    "mu_log_ratio": -2.2,
+    "sigma_log_ratio": 0.3,
+}
+SCHEDULE = {
+    "n_blocks_min": 8,
+    "n_blocks_max": 60,
+    "mu_log_block_len": 3.1,
+    "sigma_log_block_len": 0.4,
+    "kind_concentration": 3.0,
+}
 TINY = 1e-12  # noise standard deviation small enough to make a sitting deterministic
 
 
@@ -82,3 +105,41 @@ def test_parameters_outside_their_domain_are_rejected(rng, theta, message):
 def test_malformed_schedules_are_rejected(rng, p, v, message):
     with pytest.raises(ValueError, match=message):
         simulate_sitting(rng, THETA, p, v)
+
+
+def test_prior_draws_have_the_documented_shape_and_domains(rng):
+    theta = sample_prior(rng, 1000, **PRIOR)
+    A, B, sigma_eta, sigma_epsilon = theta.T
+    assert theta.shape == (1000, 4)
+    assert np.all((A > 0) & (A < 1) & (B > 0) & (B < 1))
+    assert np.all((sigma_eta > 0) & (sigma_epsilon > 0))
+
+
+def test_prior_draws_can_be_simulated(rng):
+    p, v = sample_schedule(rng, **SCHEDULE)
+    for theta in sample_prior(rng, 5, **PRIOR):
+        assert np.all(np.isfinite(simulate_sitting(rng, theta, p, v)))
+
+
+def test_schedules_start_with_baseline_and_use_only_the_four_kinds(rng):
+    kinds = set(zip(BLOCK_P, BLOCK_V))
+    for _ in range(200):
+        p, v = sample_schedule(rng, **SCHEDULE)
+        assert p.shape == v.shape and p.ndim == 1
+        assert (p[0], v[0]) == (0.0, 1)
+        assert set(zip(p, v)) <= kinds
+
+
+def test_schedule_length_is_the_sum_of_its_blocks_within_the_block_counts(rng):
+    # With every block exactly 20 trials long, T / 20 is the number of blocks.
+    fixed_len = {**SCHEDULE, "mu_log_block_len": np.log(20), "sigma_log_block_len": 0}
+    n_blocks = [len(sample_schedule(rng, **fixed_len)[0]) // 20 for _ in range(300)]
+    assert min(n_blocks) >= SCHEDULE["n_blocks_min"]
+    assert max(n_blocks) <= SCHEDULE["n_blocks_max"]
+
+
+def test_schedule_rejects_an_impossible_block_range(rng):
+    with pytest.raises(ValueError, match="n_blocks_min"):
+        sample_schedule(rng, **{**SCHEDULE, "n_blocks_min": 0})
+    with pytest.raises(ValueError, match="n_blocks_min"):
+        sample_schedule(rng, **{**SCHEDULE, "n_blocks_min": 61})
