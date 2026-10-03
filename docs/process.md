@@ -121,6 +121,11 @@ list starts conservative and is calibrated over time.
 The repo's GitHub wiki records what the reviewer understands. It is a separate git
 repository, cloned into a gitignored `wiki/` folder in the repo.
 
+The wiki is never authoritative. It may restate and summarize what the repo says, in
+the reviewer's terms, to make the repo easier to approach; the repo is the source. When
+the two drift apart, that is a signal to slow down and check that the reviewer is still
+on top of the work, and that it is making real progress rather than only producing code.
+
 **Page kinds.** A page's name starts with its kind (`Code-environment`,
 `Concept-kalman-filter`), and `Home` and the sidebar group pages by kind.
 
@@ -175,6 +180,7 @@ never restate it.
 | Current goals, state and next steps | `docs/plan.md` |
 | What happened | `docs/journal/` |
 | Why we chose what we chose | `docs/decisions/` |
+| The project's terms | `docs/glossary.md` |
 | What the reviewer understands | the wiki |
 
 To change something:

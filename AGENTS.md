@@ -58,6 +58,7 @@ docs/process.md               # the working process (generic)
 docs/plan.md                  # the one living plan: current goals + next steps
 docs/journal/YYYY-MM-DD.md    # session log
 docs/decisions/NNNN-title.md  # decision records
+docs/glossary.md              # the project's terms (Sitting, Experiment, Runnable...)
 docs/models/                  # model math; must match the code
 Resources/                    # background material; moving to the wiki (#2)
 wiki/                         # gitignored clone of the GitHub wiki
@@ -203,4 +204,6 @@ added here with a one-line reason as soon as they are decided.
 ## Communication
 
 - Lead with the result. Use repo-relative links when referencing files.
+- Use the terms of [docs/glossary.md](docs/glossary.md) in their defined sense, and add a
+  term there before relying on it.
 - When you infer something or make a judgment call that affects the outcome, say so.
