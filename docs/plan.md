@@ -40,7 +40,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   exact machinery, which becomes a separate validation stage.
 - Open PRs: #15 (rules from the review, read track; revised after one comment), #16
   (decision 0005, which supersedes 0002: the model in the published form of van der
-  Vliet et al. 2018, with no-vision trials; read track).
+  Vliet et al. 2018, with no-vision blocks and sittings of about 200 to 1,500 trials;
+  read track; revised after review).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
   one-state likelihood in a one-off test; proposed to Opher as the exact reference for
   stage 2 (a dependency and a class, so not added without his agreement).
@@ -50,8 +51,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher approves PR #15 and reads PR #16, where the rule for placing no-vision
-   trials is a proposal for him to edit.
+1. Opher approves PR #15, and checks the Dirichlet concentration in PR #16 before
+   approving it.
 2. When #16 is merged: stage 1, step 1 of #12, the model and its simulator.
 3. Stage 1 of #12, one PR each, taking code from `sim/one-state-kalman`: the model and
    its simulator; priors and schedules; BayesFlow on the simulations (first settle
