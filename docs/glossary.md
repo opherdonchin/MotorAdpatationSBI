@@ -3,7 +3,9 @@
 The words this project uses for the things it works with. A capitalized term (Sitting,
 Experiment, Runnable) is a technical term: if it is defined here it is used in exactly
 that sense, and if it is not yet defined here it should be added. The same word in lower
-case is ordinary language and may be loose.
+case is ordinary language and may be loose. Capitalization is for our own clarity in
+prose (documents, notebook text, docstrings, PRs); it is not used in code names, plot
+labels or table headers.
 
 The terms fall into five groups. Definitions say what something is mathematically.
 Runnables are code that instantiates a Definition. Data is what Runnables take in and
@@ -21,6 +23,10 @@ fixes what is recorded on each Trial and in what units.
 **Trial.** One movement (or the smallest division of data collection) with the data relevant to it as defined by the Task. For instance: the movement angle, the applied perturbation and the vision condition in force on it.
 
 **Condition.** Everything about a Trial that is known before the Trial begins. That is, the parts of the trial that are parts of the experimental design as opposed to being collected data. A Condition may depend on what happened on earlier Trials (an adaptive design), but not on the Trial itself.
+
+**Trial Type.** A named combination of Condition values, as in an experimental design:
+for example baseline, +1, -1 and no vision in the one-state Schedule Design. Every Trial
+is of one Trial Type.
 
 **Block.** A logical grouping of consecutive Trials. This may mean that the Conditions are fixed or that their distribution is fixed or that a specific part of the Condition is fixed. For instance, a gradually increasing perturbation or a randomly generated perturbations with a pre-defined distribution or a vision condition could all define Blocks. Blocks can also be defined without any specific defining feature in the Conditions for the convenience of specific analysis.
 

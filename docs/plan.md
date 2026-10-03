@@ -42,7 +42,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   model, priors and schedules; it supersedes 0002.
 - Stage 1 of #12: step C1 (the simulator) merged; step C2 (prior and schedules) ready
   for review as PR #18.
-- The project's terms are being fixed in `docs/glossary.md` (PR #19).
+- The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
+  (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
   one-state likelihood in a one-off test; proposed to Opher as the exact reference for
   stage 2 (a dependency and a class, so not added without his agreement).
@@ -52,12 +53,12 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher reviews PR #18 (step C2), including his judgement of the generated sittings,
-   and PR #19 (the glossary).
-2. After both merge: reorganize the model page (model, derived properties, then the
-   Experiments and Analyses done with it), and draft a wiki page summarizing the
-   glossary.
-3. Step C3 of #12 then starts: BayesFlow on the simulations, learning the posterior first,
+1. Opher approves PR #21 (decision 0006: Models, Tasks and experiment designs in
+   separate modules).
+2. Reorganize the code in PR #18 as 0006 says (`src/designs/`, `src/models/`), same
+   numbers; then Opher's final review of #18.
+3. Step C3 of #12 then starts with `simulate_experiment` in `motor_sbi`, then BayesFlow on
+   the simulations, learning the posterior first,
    with the output-provenance lines explained and given a wiki page.
 4. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.

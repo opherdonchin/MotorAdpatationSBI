@@ -64,8 +64,13 @@ real check of the reviewer's understanding rather than a request for an OK.
    explain by the end.
 3. **Layers,** in the order of `.github/skills/templates/pr-explanation.md`: a plain
    summary, the math, a code walkthrough, the evidence, the consequences, and surprises.
-4. **Permalinks.** Every claim about code links to the exact lines with a GitHub
-   permalink (`https://github.com/<owner>/<repo>/blob/<commit>/<path>#L10-L20`).
+4. **Links everywhere.** Every claim about code links to the exact lines with a GitHub
+   permalink (`https://github.com/<owner>/<repo>/blob/<commit>/<path>#L10-L20`). Every
+   other reference, to an issue, pull request, commit, file, decision record, wiki page
+   or notebook cell, is a link too, in anything posted on GitHub and in every file in the
+   repo. Do not rely on GitHub to make the link: a bare `#12` or commit hash links only
+   in issue and PR text and never inside backticks, and nothing links by itself in a
+   repository file or the wiki.
 5. **Load-bearing vs boilerplate.** The walkthrough labels code as *load-bearing — read
    this* or *boilerplate — skim*.
 6. **One sitting, one method.** If a change cannot be explained in about fifteen
