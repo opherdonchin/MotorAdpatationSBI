@@ -45,32 +45,35 @@ auxiliary files (plans, reports, exports, debug dumps), without asking.
 
 ```
 AGENTS.md, CLAUDE.md, README.md
-.github/skills/               # skills, templates and scripts (see docs/process.md)
-.claude/                      # Claude Code: hooks, and a link to .github/skills
-pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
-src/motor_sbi/                # the framework: code that works with any Model and design
-src/models/<model>.py         # one Model: TASK, PARAMETERS, Prior Sampler, Simulator
-src/designs/<task>_task.py    # a Task's contract: CONDITION_VARS, OBSERVATION_VARS
-src/designs/<task>_experiment.py  # Trial Types, Schedule Designs, Schedule Generators
-notebooks/<model>_<topic>.ipynb  # finalized notebooks (see *Notebooks*)
-notebooks/working/            # notebooks in progress; committed, pruned when stale
-data/                         # Experiments: Schedules and Sittings; gitignored (storage: #3)
-  actual/<experiment>/        #   Actual Experiments
-  simulated/<experiment>/     #   Simulated Experiments, with their Ground Truth
-outputs/<model>/              # everything else notebooks save; gitignored, regenerable
-  engines/<name>/             #   trained Inference Engines
-  analyses/<name>/            #   results of Analyses
-tests/                        # pytest code tests (repo root, standard for a src layout)
-docs/                         # documentation: process, state, decisions, terms, models
-  process.md                  #   the working process (generic)
-  plan.md                     #   the one living plan: current goals + next steps
-  journal/YYYY-MM-DD.md       #   session log
-  decisions/NNNN-title.md     #   decision records
-  glossary.md                 #   the project's terms (Sitting, Experiment, Runnable...)
-  models/<model>.md           #   one page per Model (see *Model pages*)
-  experiments/<experiment>.md #   one page per Actual Experiment, when we have one
-Resources/                    # background material; moving to the wiki (#2)
-wiki/                         # gitignored clone of the GitHub wiki
+.github/skills/                  # skills, templates and scripts (see docs/process.md)
+.claude/                         # Claude Code: hooks, and a link to .github/skills
+pyproject.toml, pixi.lock        # environment (pixi); never hand-edit the lock
+src/                             # Where all importable source lives
+   motor_sbi/                    # the framework: code that works with any Model and design
+   models/<model>.py             # one Model: TASK, PARAMETERS, Prior Sampler, Simulator
+   designs/                      # all experimental designs from task specification through schedules
+      <task>_task.py             # a Task's contract: CONDITION_VARS, OBSERVATION_VARS
+      <task>_experiment.py       # Trial Types, Schedule Designs, Schedule Generators
+notebooks/                       # All .ipynb jupyter notebooks
+   <model>_<topic>.ipynb         # finalized notebooks (see *Notebooks*)
+   working/                      # notebooks in progress; committed, pruned when stale
+data/                            # Experiments: Schedules and Sittings; gitignored (storage: #3)
+  actual/<experiment>/           #   Actual Experiments
+  simulated/<experiment>/        #   Simulated Experiments, with their Ground Truth
+outputs/<model>/                 # everything else notebooks save; gitignored, regenerable
+  engines/<name>/                #   trained Inference Engines
+  analyses/<name>/               #   results of Analyses
+tests/                           # pytest code tests (repo root, standard for a src layout)
+docs/                            # documentation: process, state, decisions, terms, models
+  process.md                     #   the working process (generic)
+  plan.md                        #   the one living plan: current goals + next steps
+  journal/YYYY-MM-DD.md          #   session log
+  decisions/NNNN-title.md        #   decision records
+  glossary.md                    #   the project's terms (Sitting, Experiment, Runnable...)
+  models/<model>.md              #   one page per Model (see *Model pages*)
+  experiments/<experiment>.md    #   one page per Actual Experiment, when we have one
+Resources/                       # background material; moving to the wiki (#2)
+wiki/                            # gitignored clone of the GitHub wiki
 ```
 
 - Words: [docs/glossary.md](docs/glossary.md). `<model>` is a Model's short name
