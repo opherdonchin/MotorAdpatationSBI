@@ -58,17 +58,24 @@ normal is its standard deviation.
 
 The planning noise has no prior of its own; it is the execution noise times the ratio.
 
-**Schedules.** Each simulated sitting has its own schedule.
+**Schedules.** Each simulated sitting has its own schedule, made of blocks. A block is
+one of four kinds: baseline ($p_t = 0$), perturbation $+1$, perturbation $-1$, or no
+vision ($v_t = 0$; the cursor is not shown, so $p_t$ has no effect and is set to 0).
+Vision is on ($v_t = 1$) in every block that is not a no-vision block.
 
-- *Perturbation,* unchanged from 0002: 3 to 10 blocks, equally likely; $p_t$ constant
-  within a block; the first block is a baseline ($p_t = 0$); at every block boundary
-  $p_t$ changes to one of the other two values, equally likely; block lengths log-normal
-  with central 95% interval 10 to 50 trials, rounded to whole trials.
-- *Vision,* new, **a proposal for Opher to edit:** each sitting draws a fraction of
-  no-vision trials uniformly between 0 and 0.5, and each trial is then a no-vision trial
-  with that probability, independently of the others. This covers both parts of the
-  paper's experiment (half of the baseline trials without vision, one in nine afterwards)
-  and all-vision sittings.
+- *Number of blocks:* 8 to 60, equally likely.
+- *Block lengths:* independent, log-normal with central 95% interval 10 to 50 trials
+  ($\log L \sim \mathcal N(3.11, 0.41)$, median 22), rounded to whole trials. With 8 to 60
+  blocks, sittings are about 210 to 1,480 trials long (central 95%), median about 830.
+- *Kinds:* the first block is a baseline block. Each sitting draws its own proportions of
+  the four kinds from a symmetric Dirichlet distribution with concentration 2 for each
+  kind, and every later block's kind is drawn independently with those proportions. Two
+  neighbouring blocks of the same kind make, in effect, one longer block.
+
+With concentration 2, any one kind can take up to about 0.7 of a sitting's blocks (the
+largest proportion in a sitting is below 0.67 in 97.5% of sittings), and the typical
+smallest proportion is 0.10. Each single proportion is below 0.1 in 15% of sittings and
+above 0.7 in 0.4%. (One-off calculation, 2026-10-03.)
 
 **Why:** Using the published form means the model, the symbols and the sign are the
 ones in the paper and in the lab's code, and the lab's data (movement angles,
@@ -80,8 +87,12 @@ up as correlation between successive movements, while execution noise does not.
 *Alternatives:* keeping the convention of 0002 (no change to code already written, but a
 private dialect of a published model); a vision flag in the model with all-vision
 simulated sittings (the model would be ready for real data, but the simulations would
-not exercise it); no-vision trials in whole blocks instead of scattered (closer to the
-paper's 30-trial no-vision run; scattered was chosen as the simpler rule to state).
+not exercise it); no-vision trials scattered one by one instead of in blocks (rejected:
+no vision is a condition the experimenter sets for a stretch of trials, like a
+perturbation); proportions of block kinds closer to real experiments, where baseline and
+no-vision blocks together are about 20% and the two perturbations the rest (left for
+later: for training, a prior that covers every mix is more useful); a fixed rule that
+neighbouring blocks must differ (it caps the share of any one kind at one half).
 
 **Consequences:**
 
@@ -91,6 +102,8 @@ paper's 30-trial no-vision run; scattered was chosen as the simpler rule to stat
 - The code on the branch `sim/one-state-kalman` is in the convention of 0002 and has no
   vision flag. Whatever is taken from it is converted.
 - How well the two noises are identified is no longer assumed, in either direction. The
-  paper separated them with 900 trials, 275 of them without vision. Sittings here are
-  about 55 to 280 trials. Identification is measured for these schedules, and the length
-  of the sittings is revisited if it is not good enough.
+  paper separated them with 900 trials, 275 of them without vision; sittings here cover
+  that range (about 210 to 1,480 trials). Identification is measured for these
+  schedules, not taken from the paper.
+- Sittings of up to about 1,500 trials make each simulation, and each input to the
+  network, about five times longer than in the first attempt.
