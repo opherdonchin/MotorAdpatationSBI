@@ -8,8 +8,8 @@ functions do what their docstrings say.
 import numpy as np
 import pytest
 
-from designs.visuomotor_adaptation_experiment import sample_schedule
-from models.one_state import PARAMETERS, TASK, sample_prior, simulate_sitting
+from designs import visuomotor_adaptation_experiment as des
+from models import one_state as mdl
 
 root_seed = 68921609159653578200335664192142966917  # secrets.randbits(128)
 
@@ -39,7 +39,7 @@ def schedule_of(p, v):
 
 
 def movements(rng, theta, schedule, size=()):
-    observations, _ = simulate_sitting(rng, theta, schedule, size)
+    observations, _ = mdl.simulate_sitting(rng, theta, schedule, size)
     return observations["y"]
 
 
@@ -49,23 +49,23 @@ def rng():
 
 
 def test_the_model_names_its_task_and_parameters():
-    assert PARAMETERS == ("A", "B", "sigma_eta", "sigma_epsilon")
-    assert TASK.CONDITION_VARS == ("p", "v")
+    assert mdl.PARAMETERS == ("A", "B", "sigma_eta", "sigma_epsilon")
+    assert mdl.TASK.CONDITION_VARS == ("p", "v")
 
 
 def test_the_simulator_returns_observations_and_ground_truth(rng):
     schedule = schedule_of(np.zeros(30), np.ones(30))
-    observations, ground_truth = simulate_sitting(rng, theta, schedule, size=(4,))
-    assert set(observations) == set(TASK.OBSERVATION_VARS)
+    observations, ground_truth = mdl.simulate_sitting(rng, theta, schedule, size=(4,))
+    assert set(observations) == set(mdl.TASK.OBSERVATION_VARS)
     assert observations["y"].shape == (4, 30)
-    assert set(ground_truth) == {*PARAMETERS, "x"}
+    assert set(ground_truth) == {*mdl.PARAMETERS, "x"}
     assert ground_truth["x"].shape == (4, 30)
-    assert [ground_truth[name] for name in PARAMETERS] == theta.tolist()
+    assert [ground_truth[name] for name in mdl.PARAMETERS] == theta.tolist()
 
 
 def test_with_negligible_execution_noise_the_movement_is_the_plan(rng):
     schedule = schedule_of(np.ones(30), np.ones(30))
-    observations, ground_truth = simulate_sitting(
+    observations, ground_truth = mdl.simulate_sitting(
         rng, [0.95, 0.2, 0.05, tiny], schedule
     )
     np.testing.assert_allclose(observations["y"], ground_truth["x"], atol=1e-9)
@@ -115,7 +115,7 @@ def test_without_vision_the_plan_only_decays(rng):
 )
 def test_parameters_outside_their_domain_are_rejected(rng, bad_theta, message):
     with pytest.raises(ValueError, match=message):
-        simulate_sitting(rng, bad_theta, schedule_of(np.zeros(5), np.ones(5)))
+        mdl.simulate_sitting(rng, bad_theta, schedule_of(np.zeros(5), np.ones(5)))
 
 
 @pytest.mark.parametrize(
@@ -131,25 +131,25 @@ def test_parameters_outside_their_domain_are_rejected(rng, bad_theta, message):
 )
 def test_malformed_schedules_are_rejected(rng, schedule, message):
     with pytest.raises(ValueError, match=message):
-        simulate_sitting(rng, theta, schedule)
+        mdl.simulate_sitting(rng, theta, schedule)
 
 
 def test_prior_draws_have_the_documented_shape_and_domains(rng):
-    draws = sample_prior(rng, 1000, prior)
+    draws = mdl.sample_prior(rng, 1000, prior)
     A, B, sigma_eta, sigma_epsilon = draws.T
-    assert draws.shape == (1000, len(PARAMETERS))
+    assert draws.shape == (1000, len(mdl.PARAMETERS))
     assert np.all((A > 0) & (A < 1) & (B > 0) & (B < 1))
     assert np.all((sigma_eta > 0) & (sigma_epsilon > 0))
 
 
 def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):
     with pytest.raises(ValueError, match="exactly the keys"):
-        sample_prior(rng, 10, {k: v for k, v in prior.items() if k != "mu_logit_A"})
+        mdl.sample_prior(rng, 10, {k: v for k, v in prior.items() if k != "mu_logit_A"})
     with pytest.raises(ValueError, match="exactly the keys"):
-        sample_prior(rng, 10, {**prior, "mu_logit_C": 0.0})
+        mdl.sample_prior(rng, 10, {**prior, "mu_logit_C": 0.0})
 
 
 def test_prior_draws_can_be_simulated(rng):
-    schedule = sample_schedule(rng, schedule_design)
-    for draw in sample_prior(rng, 5, prior):
+    schedule = des.sample_schedule(rng, schedule_design)
+    for draw in mdl.sample_prior(rng, 5, prior):
         assert np.all(np.isfinite(movements(rng, draw, schedule)))

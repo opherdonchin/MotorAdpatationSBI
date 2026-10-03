@@ -5,13 +5,13 @@ docs/glossary.md; where this module fits: decision 0006.
 """
 
 import numpy as np
-from scipy.special import expit
+from scipy import special
 
-from designs import visuomotor_adaptation_task
+from designs import visuomotor_adaptation_task as tsk
 
 # The Task this Model is written for: its Schedules hold TASK.CONDITION_VARS and its
 # Sittings TASK.OBSERVATION_VARS.
-TASK = visuomotor_adaptation_task
+TASK = tsk
 
 # The Model's parameters, in the order they have in a parameter vector theta.
 PARAMETERS = ("A", "B", "sigma_eta", "sigma_epsilon")
@@ -112,8 +112,8 @@ def sample_prior(rng, size, prior):
 
     Each part of the Prior is normal on an unbounded scale and is then transformed::
 
-        A             = expit(N(mu_logit_A, sigma_logit_A))
-        B             = expit(N(mu_logit_B, sigma_logit_B))
+        A             = special.expit(N(mu_logit_A, sigma_logit_A))
+        B             = special.expit(N(mu_logit_B, sigma_logit_B))
         sigma_epsilon = exp(N(mu_log_sigma_epsilon, sigma_log_sigma_epsilon))
         sigma_eta     = sigma_epsilon * exp(N(mu_log_ratio, sigma_log_ratio))
 
@@ -157,8 +157,8 @@ def sample_prior(rng, size, prior):
         raise ValueError(
             f"prior must have exactly the keys {sorted(keys)}, got {sorted(prior)}"
         )
-    A = expit(rng.normal(prior["mu_logit_A"], prior["sigma_logit_A"], size))
-    B = expit(rng.normal(prior["mu_logit_B"], prior["sigma_logit_B"], size))
+    A = special.expit(rng.normal(prior["mu_logit_A"], prior["sigma_logit_A"], size))
+    B = special.expit(rng.normal(prior["mu_logit_B"], prior["sigma_logit_B"], size))
     log_sigma_epsilon = rng.normal(
         prior["mu_log_sigma_epsilon"], prior["sigma_log_sigma_epsilon"], size
     )

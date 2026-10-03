@@ -203,6 +203,13 @@ those sections it belongs to, and nowhere else.
   Model's equations keeps its case, alone or as a suffix (`A`, `mu_logit_A`), so code
   reads like the math. `ruff` enforces the rest; the exceptions are listed by name in
   `pyproject.toml`.
+- Import modules, not the names inside them, and call through the module, so that every
+  call shows where it comes from: `import numpy as np`, then `np.exp`;
+  `from scipy import special`, then `special.expit`; `from models import one_state as
+  mdl`, then `mdl.simulate_sitting`. Common libraries keep their usual aliases (`np`,
+  `pd`, `plt`, `pm`, `az`, `bf`). Our own modules are aliased by role: `mdl` for a Model,
+  `des` for an experiment design, `tsk` for a Task, so code reads the same whichever
+  Model or design it uses.
 - Plain code first; no abstraction until there is a second use (see above).
 - If an approach starts conflicting with these principles, stop and realign.
 

@@ -6,14 +6,14 @@ the four Trial Types (decision 0005), drawn by `sample_schedule`. Terms:
 docs/glossary.md; where this module fits: decision 0006.
 """
 
-from types import MappingProxyType
+import types
 
 import numpy as np
 
-from designs.visuomotor_adaptation_task import CONDITION_VARS
+from designs import visuomotor_adaptation_task as tsk
 
 # The Trial Types, with the value of each Condition in CONDITION_VARS.
-TRIAL_TYPES = MappingProxyType(
+TRIAL_TYPES = types.MappingProxyType(
     {
         "baseline": {"p": 0.0, "v": 1},
         "+1": {"p": 1.0, "v": 1},
@@ -95,7 +95,7 @@ def sample_schedule(rng, schedule_design):
     # For each Condition, its value in each Trial Type, then on every Trial.
     by_type = {
         name: np.array([conditions[name] for conditions in TRIAL_TYPES.values()])
-        for name in CONDITION_VARS
+        for name in tsk.CONDITION_VARS
     }
     return {
         name: np.repeat(values[block_type], block_len)
