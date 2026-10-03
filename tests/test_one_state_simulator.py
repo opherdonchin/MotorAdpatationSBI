@@ -2,8 +2,7 @@
 
 The scientific checks are in notebooks/working/one_state_simulator.ipynb (the Simulator)
 and notebooks/working/one_state_priors.ipynb (Prior and Schedule Design); these are fast
-checks that the
-functions do what their docstrings say.
+checks that the functions do what their docstrings say.
 """
 
 import numpy as np
