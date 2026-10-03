@@ -23,7 +23,8 @@ the commit message on `main`.
 
 - Render it with GitHub's renderer and look for mangled math:
   `gh api markdown -f mode=gfm -f text="$(cat description.md)"`.
-- Check that every permalink shows the lines it claims.
+- Check that every permalink shows the lines it claims, and that every issue, PR,
+  commit, file and notebook-cell reference is a link (*Presentations*, rule 4).
 - GitHub closes an issue on merge whenever a closing keyword (`close`, `fix`,
   `resolve` and their variants) comes directly before `#<n>`, in any sentence. Keep
   those words away from issue numbers unless this PR finishes that issue.

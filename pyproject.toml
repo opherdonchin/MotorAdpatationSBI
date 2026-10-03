@@ -60,3 +60,11 @@ addopts = ["--import-mode=importlib"]
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
+# PEP 8 naming (N), on top of ruff's defaults.
+extend-select = ["N"]
+
+[tool.ruff.lint.pep8-naming]
+# Symbols of a Model's equations keep their case, alone or as a suffix (AGENTS.md).
+ignore-names = ["A", "B", "*_A", "*_B"]
