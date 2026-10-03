@@ -189,6 +189,11 @@ those sections it belongs to, and nowhere else.
   exactly one place.
 - Prefer flat data structures and vectorized array operations over Python loops.
 - Be honest in naming: a name must not promise more than the code does.
+- Names follow PEP 8: `lower_case` for variables, functions and arguments, `CapWords`
+  for classes, `UPPER_CASE` for constants (module constants, and the values set in a
+  notebook's `[config]` cell). The one exception: a symbol of a Model's equations keeps
+  its case, alone or as a suffix (`A`, `mu_logit_A`), so code reads like the math.
+  `ruff` enforces this; the exceptions are listed by name in `pyproject.toml`.
 - Plain code first; no abstraction until there is a second use (see above).
 - If an approach starts conflicting with these principles, stop and realign.
 
