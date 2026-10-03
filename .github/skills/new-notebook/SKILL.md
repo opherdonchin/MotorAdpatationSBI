@@ -1,6 +1,6 @@
 ---
 name: new-notebook
-description: Start a new notebook - for a Simulated Experiment, a trained Inference Engine, an Analysis, or the Checks of a Runnable - with its Checks agreed, a seeded config cell, output provenance and labelled cells, and a section on its model page. Use when the reviewer wants to start any new piece of notebook work.
+description: Start a new working notebook - for a Simulated Experiment, a trained Inference Engine, an Analysis, or the Checks of a Runnable - with its Checks agreed, a seeded config cell, output provenance and labelled cells, and a section on its model page. Use when the reviewer wants to start any new piece of notebook work.
 ---
 
 # New notebook
@@ -12,8 +12,7 @@ the order of operations.
 1. **Agree first.** The work needs an agreed scope (`scope` skill), and the Checks it will
    run are agreed with the reviewer. Agree the names too: the Model's short name and a
    short topic (`one_state_priors`).
-2. **Create `notebooks/<model>_<topic>.ipynb`** (prefix `explore_` while exploring),
-   starting with:
+2. **Create `notebooks/working/<model>_<topic>.ipynb`,** starting with:
    - a markdown title cell: the question, the scope issue, the agreed Checks;
    - `# [imports]`;
    - `# [config]`: the root seed and every constant. Generate the seed once with
@@ -25,14 +24,18 @@ the order of operations.
    ```python
    REPO = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
    GIT_COMMIT = subprocess.check_output(["git", "describe", "--always", "--dirty"], text=True).strip()
-   OUT_DIR = REPO / "outputs" / "<model>" / "<experiments|engines|analyses>" / "<name>"
+   OUT_DIR = REPO / "data" / "simulated" / "<experiment>"  # a Simulated Experiment
+   OUT_DIR = REPO / "outputs" / "<model>" / "<engines|analyses>" / "<name>"  # anything else
    ```
 
    `REPO` is the repository's top folder, so the notebook finds it from anywhere.
    `GIT_COMMIT` is the commit that produced the output, with `-dirty` if there were
    uncommitted changes; commit before a run whose outputs matter. `OUT_DIR` is where
-   this notebook's outputs go.
+   this notebook's outputs go. A Simulated Experiment is saved with its Ground Truth
+   alongside the Sittings, apart from them.
 4. **Describe it on the model page:** a subsection under *Experiments, Inference Engines
-   and Analyses* with the same `<name>`.
+   and Analyses* with the same `<name>` (an Actual Experiment: its own page in
+   `docs/experiments/`).
 5. **Record it:** the plan and the journal (`journal` skill).
-6. **When it works,** it becomes a finalized notebook (no `explore_` prefix).
+6. **When it works,** it becomes, alone or combined with other working notebooks, a
+   finalized notebook in `notebooks/`.
