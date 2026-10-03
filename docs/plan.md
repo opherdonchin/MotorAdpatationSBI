@@ -53,12 +53,15 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher reviews PR #18 (step C2), including his judgement of the simulated Sittings.
-2. Step C3 of #12 then starts: BayesFlow on the simulations, learning the posterior first,
+1. Opher reviews PR #18 (step C2, revised after his review), PR #20 (conventions) and
+   PR #21 (decision 0006, data classes).
+2. After #21: introduce the data classes in a behaviour-preserving PR (same seeds, same
+   numbers).
+3. Step C3 of #12 then starts: BayesFlow on the simulations, learning the posterior first,
    with the output-provenance lines explained and given a wiki page.
-3. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
+4. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
-4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+5. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
-5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+6. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+7. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
