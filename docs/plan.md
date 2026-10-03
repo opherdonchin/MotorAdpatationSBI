@@ -50,7 +50,7 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher reviews PR #17 (step C1, full track).
+1. Opher merges PR #17 (step C1; reviewed, two description fixes made).
 2. Step C2 of #12: priors and schedules (the samplers of decision 0005), with plots of
    generated sittings for Opher to judge, and the output-provenance lines explained.
 3. Step C3 of #12: BayesFlow on the simulations, learning the posterior first.
