@@ -1,6 +1,6 @@
 # 0002 — One-state model formulation for the first quick win
 
-**Date:** 2026-10-01 · **Status:** Accepted
+**Date:** 2026-10-01 · **Status:** Superseded by [0005](0005-one-state-model-published-form.md)
 
 **Context:** The first quick win needs a motor-adaptation model simple enough to have an
 exact likelihood, so BayesFlow's learned likelihood can be checked against ground truth,
