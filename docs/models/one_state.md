@@ -85,7 +85,36 @@ in the numerator, and $A^k (A - B)^k$ in place of $(A - B)^{2k}$ in the denomina
 version above is derived here and agrees with simulation; the printed one does not
 (`one_state_simulator.ipynb#[check-stationary]`).
 
-## Priors and schedules
+## Priors
 
-Defined in [decision 0005](../decisions/0005-one-state-model-published-form.md); written
-up here when they are implemented (step C2 of #12).
+From [decision 0005](../decisions/0005-one-state-model-published-form.md). Each prior is
+normal on an unbounded scale, with the stated range as its central 95% interval. The
+constants are computed from the ranges in `one_state_priors.ipynb#[config]`.
+
+| Quantity | Range (95%) | Prior |
+|---|---|---|
+| $A$ | 0.75 to 0.999 | $\mathrm{logit}(A) \sim \mathcal N(4.00, 1.48)$ |
+| $B$ | 0.01 to 0.5 | $\mathrm{logit}(B) \sim \mathcal N(-2.30, 1.17)$ |
+| $\sigma_\varepsilon$ | 1/15 to 1/3 | $\log \sigma_\varepsilon \sim \mathcal N(-1.90, 0.41)$ |
+| $\sigma_\eta / \sigma_\varepsilon$ | 1/15 to 1/5 | $\log(\sigma_\eta/\sigma_\varepsilon) \sim \mathcal N(-2.16, 0.28)$ |
+
+The second number of each normal is its standard deviation. $\sigma_\eta$ is the
+execution noise times the ratio. Code: `sample_prior` in
+[simulators/one_state.py](../../simulators/one_state.py).
+
+## Schedules
+
+A sitting is a sequence of blocks of four kinds: baseline ($p = 0$, $v = 1$),
+perturbation $+1$ or $-1$ ($v = 1$), and no vision ($v = 0$, $p$ set to 0).
+
+- 8 to 60 blocks, equally likely.
+- Block lengths independent, $\log L \sim \mathcal N(3.11, 0.41)$ (central 95% interval
+  10 to 50 trials), rounded to whole trials.
+- The first block is a baseline. Each sitting draws its proportions of the four kinds
+  from a symmetric Dirichlet with concentration 3; every later block's kind is drawn
+  independently with those proportions. Neighbouring blocks of the same kind make one
+  longer block.
+
+Code: `sample_schedule` in [simulators/one_state.py](../../simulators/one_state.py),
+which returns $p_t$ and $v_t$ for every trial. What the schedules look like:
+[notebooks/one_state_priors.ipynb](../../notebooks/one_state_priors.ipynb).
