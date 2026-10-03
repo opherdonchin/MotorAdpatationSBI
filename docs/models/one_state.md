@@ -96,8 +96,8 @@ likelihood of a Sitting; it comes in stage 2 of issue [#12](https://github.com/o
 
 ### Prior and Schedule Design for the Simulated Experiments of issue #12
 
-The Simulated Experiments that BayesFlow will be trained and tested on (scope issue
-[#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12), which scopes this work) draw each
+The Simulated Experiments that BayesFlow will be trained and tested on (scope
+issue [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12)) draw each
 Sitting's parameter values from this Prior and its Schedule from this Schedule Design,
 both from [decision 0005](../decisions/0005-one-state-model-published-form.md). No
 Simulated Experiment has been saved yet. Checks:
