@@ -121,15 +121,15 @@ execution noise times the ratio.
 $v = 1$), perturbation $+1$ or $-1$ ($v = 1$), and no vision ($v = 0$, $p$ set to 0).
 Schedule Generator: `sample_schedule`, which returns $p_t$ and $v_t$ for every Trial.
 
-- 8 to 60 Blocks, equally likely.
-- Block lengths independent, $\log L \sim \mathcal N(3.11, 0.41)$ (central 95% interval
-  10 to 50 Trials), rounded to whole Trials.
+- 5 to 16 Blocks, equally likely.
+- Block lengths independent, $\log L \sim \mathcal N(3.91, 0.82)$ (central 95% interval
+  10 to 250 Trials, median 50), rounded to whole Trials.
 - The first Block is a baseline. Each Sitting draws its proportions of the four kinds
   from a symmetric Dirichlet with concentration 3; every later Block's kind is drawn
   independently with those proportions. Neighbouring Blocks of the same kind make one
   longer Block.
 
 **Results.** Prior quantiles match the stated ranges within sampling error. Sittings have
-212 to 1,470 Trials (central 95%), median about 830. About 3.5% of Sittings lack a
-no-vision Block, about 3.5% lack each perturbation, and 0.2% have no perturbation at
-all.
+about 230 to 1,440 Trials (central 95%), median about 700. With few Blocks, many
+Sittings lack a kind: about 16% have no no-vision Block, about 17% lack each
+perturbation, and 2.4% have no perturbation at all.

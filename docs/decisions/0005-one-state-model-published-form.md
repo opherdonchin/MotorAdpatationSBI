@@ -63,10 +63,15 @@ one of four kinds: baseline ($p_t = 0$), perturbation $+1$, perturbation $-1$, o
 vision ($v_t = 0$; the cursor is not shown, so $p_t$ has no effect and is set to 0).
 Vision is on ($v_t = 1$) in every block that is not a no-vision block.
 
-- *Number of blocks:* 8 to 60, equally likely.
-- *Block lengths:* independent, log-normal with central 95% interval 10 to 50 trials
-  ($\log L \sim \mathcal N(3.11, 0.41)$, median 22), rounded to whole trials. With 8 to 60
-  blocks, sittings are about 210 to 1,480 trials long (central 95%), median about 830.
+- *Number of blocks:* 5 to 16, equally likely.
+- *Block lengths:* independent, log-normal with central 95% interval 10 to 250 trials
+  ($\log L \sim \mathcal N(3.91, 0.82)$, median 50), rounded to whole trials. With 5 to 16
+  blocks, sittings are about 230 to 1,440 trials long (central 95%), median about 700.
+- *Amended 2026-10-03* (Opher, review of PR #18): blocks of 10 to 250 trials instead of
+  10 to 50, so that blocks are as long as in real experiments; the number of blocks
+  went from 8 to 60 down to 5 to 16 to keep sittings at about 200 to 1,500 trials. With
+  fewer blocks, about 16% of sittings lack a no-vision block and 2.4% have no
+  perturbation.
 - *Kinds:* the first block is a baseline block. Each sitting draws its own proportions of
   the four kinds from a symmetric Dirichlet distribution with concentration 3 for each
   kind, and every later block's kind is drawn independently with those proportions. Two
@@ -104,7 +109,7 @@ neighbouring blocks must differ (it caps the share of any one kind at one half).
   vision flag. Whatever is taken from it is converted.
 - How well the two noises are identified is no longer assumed, in either direction. The
   paper separated them with 900 trials, 275 of them without vision; sittings here cover
-  that range (about 210 to 1,480 trials). Identification is measured for these
+  that range (about 230 to 1,440 trials). Identification is measured for these
   schedules, not taken from the paper.
 - Sittings of up to about 1,500 trials make each simulation, and each input to the
   network, about five times longer than in the first attempt.
