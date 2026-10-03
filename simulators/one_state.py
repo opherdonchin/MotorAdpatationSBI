@@ -1,31 +1,32 @@
-"""Simulator of the one-state motor-adaptation model, with its prior and schedules.
+"""Simulator, Prior Sampler and Schedule Generator of the one-state Model.
 
-Model, symbols, sign convention, priors and schedules: decision 0005 and
-docs/models/one_state.md. Parameter order everywhere:
+Terms (Sitting, Schedule, Block, ...): docs/glossary.md. The Model, its Prior and the
+Schedule Design: decision 0005 and docs/models/one_state.md. Parameter order everywhere:
 theta = (A, B, sigma_eta, sigma_epsilon).
 """
 
 import numpy as np
 from scipy.special import expit
 
-# The four kinds of block, in this order: perturbation p and vision flag v of each.
+# The four kinds of Block, in this order: perturbation p and vision flag v of each.
 BLOCK_KINDS = ("baseline", "+1", "-1", "no vision")
 BLOCK_P = np.array([0.0, 1.0, -1.0, 0.0])
 BLOCK_V = np.array([1, 1, 1, 0])
 
 
 def simulate_sitting(rng, theta, p, v, size=()):
-    """Simulate the movement angles of one or more sittings.
+    """Simulator: the movement angles of one or more Sittings on a given Schedule.
 
-    Runs the model of decision 0005 forward, one trial at a time::
+    Runs the Model of decision 0005 forward, one Trial at a time::
 
         x[0] ~ N(0, sigma_eta^2)
         y[t] = x[t] + epsilon[t],                 epsilon[t] ~ N(0, sigma_epsilon^2)
         e[t] = y[t] + p[t]
         x[t+1] = A x[t] - B v[t] e[t] + eta[t],   eta[t] ~ N(0, sigma_eta^2)
 
-    Several sittings that share the parameters and the schedule are simulated at once
-    (vectorized over `size`); the loop over trials is the model's recursion.
+    Several Sittings that share the parameter values and the Schedule are simulated at
+    once (vectorized over `size`); the loop over Trials is the Model's recursion. The
+    hidden plans x are not returned, so the Ground Truth is theta alone.
 
     Parameters
     ----------
@@ -36,18 +37,18 @@ def simulate_sitting(rng, theta, p, v, size=()):
         each strictly between 0 and 1, and the standard deviations of the planning
         and execution noise, each positive. In units of the perturbation size.
     p : array_like of float, shape (T,)
-        Perturbation on each trial, added to the movement to give the error.
+        Perturbation on each Trial, added to the movement to give the error.
     v : array_like of {0, 1}, shape (T,)
-        Vision flag on each trial: 1 if the cursor is shown, so the subject learns from
+        Vision flag on each Trial: 1 if the cursor is shown, so the subject learns from
         the error; 0 if not, so the plan only decays and picks up planning noise.
     size : tuple of int, optional
-        Number of independent sittings to simulate, as an array shape. Default ``()``:
-        one sitting.
+        Number of independent Sittings to simulate, as an array shape. Default ``()``:
+        one Sitting.
 
     Returns
     -------
     y : numpy.ndarray of float, shape (*size, T)
-        Movement angle on every trial of every sitting.
+        Movement angle on every Trial of every Sitting.
 
     Raises
     ------
@@ -102,16 +103,16 @@ def sample_prior(
     mu_log_ratio,
     sigma_log_ratio,
 ):
-    """Draw parameter vectors from the prior of decision 0005.
+    """Prior Sampler: draw parameter vectors from the Prior of decision 0005.
 
-    Each prior is normal on an unbounded scale and is then transformed::
+    Each part of the Prior is normal on an unbounded scale and is then transformed::
 
         A             = expit(N(mu_logit_A, sigma_logit_A))
         B             = expit(N(mu_logit_B, sigma_logit_B))
         sigma_epsilon = exp(N(mu_log_sigma_epsilon, sigma_log_sigma_epsilon))
         sigma_eta     = sigma_epsilon * exp(N(mu_log_ratio, sigma_log_ratio))
 
-    so the planning noise is given a prior through its ratio to the execution noise.
+    so the planning noise is given a Prior through its ratio to the execution noise.
     The four normal draws are independent.
 
     Parameters
@@ -153,24 +154,26 @@ def sample_schedule(
     sigma_log_block_len,
     kind_concentration,
 ):
-    """Draw the schedule of one sitting: perturbation and vision on every trial.
+    """Schedule Generator: draw the Schedule of one Sitting.
 
-    Following decision 0005: the number of blocks is uniform on
-    n_blocks_min..n_blocks_max; block lengths are independent and log-normal, rounded
-    to whole trials; the sitting's proportions of the four kinds of block
-    (`BLOCK_KINDS`) are drawn from a symmetric Dirichlet with the given concentration;
-    the first block is a baseline and every later block's kind is drawn independently
-    with those proportions. Two neighbouring blocks of the same kind are, in effect, one
-    longer block.
+    A Schedule is the Condition on every Trial, here the perturbation and the vision
+    flag. Following the Schedule Design of decision 0005: the number of Blocks is
+    uniform on n_blocks_min..n_blocks_max; Block lengths are independent and
+    log-normal, rounded to whole Trials; the Sitting's proportions of the four kinds of
+    Block (`BLOCK_KINDS`) are drawn from a symmetric Dirichlet with the given
+    concentration; the first Block is a baseline and every later Block's kind is drawn
+    independently with those proportions. Two neighbouring Blocks of the same kind are,
+    in effect, one longer Block. The Blocks themselves are not returned: they are part
+    of the Schedule Design, not of the Schedule.
 
     Parameters
     ----------
     rng : numpy.random.Generator
         Source of the draws. It is advanced (the only side effect).
     n_blocks_min, n_blocks_max : int
-        Smallest and largest number of blocks, both included; 1 <= min <= max.
+        Smallest and largest number of Blocks, both included; 1 <= min <= max.
     mu_log_block_len, sigma_log_block_len : float
-        Mean and standard deviation of the log of a block's length in trials.
+        Mean and standard deviation of the log of a Block's length in Trials.
     kind_concentration : float
         Concentration of the symmetric Dirichlet over the four kinds, for each kind.
         Larger values make the four proportions more alike.
@@ -178,14 +181,14 @@ def sample_schedule(
     Returns
     -------
     p : numpy.ndarray of float, shape (T,)
-        Perturbation on each trial: 0, +1 or -1 (0 on no-vision trials).
+        Perturbation on each Trial: 0, +1 or -1 (0 on no-vision Trials).
     v : numpy.ndarray of int, shape (T,)
-        Vision flag on each trial: 1, or 0 in no-vision blocks.
+        Vision flag on each Trial: 1, or 0 in no-vision Blocks.
 
     Raises
     ------
     ValueError
-        If the block counts do not satisfy 1 <= n_blocks_min <= n_blocks_max.
+        If the Block counts do not satisfy 1 <= n_blocks_min <= n_blocks_max.
     """
     if not 1 <= n_blocks_min <= n_blocks_max:
         raise ValueError(
