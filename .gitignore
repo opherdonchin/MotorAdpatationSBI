@@ -219,3 +219,7 @@ __marimo__/
 
 # Wiki clone (separate git repo: MotorAdpatationSBI.wiki)
 wiki/
+
+# Notebook outputs and Actual Experiments (AGENTS.md, Where things live)
+outputs/
+data/
