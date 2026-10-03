@@ -42,6 +42,7 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   model, priors and schedules; it supersedes 0002.
 - Stage 1 of #12: step C1 (the simulator) merged; step C2 (prior and schedules) ready
   for review as PR #18.
+- The project's terms are being fixed in `docs/glossary.md` (PR #19).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
   one-state likelihood in a one-off test; proposed to Opher as the exact reference for
   stage 2 (a dependency and a class, so not added without his agreement).
@@ -51,12 +52,16 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-1. Opher reviews PR #18 (step C2), including his judgement of the generated sittings.
-2. Step C3 of #12 then starts: BayesFlow on the simulations, learning the posterior first,
+1. Opher reviews PR #18 (step C2), including his judgement of the generated sittings,
+   and PR #19 (the glossary).
+2. After both merge: reorganize the model page (model, derived properties, then the
+   Experiments and Analyses done with it), and draft a wiki page summarizing the
+   glossary.
+3. Step C3 of #12 then starts: BayesFlow on the simulations, learning the posterior first,
    with the output-provenance lines explained and given a wiki page.
-3. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
+4. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
-4. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
+5. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
    on each platform (Linux with GPUs, Windows without) (#9).
-5. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-6. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+6. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
+7. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
