@@ -22,6 +22,10 @@ fixes what is recorded on each Trial and in what units.
 
 **Condition.** Everything about a Trial that is known before the Trial begins. That is, the parts of the trial that are parts of the experimental design as opposed to being collected data. A Condition may depend on what happened on earlier Trials (an adaptive design), but not on the Trial itself.
 
+**Trial Type.** A named combination of Condition values, as in an experimental design:
+for example baseline, +1, -1 and no vision in the one-state Schedule Design. Every Trial
+is of one Trial Type.
+
 **Block.** A logical grouping of consecutive Trials. This may mean that the Conditions are fixed or that their distribution is fixed or that a specific part of the Condition is fixed. For instance, a gradually increasing perturbation or a randomly generated perturbations with a pre-defined distribution or a vision condition could all define Blocks. Blocks can also be defined without any specific defining feature in the Conditions for the convenience of specific analysis.
 
 **Schedule.** The Condition on every Trial of one Sitting: for the one-state Model, this could be the

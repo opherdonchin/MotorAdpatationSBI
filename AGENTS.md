@@ -49,7 +49,7 @@ AGENTS.md, CLAUDE.md, README.md
 .claude/                      # Claude Code: hooks, and a link to .github/skills
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
 src/motor_sbi/                # reusable, tested code: Likelihood Functions, Inference Engines, diagnostics
-simulators/<model>.py         # Simulator, Prior Sampler and Schedule Generator of one Model
+simulators/<model>.py         # Simulator and Prior Sampler of one Model (and, for now, its Schedule Generator)
 notebooks/<model>_<topic>.ipynb  # finalized notebooks (see *Notebooks*)
 notebooks/working/            # notebooks in progress; committed, pruned when stale
 data/                         # Experiments: Schedules and Sittings; gitignored (storage: #3)
