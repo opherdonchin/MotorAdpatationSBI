@@ -3,7 +3,9 @@
 The words this project uses for the things it works with. A capitalized term (Sitting,
 Experiment, Runnable) is a technical term: if it is defined here it is used in exactly
 that sense, and if it is not yet defined here it should be added. The same word in lower
-case is ordinary language and may be loose.
+case is ordinary language and may be loose. Capitalization is for our own clarity in
+prose (documents, notebook text, docstrings, PRs); it is not used in code names, plot
+labels or table headers.
 
 The terms fall into five groups. Definitions say what something is mathematically.
 Runnables are code that instantiates a Definition. Data is what Runnables take in and
