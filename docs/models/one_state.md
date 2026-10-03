@@ -49,7 +49,7 @@ the movement angles.
 ## Derived properties
 
 Checked against the Simulator in
-[notebooks/one_state_simulator.ipynb](../../notebooks/one_state_simulator.ipynb).
+[notebooks/working/one_state_simulator.ipynb](../../notebooks/working/one_state_simulator.ipynb).
 
 **Without noise,** with vision and a constant perturbation $p$, the movement approaches a
 fixed point geometrically:
@@ -101,7 +101,7 @@ issue [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12)) draw 
 Sitting's parameter values from this Prior and its Schedule from this Schedule Design,
 both from [decision 0005](../decisions/0005-one-state-model-published-form.md). No
 Simulated Experiment has been saved yet. Checks:
-[notebooks/one_state_priors.ipynb](../../notebooks/one_state_priors.ipynb).
+[notebooks/working/one_state_priors.ipynb](../../notebooks/working/one_state_priors.ipynb).
 
 **Prior.** Each part is normal on an unbounded scale, with the stated range as its
 central 95% interval; the constants are computed from the ranges in
