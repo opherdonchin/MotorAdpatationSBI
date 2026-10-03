@@ -48,31 +48,52 @@ AGENTS.md, CLAUDE.md, README.md
 .github/skills/               # skills, templates and scripts (see docs/process.md)
 .claude/                      # Claude Code: hooks, and a link to .github/skills
 pyproject.toml, pixi.lock     # environment (pixi); never hand-edit the lock
-src/motor_sbi/                # reusable, tested code: likelihoods, SBI wrappers, diagnostics
-simulators/                   # model simulators; separate from the package
-notebooks/                    # all work starts here (see *Notebooks*)
-analyses/sim/<study>/         # one folder per simulated-data analysis
-analyses/data/<dataset>/      # one folder per real-data analysis
+src/motor_sbi/                # reusable, tested code: Likelihood Functions, Inference Engines, diagnostics
+simulators/<model>.py         # Simulator, Prior Sampler and Schedule Generator of one Model
+notebooks/<model>_<topic>.ipynb  # all work starts here (see *Notebooks*)
+outputs/<model>/              # everything notebooks save; gitignored, regenerable
+  experiments/<name>/         #   Simulated Experiments
+  engines/<name>/             #   trained Inference Engines
+  analyses/<name>/            #   results of Analyses
+data/<experiment>/            # Actual Experiments; gitignored (storage policy: #3)
 tests/                        # pytest code tests (repo root, standard for a src layout)
 docs/process.md               # the working process (generic)
 docs/plan.md                  # the one living plan: current goals + next steps
 docs/journal/YYYY-MM-DD.md    # session log
 docs/decisions/NNNN-title.md  # decision records
 docs/glossary.md              # the project's terms (Sitting, Experiment, Runnable...)
-docs/models/                  # model math; must match the code
+docs/models/<model>.md        # one page per Model (see *Model pages*)
 Resources/                    # background material; moving to the wiki (#2)
 wiki/                         # gitignored clone of the GitHub wiki
 ```
 
-- Large or regenerable outputs (simulation banks, trained networks, traces, figures from
-  exploratory runs) go inside their analysis folder under `analyses/` and are
-  gitignored. Each saved output records the root seed and git commit that produced it.
+- Words: [docs/glossary.md](docs/glossary.md). `<model>` is a Model's short name
+  (`one_state`); `<name>` is short, lowercase, with underscores, and is the same as the
+  heading of the section of the model page that describes it.
+- Everything a notebook saves goes under `outputs/<model>/`, by kind: Simulated
+  Experiments, trained Inference Engines, or Analysis results. All of it is gitignored
+  and must be regenerable by re-running the notebook. Each saved file records the root
+  seed and the git commit that produced it. Output folders have no README; the model
+  page describes what is in them.
+- Actual Experiments are inputs, not outputs: they go under `data/<experiment>/`, also
+  gitignored. How to keep data and outputs that are too expensive to regenerate is #3.
 - Findings go in the journal or in a finalized notebook, not in ad hoc report files.
 
-## Model math — `docs/models/`
+## Model pages — `docs/models/<model>.md`
 
-- One file per model: equations, parameter meanings, units, domains, and the parameter
-  order used in code. Update in the same change as the code it describes.
+One page per Model, so that a Model and everything done with it can be read in one place.
+Its sections, in this order:
+
+1. **The Model:** source, equations, parameter meanings, units, domains, and the
+   parameter order used in code. Updated in the same change as the code it describes.
+2. **Derived properties:** results that follow from the Model and serve as Checks.
+3. **Likelihood:** the exact Likelihood Function, when there is one.
+4. **Experiments, Inference Engines and Analyses** done with the Model, one subsection
+   each: what it is (Prior and Schedule Design for a Simulated Experiment), the
+   question, the notebook, the output folder, and the result in a few lines.
+
+Nothing about a Model's work gets a separate file unless the page becomes too long to
+read, and then only after asking.
 
 ## Notebooks
 
@@ -103,15 +124,15 @@ wiki/                         # gitignored clone of the GitHub wiki
   discussing it with Opher first.
 - **Helpers come from repetition.** A helper function comes into being only when the
   same code has been written twice, and its creation is discussed first.
-- **Scientific tests are designed together.** When starting a study or simulator, propose
-  which correctness checks it needs (exact likelihood, limiting cases, recovery, SBC…)
-  and agree on them. Not every simulator needs the same checks.
+- **Scientific tests are designed together.** When starting a Runnable or an Analysis,
+  propose which Checks it needs (exact likelihood, limiting cases, recovery, SBC…) and
+  agree on them. Not every Runnable needs the same Checks.
 
 Pytest code tests (`tests/`) are separate and can be written freely.
 
 ## Randomness
 
-- One root seed per study or notebook, set once in the config cell and recorded with
+- One root seed per notebook, set once in the config cell and recorded with
   every saved output. Generate new root seeds with `secrets.randbits(128)`; do not use
   magic numbers like `42`.
 - Use `np.random.default_rng(root_seed)`. Never use `np.random.seed` or other global
@@ -171,7 +192,7 @@ added here with a one-line reason as soon as they are decided.
 ## Skills
 
 - Process skills: see [docs/process.md](docs/process.md), *How the tooling works*.
-- Starting an analysis: `new-analysis` (project-specific; lives with the others).
+- Starting a notebook: `new-notebook` (project-specific; lives with the others).
 - BayesFlow code: consult `amortized-workflow` before writing it.
 - PyMC/ArviZ: `pymc-modeling`, `bayesian-workflow`, `arviz-diagnostics`,
   `prior-elicitation`.

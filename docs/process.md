@@ -208,7 +208,7 @@ To change something:
 | `understood` | After a merge; a wiki page needs drafting or updating |
 | `digest` | Periodically; when the repo starts to feel unwieldy |
 
-Project-specific skills (starting an analysis, for instance) are listed in `AGENTS.md`.
+Project-specific skills (starting a notebook, for instance) are listed in `AGENTS.md`.
 
 **Two scripts** do the mechanical work, in `.github/skills/scripts/`:
 
