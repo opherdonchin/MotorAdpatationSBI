@@ -38,8 +38,10 @@ scope issue ─► branch + draft PR ─► work in small commits ─► explana
 8. **Record.** The agent brings the journal and plan up to date and drafts wiki pages for
    anything new or changed (see *Understanding map*).
 
-Work done directly on `main` (small fixes, durable-state updates, anything the reviewer
-asks for there) may be committed and pushed to `main`.
+Work done directly on `main` (small fixes, plan and journal updates, anything the
+reviewer asks for there) may be committed and pushed to `main`. Decision records are the
+exception among the durable state files: they always arrive by pull request (see
+*Decision records*).
 
 ## Scope agreements
 
@@ -66,15 +68,20 @@ real check of the reviewer's understanding rather than a request for an OK.
    permalink (`https://github.com/<owner>/<repo>/blob/<commit>/<path>#L10-L20`).
 5. **Load-bearing vs boilerplate.** The walkthrough labels code as *load-bearing — read
    this* or *boilerplate — skim*.
-6. **One sitting.** If a change cannot be explained in about fifteen minutes, it is too
-   big and gets split.
+6. **One sitting, one method.** If a change cannot be explained in about fifteen
+   minutes, it is too big and gets split. A change introduces one method at a time. A
+   method the reviewer has not been shown before comes with its background (a concept
+   page in the wiki) and with a check against a result the reviewer already trusts,
+   such as a published result or existing code, before anything is built on it.
 7. **"I don't get it" is always a good answer.** It means the explanation or the code
    needs work, never that the reviewer failed.
 8. **Math that survives GitHub's markdown.** Display math goes in fenced ` ```math `
    blocks, whose content markdown leaves alone. In `$...$` and `$$...$$`, markdown eats
    a backslash before punctuation (`\,` `\;` `\!` `\{` become `,` `;` `!` `{`) and
-   mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`). Check rendering
-   with `gh api markdown` when in doubt.
+   mangles `<`; avoid them there (write `y_{1:t-1}`, not `y_{<t}`, and `\lbrace`,
+   `\rbrace` for braces). Check that with `gh api markdown` when in doubt. GitHub also
+   refuses some macros, `\operatorname` among them (write `\mathrm{...}`); that error
+   appears only in the browser, so `gh api markdown` cannot show it.
 9. **An explanation always describes the change as it now stands.** After review, the
    explanation is rewritten in place, not patched: a reader should never have to combine
    an old description with a list of amendments. What changed in response to review is
@@ -258,6 +265,10 @@ The agent cannot tell when a session will end, so the plan and journal are updat
   model formulations, conventions, rejected alternatives worth remembering.
 - **When to write:** when the decision is made (drafted by the agent, accepted by the
   reviewer). Small choices go in the journal's *Decisions* line instead.
+- **How it is accepted:** a new record, and any change to an existing one, arrives as a
+  pull request on the *read* track, so the reviewer can comment on its lines. The agent
+  never commits a decision record directly to `main`, and only the reviewer's approval of
+  that pull request makes its status `Accepted`.
 - **Format:** `.github/skills/templates/decision-record.md`.
 - **Superseding:** write a new record and set the old one's status to `Superseded by
   NNNN`. Decision records are kept, not deleted: the history of why is the point.
