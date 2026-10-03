@@ -42,8 +42,9 @@ little as possible about any of this.
    module it is written for), `PARAMETERS` (its parameters, in the order they have in a
    parameter vector; the one place that order is defined), its Prior Sampler
    `sample_prior(rng, size, prior)`, its Simulator `simulate_sitting(rng, theta,
-   schedule)`, and later its Likelihood Function. It checks Schedules against
-   `TASK.CONDITION_VARS`.
+   schedule)`, and later its Likelihood Function. The Simulator simulates a whole Sitting,
+   so that each Model can vectorize as suits it, and returns the Ground Truth along with
+   the Observations. It checks Schedules against `TASK.CONDITION_VARS`.
 5. **No new classes.** Schedules are dicts of per-Trial arrays keyed by
    `CONDITION_VARS`; a Sitting adds the `OBSERVATION_VARS`. Ground Truth is a separate
    dict of parameter values and hidden states, never mixed into the Sitting. The Prior's
@@ -80,7 +81,10 @@ Generators in the Model module (ties experiment design to one Model); the Model 
 named `simulators` (it holds more than a Simulator); one keyword argument per constant
 (the Prior and the Schedule Design stop being single things that can be passed on or
 saved); a Model class (not until a second Model, or more generic code, shows what it
-must contain); writing `simulate_experiment` now (no consumer until step C3).
+must contain); writing `simulate_experiment` now (no consumer until step C3); a generic
+`simulate_sitting` in `motor_sbi` that loops over Trials and calls a Model-supplied
+one-Trial step (Ground Truth would be collected uniformly, but Models simulate whole
+Sittings so that they can stay vectorized).
 
 **Consequences:**
 
