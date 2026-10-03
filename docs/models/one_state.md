@@ -41,10 +41,11 @@ The execution noise $\varepsilon_t$ is part of the movement, and so of the error
 fed back into the next plan. On a no-vision Trial ($v_t = 0$) there is no error to learn
 from: the plan decays by $A$ and picks up planning noise.
 
-**Code.** Parameter order: $\theta = (A, B, \sigma_\eta, \sigma_\varepsilon)$, named `A`,
-`B`, `sigma_eta`, `sigma_epsilon`. Simulator: `simulate_sitting` in
-[simulators/one_state.py](../../simulators/one_state.py); it takes a Schedule and returns
-the movement angles.
+**Code.** [simulators/one_state.py](../../simulators/one_state.py) states the Model's
+contract as three name lists: `PARAMETER_NAMES` (`A`, `B`, `sigma_eta`, `sigma_epsilon`,
+the order of $\theta$), `CONDITION_NAMES` (`p`, `v`: what a Schedule must hold) and
+`OBSERVATION_NAMES` (`y`). The Simulator, `simulate_sitting(rng, theta, schedule)`, takes a
+Schedule as a dict with exactly the keys `p` and `v`, and returns the movement angles.
 
 ## Derived properties
 
@@ -105,7 +106,8 @@ Simulated Experiment has been saved yet. Checks:
 
 **Prior.** Each part is normal on an unbounded scale, with the stated range as its
 central 95% interval; the constants are computed from the ranges in
-`one_state_priors.ipynb#[config]`. Prior Sampler: `sample_prior`.
+`one_state_priors.ipynb#[config]`. Prior Sampler: `sample_prior(rng, size, prior)`, with the
+Prior's constants in one dict.
 
 | Quantity | Range (95%) | Prior |
 |---|---|---|
@@ -117,19 +119,21 @@ central 95% interval; the constants are computed from the ranges in
 The second number of each normal is its standard deviation. $\sigma_\eta$ is the
 execution noise times the ratio.
 
-**Schedule Design.** A Sitting is a sequence of Blocks of four kinds: baseline ($p = 0$,
-$v = 1$), perturbation $+1$ or $-1$ ($v = 1$), and no vision ($v = 0$, $p$ set to 0).
-Schedule Generator: `sample_schedule`, which returns $p_t$ and $v_t$ for every Trial.
+**Schedule Design.** There are four Trial Types: baseline ($p = 0$, $v = 1$), perturbation
+$+1$ or $-1$ ($v = 1$), and no vision ($v = 0$, $p$ set to 0). A Sitting is a sequence of
+Blocks, each a run of Trials of one Trial Type. Schedule Generator:
+`sample_schedule(rng, schedule_design)`, which returns the Schedule as a dict of $p_t$ and
+$v_t$; the Trial Types are listed in `TRIAL_TYPES`.
 
 - 5 to 16 Blocks, equally likely.
 - Block lengths independent, $\log L \sim \mathcal N(3.91, 0.82)$ (central 95% interval
   10 to 250 Trials, median 50), rounded to whole Trials.
-- The first Block is a baseline. Each Sitting draws its proportions of the four kinds
-  from a symmetric Dirichlet with concentration 3; every later Block's kind is drawn
-  independently with those proportions. Neighbouring Blocks of the same kind make one
-  longer Block.
+- The first Block is a baseline. Each Sitting draws its proportions of the four Trial
+  Types from a symmetric Dirichlet with concentration 3; every later Block's Trial Type
+  is drawn independently with those proportions. Neighbouring Blocks of the same Trial
+  Type make one longer Block.
 
 **Results.** Prior quantiles match the stated ranges within sampling error. Sittings have
 about 230 to 1,440 Trials (central 95%), median about 700. With few Blocks, many
-Sittings lack a kind: about 16% have no no-vision Block, about 17% lack each
+Sittings lack a Trial Type: about 16% have no no-vision Block, about 17% lack each
 perturbation, and 2.4% have no perturbation at all.
