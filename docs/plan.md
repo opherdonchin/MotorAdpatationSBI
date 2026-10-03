@@ -58,7 +58,7 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
-     and Ground Truth apart) under `data/simulated/`; the provenance lines explained.
+     and Ground Truth apart) under `data/simulated/`; in review as PR #22.
    - C3b: background on amortized inference (concept page), then a BayesFlow posterior
      estimator trained on a Simulated Experiment, with BayesFlow's own recovery and
      calibration diagnostics.
