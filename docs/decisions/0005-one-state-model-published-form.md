@@ -1,6 +1,6 @@
 # 0005 — One-state model in its published form, with no-vision trials
 
-**Date:** 2026-10-02 · **Status:** Proposed
+**Date:** 2026-10-02 · **Status:** Accepted
 
 **Context:** [0002](0002-one-state-model.md) chose a one-state model with state and
 output noise for the first quick win. The review of PR #13 showed three things. The
@@ -68,14 +68,15 @@ Vision is on ($v_t = 1$) in every block that is not a no-vision block.
   ($\log L \sim \mathcal N(3.11, 0.41)$, median 22), rounded to whole trials. With 8 to 60
   blocks, sittings are about 210 to 1,480 trials long (central 95%), median about 830.
 - *Kinds:* the first block is a baseline block. Each sitting draws its own proportions of
-  the four kinds from a symmetric Dirichlet distribution with concentration 2 for each
+  the four kinds from a symmetric Dirichlet distribution with concentration 3 for each
   kind, and every later block's kind is drawn independently with those proportions. Two
   neighbouring blocks of the same kind make, in effect, one longer block.
 
-With concentration 2, any one kind can take up to about 0.7 of a sitting's blocks (the
-largest proportion in a sitting is below 0.67 in 97.5% of sittings), and the typical
-smallest proportion is 0.10. Each single proportion is below 0.1 in 15% of sittings and
-above 0.7 in 0.4%. (One-off calculation, 2026-10-03.)
+With concentration 3, one kind can take up to about 0.6 of a sitting's blocks (the
+largest proportion in a sitting is below 0.60 in 97.5% of sittings), and the typical
+smallest proportion is 0.12. Each single proportion is below 0.1 in 9% of sittings and
+above 0.7 in 0.06%. Concentration 2 would let one kind reach about 0.7, at the cost of
+more sittings in which some kind is nearly absent. (One-off calculation, 2026-10-03.)
 
 **Why:** Using the published form means the model, the symbols and the sign are the
 ones in the paper and in the lab's code, and the lab's data (movement angles,
