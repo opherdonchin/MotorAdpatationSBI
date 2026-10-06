@@ -90,7 +90,10 @@ wiki/                            # gitignored clone of the GitHub wiki
   regenerable by re-running a notebook; each saved file records the root seed and the
   git commit that produced it. `data/actual/` is gitignored too. Data and outputs too
   expensive to regenerate: #3. Storage formats are not fixed yet; they will be aligned
-  once there is more experience.
+  once there is more experience. The current, provisional format of an Experiment on
+  disk is defined and documented in one place, the docstring of
+  [src/motor_sbi/experiments.py](src/motor_sbi/experiments.py), and nothing outside
+  that module reads or writes those files.
 - Folders under `data/` and `outputs/` have no README; the page that describes them
   says what is in them (a model page, or the page of an Actual Experiment).
 - What goes in `src/designs/`, `src/models/` and `src/motor_sbi/`, and the names each
