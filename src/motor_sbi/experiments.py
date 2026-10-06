@@ -4,11 +4,49 @@ Uses only the names every Model module and Task module provide (decision 0006): 
 `TASK`, `PARAMETERS`, `sample_prior` and `simulate_sitting`, and its Task's
 `CONDITION_VARS` and `OBSERVATION_VARS`. Terms: docs/glossary.md.
 
-On disk, an Experiment is a folder. `sittings.npz` holds one row per Trial: the
-Sitting it belongs to, the Trial's number within the Sitting, and one column per
-Condition and Observation. A Simulated Experiment also has `ground_truth.npz` (the
-parameter values of each Sitting, and the hidden states per Trial, in the same row order)
-and `record.json` (what produced it). Analyses read only `sittings.npz`.
+How an Experiment lives on disk
+-------------------------------
+This is a first, provisional format (AGENTS.md, *Where things live*). It is defined
+here and only here: nothing outside this module reads or writes these files, so the
+format can change without touching Analyses or notebooks.
+
+Where. One folder per Experiment: ``data/actual/<experiment>/`` or
+``data/simulated/<experiment>/``. Both are gitignored. An Actual and a Simulated
+Experiment are stored alike; a Simulated one has two more files.
+
+``sittings.npz`` (every Experiment; the only file an Analysis reads). A table in long
+format, one row per Trial, stored as one array per column, all of the same length (the
+number of Trials in the whole Experiment). Rows are ordered by Sitting, then by Trial.
+
+=========  =======  ==========================================================
+column     type     meaning
+=========  =======  ==========================================================
+sitting    int64    which Sitting the Trial belongs to: 0, 1, 2, ...
+trial      int64    the Trial's number within its Sitting: 0, 1, 2, ...
+<name>     as made  one column per name in the Task's CONDITION_VARS and
+                    OBSERVATION_VARS (visuomotor adaptation: p float64,
+                    v int64, y float64)
+=========  =======  ==========================================================
+
+Sittings may differ in length; the ``sitting`` column says where each begins and ends.
+
+``ground_truth.npz`` (Simulated Experiments only; read by Checks, never by Analyses).
+One array per entry of the Ground Truth the Simulator returns. Each parameter in the
+Model's PARAMETERS has one value per Sitting (float64, in Sitting order). Each hidden
+state has one value per Trial (float64), in exactly the row order of ``sittings.npz``,
+so row i of a hidden state belongs to row i of the Sittings table.
+
+``record.json`` (Simulated Experiments only; for people and for provenance). Whatever
+dict the caller passes: by convention the Model module, the Schedule Generator, the
+Prior's constants, the Schedule Design's constants, the number of Sittings, the root
+seed (as text, because it does not fit a JSON number) and the git commit.
+
+Compression. Both ``.npz`` files are written with ``numpy.savez_compressed``.
+
+In memory. `load_sittings` gives back what `simulate_experiment` returns: a list with
+one dict per Sitting, each mapping a Condition or Observation name to an array of shape
+(T,). `load_ground_truth` gives back the arrays as saved (not split by Sitting) and the
+record.
 """
 
 import json
