@@ -44,7 +44,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   with the code in the layout of decision
   [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
 - Wiki drafts waiting for Opher: `Code-one-state-model`,
-  `Code-visuomotor-adaptation-designs`, `Code-environment` (updated), `Concept-vocabulary`.
+  `Code-visuomotor-adaptation-designs`, `Code-experiments`, `Code-environment` (updated),
+  `Concept-vocabulary`, `Concept-amortized-inference`.
 - The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
   (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
@@ -59,7 +60,7 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
-     and Ground Truth apart) under `data/simulated/`; in review as PR #22.
+     and Ground Truth apart) under `data/simulated/`; merged (PR #22).
    - C3b: background on amortized inference (concept page), then a BayesFlow posterior
      estimator trained on a Simulated Experiment, with BayesFlow's own recovery and
      calibration diagnostics.
