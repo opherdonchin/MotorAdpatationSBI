@@ -52,7 +52,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   stage 2 (a dependency and a class, so not added without his agreement).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
-  live test of the compaction hooks (#10), hooks for Copilot and Codex (#11).
+  live test of the compaction hooks (#10), hooks for Copilot and Codex (#11),
+  sequential training and fitting in BayesFlow and PyMC (#23).
 
 ## Next steps
 
