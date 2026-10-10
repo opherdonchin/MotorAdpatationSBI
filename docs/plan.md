@@ -62,8 +62,9 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
      and without padding: each training batch is 32 Sittings on one Schedule
      ([decision 0007](decisions/0007-summary-network-for-sittings.md), proposed). Branch
      `sbi/one-state-posterior`, PR #24. Run on 2026-10-10: good recovery of all four
-     parameters; calibration passes for three, `B` slightly off. Opher: good enough to
-     show the round trip is feasible; not chased further. Finalized notebook:
+     parameters; calibration passes, narrowly for `B` (it failed narrowly in an
+     earlier run with the same seed). Opher: good enough to show the round trip is
+     feasible; not chased further. Finalized notebook:
      [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
      Waiting for Opher's review and merge; then the wiki code pages.
    - C3c: the likelihood-ratio estimator.
