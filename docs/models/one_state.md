@@ -169,21 +169,22 @@ posterior for a new Sitting (step C3b of issue
 [notebooks/one_state_posterior.ipynb](../../notebooks/one_state_posterior.ipynb);
 `outputs/one_state/engines/posterior_random_blocks/`.
 
-**Result** (run of 2026-10-10, on `one_state_random_blocks_test`). Training took 1.2
-hours and had nearly levelled off. Recovery is good for all four parameters and
-calibration passes for all four, narrowly for $B$ (its posterior sits a little low and
-is a little wide).
+**Result** (run of 2026-10-10 at commit `6d36b7b`, on `one_state_random_blocks_test`).
+Training took 1.2 hours and had nearly levelled off. Recovery is good for all four
+parameters and calibration passes for all four, narrowly for $B$ (its posterior sits a
+little low and is a little wide).
 
 | | $A$ | $B$ | $\sigma_\eta$ | $\sigma_\varepsilon$ |
 |---|---|---|---|---|
-| Correlation of posterior median with truth | 0.94 | 0.99 | 0.89 | 1.00 |
+| Correlation of posterior median with truth | 0.94 | 0.99 | 0.88 | 1.00 |
 | Posterior contraction | 0.997 | 0.993 | 0.84 | 0.994 |
-| Calibration error | 0.01 | 0.04 | 0.02 | 0.02 |
-| Log Gamma (below 0: calibration rejected at 5%) | 1.0 | 1.5 | 2.4 | 1.9 |
-| Mean offset of the posterior, in posterior standard deviations | 0.04 | -0.08 | -0.05 | -0.05 |
+| Calibration error | 0.02 | 0.05 | 0.02 | 0.02 |
+| Log Gamma (below 0: calibration rejected at 5%) | 2.7 | 0.5 | 2.3 | 2.4 |
+| Mean offset of the posterior, in posterior standard deviations | 0.02 | -0.08 | -0.03 | -0.06 |
 
-An earlier run with the same seed ended with $B$ just outside the calibration band (Log
-Gamma -3.2); training on a graphics card is not reproducible bit for bit, and $B$ is at
-the edge of what 300 test Sittings can detect. Calibration does not clearly differ
-between shorter and longer Sittings. Not yet compared with an exact posterior; that is
-stage 2 of issue #12.
+This was the third run with the same seed. Training on a graphics card is not
+reproducible bit for bit: Log Gamma for $B$ was -3.2 (just outside the calibration
+band), 1.5 and 0.5 in the three runs, so $B$ is at the edge of what 300 test Sittings
+can detect. The other three parameters passed every time. Calibration does not clearly
+differ between shorter and longer Sittings. Not yet compared with an exact posterior;
+that is stage 2 of issue #12.

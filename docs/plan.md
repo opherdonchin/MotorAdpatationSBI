@@ -36,7 +36,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
 - Wiki drafts waiting for Opher: `Code-one-state-model`,
   `Code-visuomotor-adaptation-designs`, `Code-experiments`, `Code-environment` (updated),
-  `Concept-vocabulary`, `Concept-summary-networks`, `Concept-bayesflow-loss-functions`.
+  `Concept-vocabulary`, `Concept-summary-networks`, `Concept-bayesflow-loss-functions`,
+  `Concept-flow-matching`, `Concept-bayesflow-make-simulator`.
   `Concept-amortized-inference` is `understood`.
 - The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
   (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
@@ -62,11 +63,13 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
      and without padding: each training batch is 32 Sittings on one Schedule
      ([decision 0007](decisions/0007-summary-network-for-sittings.md), proposed). Branch
      `sbi/one-state-posterior`, PR #24. Run on 2026-10-10: good recovery of all four
-     parameters; calibration passes, narrowly for `B` (it failed narrowly in an
-     earlier run with the same seed). Opher: good enough to show the round trip is
-     feasible; not chased further. Finalized notebook:
+     parameters; calibration passes, narrowly for `B` (in two of three runs
+     with the same seed; it failed narrowly in the first). Opher: good enough to show
+     the round trip is feasible; not chased further. Finalized notebook:
      [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
      Waiting for Opher's review and merge; then the wiki code pages.
+     [PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25) (process:
+     a wiki section in every explanation) also waits for Opher.
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
