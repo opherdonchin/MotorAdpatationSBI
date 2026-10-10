@@ -149,7 +149,7 @@ perturbation, and 2.4% have no perturbation at all.
 300 Sittings for testing Inference Engines: 30 Schedules from the Schedule Design above
 (270 to 1,771 Trials), with 10 Sittings on each, every Sitting with its own parameter
 values from the Prior above. Simulated and saved by
-[notebooks/working/one_state_posterior.ipynb](../../notebooks/working/one_state_posterior.ipynb)
+[notebooks/one_state_posterior.ipynb](../../notebooks/one_state_posterior.ipynb)
 (`#[simulate-test]`) in `data/simulated/one_state_random_blocks_test/`.
 
 ### Inference Engine `posterior_random_blocks`
@@ -166,7 +166,7 @@ posterior for a new Sitting (step C3b of issue
 [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12))?
 
 **Notebook and folder.**
-[notebooks/working/one_state_posterior.ipynb](../../notebooks/working/one_state_posterior.ipynb);
+[notebooks/one_state_posterior.ipynb](../../notebooks/one_state_posterior.ipynb);
 `outputs/one_state/engines/posterior_random_blocks/`.
 
 **Result** (run of 2026-10-10, on `one_state_random_blocks_test`). Training took 1.18
