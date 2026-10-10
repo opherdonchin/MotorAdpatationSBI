@@ -40,6 +40,22 @@ What this commits us to or rules out.
 
 Anything that does not work the way one would expect.
 
+## Wiki pages
+
+Rule: `docs/process.md`, *Presentations*, rule 10. Every page name is a link.
+
+**Relevant pages**
+
+| Page | How it is relevant | Status |
+|---|---|---|
+| [Kind-name](wiki link) | what the reviewer needs it for here, or how this change affects it | draft / understood / ... |
+
+**Proposed pages**
+
+| Page | New or update | What it would cover | When |
+|---|---|---|---|
+| Kind-name | new / update | one line | before review / after merge |
+
 ## Approval track
 
 Proposed: trivial | read | full | fast, with one line of why.
