@@ -104,8 +104,7 @@ likelihood of a Sitting; it comes in stage 2 of issue [#12](https://github.com/o
 The Simulated Experiments that BayesFlow will be trained and tested on (scope
 issue [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12)) draw each
 Sitting's parameter values from this Prior and its Schedule from this Schedule Design,
-both from [decision 0005](../decisions/0005-one-state-model-published-form.md). No
-Simulated Experiment has been saved yet. Checks:
+both from [decision 0005](../decisions/0005-one-state-model-published-form.md). Checks:
 [notebooks/working/one_state_priors.ipynb](../../notebooks/working/one_state_priors.ipynb).
 
 **Prior.** Each part is normal on an unbounded scale, with the stated range as its
@@ -144,3 +143,48 @@ $v_t$.
 about 230 to 1,440 Trials (central 95%), median about 700. With few Blocks, many
 Sittings lack a Trial Type: about 16% have no no-vision Block, about 17% lack each
 perturbation, and 2.4% have no perturbation at all.
+
+### Simulated Experiment `one_state_random_blocks_test`
+
+300 Sittings for testing Inference Engines: 30 Schedules from the Schedule Design above
+(270 to 1,771 Trials), with 10 Sittings on each, every Sitting with its own parameter
+values from the Prior above. Simulated and saved by
+[notebooks/one_state_posterior.ipynb](../../notebooks/one_state_posterior.ipynb)
+(`#[simulate-test]`) in `data/simulated/one_state_random_blocks_test/`.
+
+### Inference Engine `posterior_random_blocks`
+
+**What it is.** A BayesFlow posterior network for the four parameters given one Sitting
+at its full length: a `TimeSeriesNetwork` summary network (12 summary numbers) and a
+flow-matching inference network
+([decision 0007](../decisions/0007-summary-network-for-sittings.md)). Trained on 960,000
+Sittings simulated as needed from the Prior and Schedule Design above, in batches of 32
+Sittings that share one Schedule, so nothing is padded.
+
+**Question.** Can a network trained once on simulated Sittings give a trustworthy
+posterior for a new Sitting (step C3b of issue
+[#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12))?
+
+**Notebook and folder.**
+[notebooks/one_state_posterior.ipynb](../../notebooks/one_state_posterior.ipynb);
+`outputs/one_state/engines/posterior_random_blocks/`.
+
+**Result** (run of 2026-10-10 at commit `6d36b7b`, on `one_state_random_blocks_test`).
+Training took 1.2 hours and had nearly levelled off. Recovery is good for all four
+parameters and calibration passes for all four, narrowly for $B$ (its posterior sits a
+little low and is a little wide).
+
+| | $A$ | $B$ | $\sigma_\eta$ | $\sigma_\varepsilon$ |
+|---|---|---|---|---|
+| Correlation of posterior median with truth | 0.94 | 0.99 | 0.88 | 1.00 |
+| Posterior contraction | 0.997 | 0.993 | 0.84 | 0.994 |
+| Calibration error | 0.02 | 0.05 | 0.02 | 0.02 |
+| Log Gamma (below 0: calibration rejected at 5%) | 2.7 | 0.5 | 2.3 | 2.4 |
+| Mean offset of the posterior, in posterior standard deviations | 0.02 | -0.08 | -0.03 | -0.06 |
+
+This was the third run with the same seed. Training on a graphics card is not
+reproducible bit for bit: Log Gamma for $B$ was -3.2 (just outside the calibration
+band), 1.5 and 0.5 in the three runs, so $B$ is at the edge of what 300 test Sittings
+can detect. The other three parameters passed every time. Calibration does not clearly
+differ between shorter and longer Sittings. Not yet compared with an exact posterior;
+that is stage 2 of issue #12.
