@@ -53,11 +53,12 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
-   - C3b: a BayesFlow posterior network trained on a 20,000-Sitting Simulated Experiment,
-     full-length Sittings without downsampling, summary network as in
-     [decision 0007](decisions/0007-summary-network-for-sittings.md) (proposed). Branch
-     `sbi/one-state-posterior`; the full run was started on 2026-10-10. If it converges
-     and passes its Checks, this is the quick win: consolidate, then decide where next.
+   - C3b: a BayesFlow posterior network on full-length Sittings, without downsampling
+     and without padding: each training batch is 32 Sittings on one Schedule
+     ([decision 0007](decisions/0007-summary-network-for-sittings.md), proposed). Branch
+     `sbi/one-state-posterior`, PR #24 (draft); the full run was started on 2026-10-10.
+     If it converges and passes its Checks, this is the quick win: consolidate, then
+     decide where next.
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
