@@ -36,7 +36,8 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
   [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
 - Wiki drafts waiting for Opher: `Code-one-state-model`,
   `Code-visuomotor-adaptation-designs`, `Code-experiments`, `Code-environment` (updated),
-  `Concept-vocabulary`, `Concept-amortized-inference`.
+  `Concept-vocabulary`, `Concept-summary-networks`, `Concept-bayesflow-loss-functions`.
+  `Concept-amortized-inference` is `understood`.
 - The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
   (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
@@ -52,9 +53,11 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
-   - C3b: background on amortized inference (concept page), then a BayesFlow posterior
-     estimator trained on a Simulated Experiment, with BayesFlow's own recovery and
-     calibration diagnostics.
+   - C3b: a BayesFlow posterior network trained on a 20,000-Sitting Simulated Experiment,
+     full-length Sittings without downsampling, summary network as in
+     [decision 0007](decisions/0007-summary-network-for-sittings.md) (proposed). Branch
+     `sbi/one-state-posterior`; the full run was started on 2026-10-10. If it converges
+     and passes its Checks, this is the quick win: consolidate, then decide where next.
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
