@@ -50,6 +50,11 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
+0. **Choose the next win** (Opher, 2026-10-10), among the directions that motivate the
+   project: a more sophisticated Model; comparison with PyMC (stage 2 below); or
+   likelihood-based inference for the one-state Model in place of posterior-based (C3c
+   below, and [issue #23](https://github.com/opherdonchin/MotorAdpatationSBI/issues/23)).
+   The order of the steps below waits on that choice.
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
@@ -57,8 +62,10 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
      and without padding: each training batch is 32 Sittings on one Schedule
      ([decision 0007](decisions/0007-summary-network-for-sittings.md), proposed). Branch
      `sbi/one-state-posterior`, PR #24. Run on 2026-10-10: good recovery of all four
-     parameters; calibration passes for three, `B` slightly off. Waiting for Opher's
-     review; then consolidate and decide where next.
+     parameters; calibration passes for three, `B` slightly off. Opher: good enough to
+     show the round trip is feasible; not chased further. Finalized notebook:
+     [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
+     Waiting for Opher's review and merge; then the wiki code pages.
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
