@@ -28,15 +28,17 @@ scope issue ─► branch + draft PR ─► work in small commits ─► explana
    any link to a branch commit stays valid. Superseded material on a branch moves to
    `archive/` instead of being deleted, so it stays at hand while the work continues.
 4. **Explanation.** The agent writes the PR description as an explanation (see
-   *Presentations*).
+   *Presentations*), which lists the wiki pages the change relies on and proposes the
+   pages it calls for.
 5. **Approval.** The reviewer approves on one of the tracks in *Approval*, in a PR
    comment.
 6. **Final cleanup.** The last commit before merge deletes `archive/` and anything else
    temporary (see *Superseded material* under *Git and GitHub*).
 7. **Squash merge.** The reviewer merges. `main` gets one commit per development, whose
    message is the PR's title and description: the explanation lives in `main`'s history.
-8. **Record.** The agent brings the journal and plan up to date and drafts wiki pages for
-   anything new or changed (see *Understanding map*).
+8. **Record.** The agent brings the journal and plan up to date and drafts the wiki
+   pages proposed in the explanation and agreed by the reviewer (see *Understanding
+   map*).
 
 Work done directly on `main` (small fixes, plan and journal updates, anything the
 reviewer asks for there) may be committed and pushed to `main`. Decision records are the
@@ -63,7 +65,8 @@ real check of the reviewer's understanding rather than a request for an OK.
 2. **What you should understand.** Two or three things the reviewer should be able to
    explain by the end.
 3. **Layers,** in the order of `.github/skills/templates/pr-explanation.md`: a plain
-   summary, the math, a code walkthrough, the evidence, the consequences, and surprises.
+   summary, the math, a code walkthrough, the evidence, the consequences, surprises, and
+   the wiki pages.
 4. **Links everywhere.** Every claim about code links to the exact lines with a GitHub
    permalink (`https://github.com/<owner>/<repo>/blob/<commit>/<path>#L10-L20`). Every
    other reference, to an issue, pull request, commit, file, decision record, wiki page
@@ -92,6 +95,15 @@ real check of the reviewer's understanding rather than a request for an OK.
    an old description with a list of amendments. What changed in response to review is
    recorded at the very end, in a dated *Changes after review* section; each later round
    appends another.
+
+10. **Wiki pages are part of an explanation.** Every explanation has a *Wiki pages*
+    section with two lists. *Relevant pages:* each existing wiki page the change relies on
+    or affects, with how it is relevant and its status, so the reviewer can see which
+    background they have confirmed and which they have not. *Proposed pages:* each page
+    the change calls for, new or to be updated, with what it would cover. A concept page
+    the reviewer needs in order to follow the change is written before review (rule 6)
+    and listed as relevant. The other proposed pages are written once the reviewer
+    agrees to them; code pages after the merge, because they record a `main` commit.
 
 | Presentation | When | Where |
 |---|---|---|
