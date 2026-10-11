@@ -1,6 +1,6 @@
 # 0007 — Reading Sittings: a convolution and recurrence summary network, full length, one Schedule per batch
 
-**Date:** 2026-10-10 · **Status:** Proposed
+**Date:** 2026-10-10 · **Status:** Accepted
 
 **Context:** a BayesFlow posterior network needs a summary network that turns a Sitting
 (one row per Trial, about 200 to over 2,000 Trials) into a short vector. BayesFlow offers
