@@ -18,6 +18,10 @@ the commit message on `main`.
 4. If it will not fit one sitting, say so and propose how to split the PR.
 5. Fill the template. Order the walkthrough by ideas, not by files. Leave out a section
    that has nothing to say.
+6. Fill *Wiki pages*: pull the wiki, list the pages the change relies on or affects with
+   their status (`wiki_status.py` prints them), and propose the pages it calls for. If
+   the reviewer needs a concept page that does not exist, write it first (`understood`
+   skill).
 
 ## Check, then publish
 
