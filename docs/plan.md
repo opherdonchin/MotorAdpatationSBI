@@ -54,11 +54,12 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 
 ## Next steps
 
-0. **Choose the next win** (Opher, 2026-10-10), among the directions that motivate the
-   project: a more sophisticated Model; comparison with PyMC (stage 2 below); or
-   likelihood-based inference for the one-state Model in place of posterior-based (C3c
-   below, and [issue #23](https://github.com/opherdonchin/MotorAdpatationSBI/issues/23)).
-   The order of the steps below waits on that choice.
+0. **Next win, chosen by Opher (2026-10-11): the same posterior approach on a two-state
+   Model.** Scope: [issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28),
+   drafted and waiting for Opher's agreement and answers to its four open points
+   (noise structure; whether to match the lab's two-rate form; how fast and slow are
+   told apart; what to do about the second notebook repeating the first). No work
+   starts before that. The remaining steps of #12 below wait.
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
@@ -70,7 +71,9 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
      [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
      Open after the merge:
      [PR #26](https://github.com/opherdonchin/MotorAdpatationSBI/pull/26) (what we saw
-     at each Check; decision 0007 marked accepted).
+     at each Check; decision 0007 marked accepted) and
+     [PR #27](https://github.com/opherdonchin/MotorAdpatationSBI/pull/27) (a
+     `needs-revision` wiki status; the status board lists `not-written` pages).
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
