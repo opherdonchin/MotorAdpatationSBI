@@ -55,11 +55,16 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 ## Next steps
 
 0. **Next win, chosen by Opher (2026-10-11): the same posterior approach on a two-state
-   Model.** Scope: [issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28),
-   drafted and waiting for Opher's agreement and answers to its four open points
-   (noise structure; whether to match the lab's two-rate form; how fast and slow are
-   told apart; what to do about the second notebook repeating the first). No work
-   starts before that. The remaining steps of #12 below wait.
+   Model.** Scope: [issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28), agreed. Three pull requests:
+   - the Model and its Prior, decision record 0008:
+     [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29), waiting for review (the Prior's numbers are a proposal);
+   - the Simulator, Prior Sampler and their Checks, all passing:
+     [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30), built on #29, waiting for review;
+   - the posterior notebook, branch `sbi/two-state-posterior`: next. Before it, agree
+     where the transforms between parameters and unbounded quantities live, and
+     whether the Prior should let the fast and slow time constants overlap.
+
+   The remaining steps of #12 below wait.
 1. Step C3 of #12, one method per PR:
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
