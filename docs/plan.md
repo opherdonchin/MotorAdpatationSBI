@@ -44,6 +44,9 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
   one-state likelihood in a one-off test; proposed to Opher as the exact reference for
   stage 2 (a dependency and a class, so not added without his agreement).
+- Process: every explanation now has a *Wiki pages* section, and wiki pages have a
+  `not-written` status
+  ([PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25), merged).
 - Open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11),
@@ -67,9 +70,7 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
      [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
      Open after the merge:
      [PR #26](https://github.com/opherdonchin/MotorAdpatationSBI/pull/26) (what we saw
-     at each Check; decision 0007 marked accepted) and
-     [PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25) (process: a
-     wiki section in every explanation; a `not-written` status).
+     at each Check; decision 0007 marked accepted).
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
