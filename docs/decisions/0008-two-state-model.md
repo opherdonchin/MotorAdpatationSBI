@@ -110,8 +110,11 @@ What these imply for the quantities that have no row of their own (one-off calcu
 
 - *The published form* for the same reasons as in 0005: the symbols and sign are those
   of the paper and of the lab's code, and the lab's data can be used without conversion.
-  It also contains the one-state Model as a special case in distribution ($B_f$ and the
-  fast state's noise going to zero), which gives a Check.
+  With a shared planning noise it does not contain the one-state Model exactly: neither
+  state can be switched off, because each always has its noise. The nearest link, used
+  as a Check, is at the edge of the domain: when $A_f$ and $A_s$ are equal, the plan
+  $x^f_t + x^s_t$ follows the one-state Model with adaptation rate $B_f + B_s$ and
+  planning noise $\sqrt 2\, \sigma_\eta$.
 - *Shared planning noise* (Opher): it is the published form, and it is the simpler
   start, with six parameters instead of seven.
 - *Positive differences* (Opher): in the lab's experience this was the best
