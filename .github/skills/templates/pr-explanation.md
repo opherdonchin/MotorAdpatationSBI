@@ -48,7 +48,7 @@ Rule: `docs/process.md`, *Presentations*, rule 10. Every page name is a link.
 
 | Page | How it is relevant | Status |
 |---|---|---|
-| [Kind-name](wiki link) | what the reviewer needs it for here, or how this change affects it | draft / understood / ... |
+| [Kind-name](wiki link) | what the reviewer needs it for here, or how this change affects it | not-written / draft / understood / ... |
 
 **Proposed pages**
 

@@ -161,13 +161,18 @@ New kinds are added here, when a real page needs one. Formats:
 
 | Status | Set by | Meaning |
 |---|---|---|
-| `stub` | agent | A placeholder still to be written. |
+| `not-written` | nobody | No page exists yet. Another page links to it, or a pull request proposes it. |
+| `stub` | agent | A page that exists only as a placeholder, still to be written. |
 | `draft` | agent | Written by the agent; the reviewer has not confirmed it. |
 | `understood` | reviewer only | The reviewer has read, edited and confirmed it. |
 | `needs-review` | either | Merged on the fast track, or the reviewer is no longer sure. |
 | `stale` | script | The code changed materially since the commit the page describes. |
 
-A generated *Status board* page lists pages by status.
+`not-written` is the one status that is not recorded on a page, since there is no page:
+it is what an explanation's *Wiki pages* section says of a page that is linked or
+proposed and does not exist.
+
+A generated *Status board* page lists the pages that exist by status.
 
 **Who writes.** The agent drafts pages; the reviewer edits them, in the browser or
 through the agent.
