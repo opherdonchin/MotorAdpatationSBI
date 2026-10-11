@@ -34,11 +34,11 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
 - Stage 1 of #12: steps C1 (the Simulator) and C2 (Prior and Schedule Design) merged,
   with the code in the layout of decision
   [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
-- Wiki drafts waiting for Opher: `Code-one-state-model`,
-  `Code-visuomotor-adaptation-designs`, `Code-experiments`, `Code-environment` (updated),
-  `Concept-vocabulary`, `Concept-summary-networks`, `Concept-bayesflow-loss-functions`,
-  `Concept-flow-matching`, `Concept-bayesflow-make-simulator`.
-  `Concept-amortized-inference` is `understood`.
+- Wiki pages waiting for Opher: drafts `Code-one-state-model`,
+  `Code-visuomotor-adaptation-designs`, `Code-environment`, `Code-one-state-posterior`,
+  `Concept-flow-matching` (rewritten 2026-10-11 in terms of distributions),
+  `Concept-bayesflow-make-simulator`, `Concept-gru`; `Code-experiments` is
+  `needs-review` (one argument added). The other concept pages are `understood`.
 - The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
   (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
 - Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
@@ -60,16 +60,16 @@ Current goals and next steps. Rewritten in place; see git history for earlier ve
    - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
      and Ground Truth apart) under `data/simulated/`; merged (PR #22).
    - C3b: a BayesFlow posterior network on full-length Sittings, without downsampling
-     and without padding: each training batch is 32 Sittings on one Schedule
-     ([decision 0007](decisions/0007-summary-network-for-sittings.md), proposed). Branch
-     `sbi/one-state-posterior`, PR #24. Run on 2026-10-10: good recovery of all four
-     parameters; calibration passes, narrowly for `B` (in two of three runs
-     with the same seed; it failed narrowly in the first). Opher: good enough to show
-     the round trip is feasible; not chased further. Finalized notebook:
+     and without padding ([decision 0007](decisions/0007-summary-network-for-sittings.md));
+     merged ([PR #24](https://github.com/opherdonchin/MotorAdpatationSBI/pull/24)).
+     Good recovery of all four parameters; calibration passes, narrowly for `B`.
+     Finalized notebook:
      [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
-     Waiting for Opher's review and merge; then the wiki code pages.
-     [PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25) (process:
-     a wiki section in every explanation) also waits for Opher.
+     Open after the merge:
+     [PR #26](https://github.com/opherdonchin/MotorAdpatationSBI/pull/26) (what we saw
+     at each Check; decision 0007 marked accepted) and
+     [PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25) (process: a
+     wiki section in every explanation; a `not-written` status).
    - C3c: the likelihood-ratio estimator.
 2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
    filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
