@@ -64,6 +64,35 @@ def test_changing_the_schedule_design_leaves_the_parameter_draws_unchanged():
         ]
 
 
+def test_sittings_can_share_schedules_and_keep_their_own_parameters():
+    rng = np.random.default_rng(root_seed)
+    sittings, ground_truth = experiments.simulate_experiment(
+        rng, mdl, prior, des.sample_schedule, schedule_design, 12, 4
+    )
+    assert len(sittings) == 12
+    for first in range(0, 12, 4):
+        for sitting in sittings[first + 1 : first + 4]:
+            for name in mdl.TASK.CONDITION_VARS:
+                np.testing.assert_array_equal(sitting[name], sittings[first][name])
+    assert len({truth["A"] for truth in ground_truth}) == 12
+    # the parameter draws are those of an Experiment with one Schedule per Sitting
+    _, truth_own = simulate(n=12)
+    assert [t["A"] for t in ground_truth] == [t["A"] for t in truth_own]
+
+
+def test_sittings_per_schedule_must_divide_the_number_of_sittings():
+    with pytest.raises(ValueError, match="n_sittings_per_schedule"):
+        experiments.simulate_experiment(
+            np.random.default_rng(root_seed),
+            mdl,
+            prior,
+            des.sample_schedule,
+            schedule_design,
+            10,
+            4,
+        )
+
+
 def test_any_module_with_the_right_names_can_be_simulated():
     # A stand-in Model: one parameter, one Condition, one Observation.
     task = types.SimpleNamespace(CONDITION_VARS=("c",), OBSERVATION_VARS=("o",))

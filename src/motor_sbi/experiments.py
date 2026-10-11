@@ -56,13 +56,22 @@ import numpy as np
 
 
 def simulate_experiment(
-    rng, model, prior, schedule_generator, schedule_design, n_sittings
+    rng,
+    model,
+    prior,
+    schedule_generator,
+    schedule_design,
+    n_sittings,
+    n_sittings_per_schedule=1,
 ):
-    """Simulate an Experiment: one Schedule and one parameter draw per Sitting.
+    """Simulate an Experiment: Schedules, and Sittings done on them.
 
     For each of `n_sittings` Sittings: draw parameter values with the Model's Prior
-    Sampler, draw a Schedule with the Schedule Generator, and simulate the movements
-    with the Model's Simulator. Three streams spawned from `rng` serve the three
+    Sampler, and simulate the movements with the Model's Simulator on a Schedule drawn
+    with the Schedule Generator. By default every Sitting has its own Schedule. With
+    `n_sittings_per_schedule` above 1, that many successive Sittings share one Schedule
+    (as subjects in an Actual Experiment usually do), each with its own parameter
+    values; Sittings that share a Schedule have the same length. Three streams spawned from `rng` serve the three
     purposes, so changing one (for example the Schedule Design) leaves the draws of
     the others unchanged.
 
@@ -82,24 +91,39 @@ def simulate_experiment(
     schedule_design : dict
         The Schedule Design's constants, passed to `schedule_generator`.
     n_sittings : int
-        Number of Sittings, each with its own parameter values and Schedule.
+        Number of Sittings, each with its own parameter values.
+    n_sittings_per_schedule : int, optional
+        Number of successive Sittings done on each Schedule; must divide `n_sittings`.
+        Default 1: every Sitting has its own Schedule.
 
     Returns
     -------
     sittings : list of dict
         One dict per Sitting: the Schedule's arrays and the Observations' arrays, each
         of shape (T,), keyed by ``CONDITION_VARS`` and ``OBSERVATION_VARS``. Nothing
-        else: no parameter values.
+        else: no parameter values. Sittings that share a Schedule are next to each
+        other and hold the same Schedule arrays (not copies).
     ground_truth : list of dict
         One dict per Sitting, in the same order, as returned by the Simulator: the
         parameter values (one float per name in ``model.PARAMETERS``) and the hidden
         states, arrays of shape (T,).
+
+    Raises
+    ------
+    ValueError
+        If `n_sittings_per_schedule` does not divide `n_sittings`.
     """
+    if n_sittings % n_sittings_per_schedule:
+        raise ValueError(
+            f"n_sittings_per_schedule must divide n_sittings, got "
+            f"{n_sittings_per_schedule} and {n_sittings}"
+        )
     rng_prior, rng_schedule, rng_sim = rng.spawn(3)
     theta = model.sample_prior(rng_prior, n_sittings, prior)
     sittings, ground_truth = [], []
-    for theta_i in theta:
-        schedule = schedule_generator(rng_schedule, schedule_design)
+    for i, theta_i in enumerate(theta):
+        if i % n_sittings_per_schedule == 0:
+            schedule = schedule_generator(rng_schedule, schedule_design)
         observations, truth = model.simulate_sitting(rng_sim, theta_i, schedule)
         sittings.append({**schedule, **observations})
         ground_truth.append(truth)
