@@ -128,3 +128,36 @@ def test_home_and_board_are_skipped(repo):
     (repo / "wiki/Home.md").write_text("Welcome.\n")
     (repo / "wiki/Status-board.md").write_text("old\n")
     assert wiki_status.read_pages(repo, repo / "wiki", threshold=10) == []
+
+
+def test_linked_pages_that_do_not_exist_are_not_written(repo):
+    wiki = repo / "wiki"
+    (wiki / "Concept-a.md").write_text(
+        page_text("draft", kind="concept")
+        + "See [[Concept-b]], [[the missing one|Concept-c]] and [[Concept c]].\n"
+    )
+    (wiki / "Concept-b.md").write_text(
+        page_text("draft", kind="concept") + "[[Concept-c]]\n"
+    )
+    (wiki / "Home.md").write_text("[[Concept-a]] [[Concept-d]]\n")
+    missing = wiki_status.not_written(wiki)
+    assert missing == {"Concept-c": ["Concept-a", "Concept-b"], "Concept-d": ["Home"]}
+    pages = wiki_status.read_pages(repo, wiki, threshold=10)
+    board = wiki_status.render_board(pages, "HEAD", head(repo), missing)
+    assert "## not-written (2)" in board
+    assert "| `Concept-c` | [[Concept-a]], [[Concept-b]] |" in board
+    assert "not-written" in wiki_status.render_report(pages, missing)
+
+
+def test_board_has_no_not_written_section_when_every_link_resolves(repo):
+    wiki = repo / "wiki"
+    (wiki / "Concept-a.md").write_text(
+        page_text("needs-revision", kind="concept") + "[[Concept-a]]\n"
+    )
+    pages = wiki_status.read_pages(repo, wiki, threshold=10)
+    assert not pages[0]["problem"]
+    board = wiki_status.render_board(
+        pages, "HEAD", head(repo), wiki_status.not_written(wiki)
+    )
+    assert "## needs-revision (1)" in board
+    assert "not-written" not in board
