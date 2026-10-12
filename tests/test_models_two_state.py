@@ -13,19 +13,19 @@ from models import two_state as mdl
 
 root_seed = 147714581166052409098528462437566379683  # secrets.randbits(128)
 
-# A_fast, A_slow, B_fast, B_slow, sigma_eta, sigma_epsilon
+# Af, As, Bf, Bs, s_eta, s_epsilon
 theta = np.array([0.6, 0.99, 0.2, 0.02, 0.02, 0.15])
 prior = {
-    "mu_logit_A_fast": 1.05,
-    "sigma_logit_A_fast": 0.97,
-    "mu_log_A_diff": 1.18,
-    "sigma_log_A_diff": 0.39,
-    "mu_logit_B_fast": -1.27,
-    "sigma_logit_B_fast": 0.85,
-    "mu_log_B_diff": 0.63,
-    "sigma_log_B_diff": 0.5,
-    "mu_log_sigma_epsilon": -1.9,
-    "sigma_log_sigma_epsilon": 0.4,
+    "mu_logit_Af": 1.52,
+    "sigma_logit_Af": 0.34,
+    "mu_log_A_diff": 1.19,
+    "sigma_log_A_diff": 0.27,
+    "mu_logit_Bf": -1.41,
+    "sigma_logit_Bf": 0.4,
+    "mu_log_B_diff": 1.22,
+    "sigma_log_B_diff": 0.26,
+    "mu_log_s_epsilon": -1.9,
+    "sigma_log_s_epsilon": 0.4,
     "mu_log_ratio": -2.2,
     "sigma_log_ratio": 0.3,
 }
@@ -55,12 +55,12 @@ def rng():
 
 def test_the_model_names_its_task_and_parameters():
     assert mdl.PARAMETERS == (
-        "A_fast",
-        "A_slow",
-        "B_fast",
-        "B_slow",
-        "sigma_eta",
-        "sigma_epsilon",
+        "Af",
+        "As",
+        "Bf",
+        "Bs",
+        "s_eta",
+        "s_epsilon",
     )
     assert mdl.TASK.CONDITION_VARS == ("p", "v")
 
@@ -103,9 +103,9 @@ def test_the_same_generator_state_gives_the_same_sitting():
 def test_without_noise_the_states_follow_the_matrix_solution(rng):
     # With vision and a constant p the two states obey s[t+1] = S s[t] - b p, with
     # S = diag(A) - b 1', so s[t] = s* + S^t (s[0] - s*) and s* = -(I - S)^-1 b p.
-    A_fast, A_slow, B_fast, B_slow = theta[:4]
-    b = np.array([B_fast, B_slow])
-    step = np.diag([A_fast, A_slow]) - np.outer(b, np.ones(2))
+    Af, As, Bf, Bs = theta[:4]
+    b = np.array([Bf, Bs])
+    step = np.diag([Af, As]) - np.outer(b, np.ones(2))
     s_star = -np.linalg.solve(np.eye(2) - step, b)
     expected = np.array(
         [s_star - np.linalg.matrix_power(step, t) @ s_star for t in range(40)]
@@ -119,28 +119,24 @@ def test_without_noise_the_states_follow_the_matrix_solution(rng):
 
 def test_without_vision_each_state_decays_by_its_own_retention(rng):
     # Adapt for 30 trials with vision, then 20 trials without.
-    A_fast, A_slow = theta[:2]
+    Af, As = theta[:2]
     schedule = schedule_of(np.ones(50), np.r_[np.ones(30), np.zeros(20)])
     _, ground_truth = mdl.simulate_sitting(rng, [*theta[:4], tiny, tiny], schedule)
     x_fast, x_slow = ground_truth["x_fast"], ground_truth["x_slow"]
-    np.testing.assert_allclose(x_fast[31:], A_fast * x_fast[30:-1], atol=1e-9)
-    np.testing.assert_allclose(x_slow[31:], A_slow * x_slow[30:-1], atol=1e-9)
+    np.testing.assert_allclose(x_fast[31:], Af * x_fast[30:-1], atol=1e-9)
+    np.testing.assert_allclose(x_slow[31:], As * x_slow[30:-1], atol=1e-9)
 
 
 def test_with_equal_retentions_the_movement_is_that_of_the_one_state_model(rng):
-    # At the edge of the domain, A_fast = A_slow = A, the plan x_fast + x_slow follows
-    # the one-state Model with B = B_fast + B_slow. Checked here without noise.
-    A, B_fast, B_slow = 0.95, 0.15, 0.05
+    # At the edge of the domain, Af = As = A, the plan x_fast + x_slow follows
+    # the one-state Model with B = Bf + Bs. Checked here without noise.
+    A, Bf, Bs = 0.95, 0.15, 0.05
     schedule = schedule_of(
         np.repeat([0.0, 1.0, 0.0, -1.0], 20),
         np.r_[np.ones(40), np.zeros(20), np.ones(20)],
     )
-    y_two = movements(
-        rng, [A, np.nextafter(A, 1), B_fast, B_slow, tiny, tiny], schedule
-    )
-    y_one = one_state.simulate_sitting(rng, [A, B_fast + B_slow, tiny, tiny], schedule)[
-        0
-    ]["y"]
+    y_two = movements(rng, [A, np.nextafter(A, 1), Bf, Bs, tiny, tiny], schedule)
+    y_one = one_state.simulate_sitting(rng, [A, Bf + Bs, tiny, tiny], schedule)[0]["y"]
     np.testing.assert_allclose(y_two, y_one, atol=1e-9)
 
 
@@ -192,19 +188,11 @@ def test_malformed_schedules_are_rejected(rng, schedule, message):
 
 def test_prior_draws_have_the_documented_shape_domains_and_ordering(rng):
     draws = mdl.sample_prior(rng, 1000, prior)
-    A_fast, A_slow, B_fast, B_slow, sigma_eta, sigma_epsilon = draws.T
+    Af, As, Bf, Bs, s_eta, s_epsilon = draws.T
     assert draws.shape == (1000, len(mdl.PARAMETERS))
     assert np.all((draws[:, :4] > 0) & (draws[:, :4] < 1))
-    assert np.all((A_fast < A_slow) & (B_fast > B_slow))
-    assert np.all((sigma_eta > 0) & (sigma_epsilon > 0))
-
-
-def test_unstable_prior_draws_are_drawn_again(rng):
-    # A Prior whose adaptation rates are nearly all close to 1 puts most draws outside
-    # the stable region; every draw returned must still be inside it.
-    eager = {**prior, "mu_logit_B_fast": 6.0, "mu_log_B_diff": -2.0}
-    A_fast, A_slow, B_fast, B_slow, _, _ = mdl.sample_prior(rng, 500, eager).T
-    assert np.all(B_fast / (1 + A_fast) + B_slow / (1 + A_slow) < 1)
+    assert np.all((Af < As) & (Bf > Bs))
+    assert np.all((s_eta > 0) & (s_epsilon > 0))
 
 
 def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):

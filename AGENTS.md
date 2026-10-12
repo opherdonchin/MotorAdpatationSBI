@@ -203,9 +203,9 @@ those sections it belongs to, and nowhere else.
   settings included), `CapWords` for classes. `UPPER_CASE` is used sparingly, by
   judgement, only to make a structural fixed value stand out (`OUT_DIR`,
   `PARAMETER_NAMES`); readability decides. The one exception to PEP 8: a symbol of a
-  Model's equations keeps its case, alone or as part of a name (`A`, `mu_logit_A`,
-  `A_fast`), so code reads like the math. `ruff` enforces the rest; the exceptions are
-  listed by name in `pyproject.toml`.
+  Model's equations keeps its case, alone or as a suffix (`A`, `Af`, `mu_logit_A`), so
+  code reads like the math. `ruff` enforces the rest; the exceptions are listed by name
+  in `pyproject.toml`.
 - Import modules, not the names inside them, and call through the module, so that every
   call shows where it comes from: `import numpy as np`, then `np.exp`;
   `from scipy import special`, then `special.expit`; `from models import one_state as

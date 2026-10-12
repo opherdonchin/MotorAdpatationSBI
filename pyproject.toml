@@ -66,5 +66,5 @@ line-length = 88
 extend-select = ["N"]
 
 [tool.ruff.lint.pep8-naming]
-# Symbols of a Model's equations keep their case, alone or as part of a name (AGENTS.md).
-ignore-names = ["A", "B", "*_A", "*_B", "A_*", "B_*", "*_A_*", "*_B_*"]
+# Symbols of a Model's equations keep their case, alone or as a suffix (AGENTS.md).
+ignore-names = ["A", "B", "*_A", "*_B", "Af", "As", "Bf", "Bs", "*_Af", "*_As", "*_Bf", "*_Bs"]
