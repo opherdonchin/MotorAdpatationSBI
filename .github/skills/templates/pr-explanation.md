@@ -30,7 +30,7 @@ Only what the code implements. Display math in fenced math blocks.
 ## Evidence
 
 Numbers and figures, each with the notebook cell or command that produced it. Say what
-was not tested.
+was not tested; if later work will rely on it, link its `validation-debt` issue.
 
 ## Consequences
 

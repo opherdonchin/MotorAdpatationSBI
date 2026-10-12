@@ -19,7 +19,8 @@ Rules: `docs/process.md`, *Presentations*.
      to be read.
    - **Where we are:** the current goal and state, in one or two lines.
    - **Since last time:** what changed, in plain words.
-   - **Understanding debt:** `understanding-debt` issues; `stale` or `needs-review` pages.
+   - **Debt:** open `validation-debt` and `understanding-debt` issues (docs/process.md,
+     *Debt*); `stale`, `needs-revision` or `needs-review` pages.
    - **Next:** the next step in the plan, and what you propose to do now.
 4. **Wait.** Do not start work until the reviewer responds, unless an agreed scope
    covers the next step and they have said to continue.
