@@ -11,7 +11,8 @@ list them: each PR must be explainable in one sitting.
 
 ## Out of scope
 
-What this work will not do.
+What this work will not do. A check of correctness left out here gets a `validation-debt`
+issue, linked from this list (docs/process.md, *Debt*).
 
 ## Stopping points
 

@@ -208,6 +208,7 @@ never restate it.
 | What happened | `docs/journal/` |
 | Why we chose what we chose | `docs/decisions/` |
 | The project's terms | `docs/glossary.md` |
+| What was skipped and is still owed | issues labelled `validation-debt` or `understanding-debt` (see *Debt*) |
 | What the reviewer understands | the wiki |
 
 To change something:
@@ -274,7 +275,8 @@ The agent cannot tell when a session will end, so the plan and journal are updat
 
 ### Plan — `docs/plan.md`
 
-- **What:** current goals, current state, and the ordered next steps. Nothing else.
+- **What:** current goals, current state, the ordered next steps, and the open debt
+  (see *Debt*). Nothing else.
 - **When to update:** at milestones (above), whenever a goal, the state, or the next steps
   change.
 - **How:** rewrite in place; the old versions are in `main`'s history (see *Git and
@@ -307,6 +309,31 @@ The agent cannot tell when a session will end, so the plan and journal are updat
   NNNN`. Decision records are kept, not deleted: the history of why is the point.
 - **When to read:** before changing anything in an area a record covers (check titles
   with `ls docs/decisions`).
+
+## Debt
+
+Moving fast means leaving things undone on purpose: a check of correctness that a scope
+puts out of reach, a walkthrough skipped on the fast track. That is allowed. Forgetting
+it is not. Each such item is recorded as an issue the moment it is skipped, so that what
+rests on unchecked ground can always be listed.
+
+| Label | What is owed | Created when |
+|---|---|---|
+| `validation-debt` | A check that a result is correct: a comparison with an exact answer, a Check that was agreed and not run, a result that passed only narrowly. | A scope issue puts the check out of scope, or an explanation's *Evidence* says "not tested" about something later work will rely on. |
+| `understanding-debt` | The reviewer's full walkthrough of a change. | A merge on the fast track (see *Approval*). |
+
+- **One issue per item.** It says what was skipped, why, what rests on it (which results
+  or code should not be trusted further than they were checked), and what would pay it.
+- **Where it is linked.** The scope issue or explanation that skipped it links to the
+  debt issue. Anything built on the unchecked result (a model page's *Result*, a later
+  explanation) links to it too, next to the claim.
+- **In the plan.** `docs/plan.md` has a *Debt* section listing the open debt issues, so
+  each rewrite of the plan is a moment to decide whether to pay some of it before going
+  on. The orientation at the start of a session reports how many are open.
+- **Closing.** A debt issue is closed by the pull request that does the work, or by the
+  reviewer deciding that it will not be done, with the reason in a comment.
+- **Not debt:** ordinary future work (it belongs in the plan's next steps) and open
+  questions (the journal's *Open questions*).
 
 ## Autonomy
 
