@@ -179,13 +179,19 @@ The Prior puts almost no weight near either case.
   as fast as a "fast" one gives posteriors that are degenerate in ways that are hard to
   debug later.
 - *Log-normal differences:* positive, and normal on the log scale, so that the six
-  quantities the network works with are all normal under the Prior.
+  quantities the network works with are all normal under the Prior. Agreed by Opher
+  (2026-10-12).
 
 *Alternatives:* a planning noise for each state (seven parameters; left until the
 shared one is understood); ordering by truncation, as in the paper (see above); no
 ordering, with the labels sorted out afterwards (two modes in every posterior, which a
 posterior network learns poorly); a free first state for each state, as in the paper
-(two more parameters that one Sitting says little about); a difference that is normal
+(two more parameters that one Sitting says little about); drawing the slow adaptation
+rate directly and adding a positive difference to reach the fast one (it cannot give the
+ranges of step 1: the fast rate's logit would then vary at least as much as the slow
+one's, so $B_f$ would range over about 0.03 to 0.64 instead of 0.10 to 0.35; the rate
+drawn directly has to be the one with the narrower range on the logit scale, which is
+the fast one for both retention and adaptation rate); a difference that is normal
 and cut off at zero (it would reproduce the slow rates' ranges of step 1 more closely,
 but the quantity the network works with would no longer be normal); ranges stated
 directly for the differences (the first draft of this record: it let the slow time
