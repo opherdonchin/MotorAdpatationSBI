@@ -138,9 +138,8 @@ calculation, 2026-10-12, four million draws):
 | adaptation reached under a constant perturbation (fraction of it) | | 0.41 | 0.69 | 0.95 |
 | share of that adaptation held by the slow state | | 0.06 | 0.48 | 0.93 |
 
-- **The states stay apart.** In four million draws the slow time constant was never
-  less than twice the fast one, and the slow adaptation rate was above half the fast one
-  in one draw.
+- **The states stay apart.** In four million draws, one had a slow time constant less
+  than twice the fast one, and one had a slow adaptation rate above half the fast one.
 - **Stability.** The Model is stable when $B_f/(1+A_f) + B_s/(1+A_s)$ is below 1;
   otherwise the movement swings from side to side with growing size. Under this Prior
   that quantity never exceeded 0.43 in four million draws, so nothing is truncated.
