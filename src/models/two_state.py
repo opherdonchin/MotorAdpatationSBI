@@ -24,13 +24,12 @@ def simulate_sitting(rng, theta, schedule, size=()):
     and a slow part, which learn from the same error::
 
         x_fast[0], x_slow[0] ~ N(0, s_eta^2)
-        y[t] = x_fast[t] + x_slow[t] + p[t] + epsilon[t],   epsilon[t] ~ N(0, s_epsilon^2)
-        x_fast[t+1] = Af x_fast[t] - Bf v[t] y[t] + eta_fast[t]
-        x_slow[t+1] = As x_slow[t] - Bs v[t] y[t] + eta_slow[t]
+        y[t] = x_fast[t] + x_slow[t] + epsilon[t],   epsilon[t] ~ N(0, s_epsilon^2)
+        e[t] = y[t] + p[t]
+        x_fast[t+1] = Af x_fast[t] - Bf v[t] e[t] + eta_fast[t]
+        x_slow[t+1] = As x_slow[t] - Bs v[t] e[t] + eta_slow[t]
 
-    with eta_fast[t] and eta_slow[t] independent, each N(0, s_eta^2). The observed y is
-    the error (where the cursor went relative to the target), not the movement; the
-    movement is y - p. This differs from the one-state Model until issue #34. Several
+    with eta_fast[t] and eta_slow[t] independent, each N(0, s_eta^2). Several
     Sittings that share the parameter values and the Schedule are simulated at once
     (vectorized over `size`); the loop over Trials is the Model's recursion.
 
@@ -47,7 +46,7 @@ def simulate_sitting(rng, theta, schedule, size=()):
     schedule : dict
         The Schedule: one array of shape (T,) per name in the Task's
         `CONDITION_VARS`, and no others. ``schedule["p"]`` is the perturbation on each
-        Trial, added to the plan and the execution noise to give the error. ``schedule["v"]`` is the vision
+        Trial, added to the movement to give the error. ``schedule["v"]`` is the vision
         flag on each Trial, 0 or 1: 1 if the cursor is shown, so both states learn from
         the error; 0 if not, so each state only decays and picks up planning noise.
     size : tuple of int, optional
@@ -57,7 +56,7 @@ def simulate_sitting(rng, theta, schedule, size=()):
     Returns
     -------
     observations : dict
-        One array per name in the Task's `OBSERVATION_VARS`: ``"y"``, the error
+        One array per name in the Task's `OBSERVATION_VARS`: ``"y"``, the movement angle
         on every Trial of every Sitting (float, shape (*size, T)). Together with the
         Schedule, this is the Sitting.
     ground_truth : dict
@@ -118,13 +117,10 @@ def simulate_sitting(rng, theta, schedule, size=()):
     for t in range(len(p)):
         x_fast[..., t] = plan_fast
         x_slow[..., t] = plan_slow
-        y[..., t] = plan_fast + plan_slow + p[t] + rng.normal(0.0, s_epsilon, size)
-        plan_fast = (
-            Af * plan_fast - Bf * v[t] * y[..., t] + rng.normal(0.0, s_eta, size)
-        )
-        plan_slow = (
-            As * plan_slow - Bs * v[t] * y[..., t] + rng.normal(0.0, s_eta, size)
-        )
+        y[..., t] = plan_fast + plan_slow + rng.normal(0.0, s_epsilon, size)
+        e = y[..., t] + p[t]
+        plan_fast = Af * plan_fast - Bf * v[t] * e + rng.normal(0.0, s_eta, size)
+        plan_slow = As * plan_slow - Bs * v[t] * e + rng.normal(0.0, s_eta, size)
     ground_truth = {
         **dict(zip(PARAMETERS, theta.tolist())),
         "x_fast": x_fast,

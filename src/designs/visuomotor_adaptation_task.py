@@ -9,6 +9,5 @@ perturbation size. Terms: docs/glossary.md.
 # p: perturbation of the cursor; v: vision flag, 1 if the cursor is shown, 0 if not.
 CONDITION_VARS = ("p", "v")
 
-# y: what is recorded on each Trial. The two-state Model records the error (movement
-# plus perturbation); the one-state Model still records the movement, until issue #34.
+# y: movement angle.
 OBSERVATION_VARS = ("y",)
