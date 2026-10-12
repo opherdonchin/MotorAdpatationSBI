@@ -18,12 +18,12 @@ x^f_1,\ x^s_1 \sim \mathcal N(0, \sigma_\eta^2)
 ```
 
 ```math
-y_t = x^f_t + x^s_t + \varepsilon_t, \qquad e_t = y_t + p_t
+y_t = x^f_t + x^s_t + p_t + \varepsilon_t
 ```
 
 ```math
-x^f_{t+1} = A_f\, x^f_t - B_f\, v_t\, e_t + \eta^f_t, \qquad
-x^s_{t+1} = A_s\, x^s_t - B_s\, v_t\, e_t + \eta^s_t
+x^f_{t+1} = A_f\, x^f_t - B_f\, v_t\, y_t + \eta^f_t, \qquad
+x^s_{t+1} = A_s\, x^s_t - B_s\, v_t\, y_t + \eta^s_t
 ```
 
 with $\varepsilon_t \sim \mathcal N(0, \sigma_\varepsilon^2)$ and $\eta^f_t$, $\eta^s_t$
@@ -33,16 +33,20 @@ perturbation size, so $p_t \in \lbrace 0, +1, -1 \rbrace$.
 | Symbol | Meaning | Domain |
 |---|---|---|
 | $x^f_t$, $x^s_t$ | the fast and the slow part of the movement plan (hidden) | |
-| $y_t$ | movement angle: what the subject did (recorded) | |
+| $y_t$ | error: where the cursor went relative to the target, or would have gone when it is not shown (recorded). The movement is $y_t - p_t$ | |
 | $p_t$ | perturbation applied to the cursor (part of the Condition) | $0$, $+1$ or $-1$ |
 | $v_t$ | vision flag: 1 if the cursor is shown, 0 if not (part of the Condition) | $0$ or $1$ |
-| $e_t$ | error: where the cursor went, relative to the target | |
 | $A_f$, $A_s$ | retention of the fast and of the slow state | between 0 and 1, $A_f$ below $A_s$ |
 | $B_f$, $B_s$ | adaptation rate of the fast and of the slow state | between 0 and 1, $B_f$ above $B_s$ |
 | $\sigma_\eta$ | planning noise: standard deviation of the noise in each state | positive |
 | $\sigma_\varepsilon$ | execution noise: standard deviation of the noise in the movement | positive |
 
-Both states learn from the same error, which contains the execution noise. On a
+The recorded $y_t$ is the error, and both states learn from it; it contains the
+execution noise. **This differs from the [one-state Model](one_state.md), whose $y_t$ is
+the movement and whose error is $e_t = y_t + p_t$,** until
+[issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34) brings it to
+this convention. Sittings of one Model must not be given to an Inference Engine of the
+other. On a
 no-vision Trial ($v_t = 0$) neither learns: each decays by its own retention and picks
 up planning noise. The planning noise has one standard deviation, and each state has its
 own draw, so the plan $x^f_t + x^s_t$ picks up variance $2\sigma_\eta^2$ per Trial.
@@ -72,10 +76,10 @@ s_t = s^* + S^{t}\,(s_0 - s^*), \qquad s^* = -(I - S)^{-1} b\, p
 ```
 
 Without vision each state decays by its own retention. (`#[check-noise-free]`: largest
-difference from the Simulator 1e-11.) The movement settles at
+difference from the Simulator 1e-11.) The movement $y - p$ settles at $-p\,K/(1+K)$ and the error at
 
 ```math
-y^* = -p\, \frac{K}{1 + K}, \qquad K = \frac{B_f}{1 - A_f} + \frac{B_s}{1 - A_s}
+y^* = \frac{p}{1 + K}, \qquad K = \frac{B_f}{1 - A_f} + \frac{B_s}{1 - A_s}
 ```
 
 and the slow state holds the share $\big(B_s/(1-A_s)\big)/K$ of it.
@@ -83,7 +87,7 @@ and the slow state holds the share $\big(B_s/(1-A_s)\big)/K$ of it.
 **Stability.** The Model is stable when $B_f/(1+A_f) + B_s/(1+A_s)$ is below 1.
 Otherwise the movement swings from side to side with growing size.
 
-**Spontaneous recovery.** After a long adaptation and a short reversal, the movement is
+**Spontaneous recovery.** After a long adaptation and a short reversal, the movement ($y - p$) is
 near zero because the fast state has been pushed the other way while the slow state
 still holds the adaptation. Without vision the fast state decays first and the movement
 returns toward the first adaptation. With the rates of Smith et al. (2006), 200 Trials
@@ -97,21 +101,22 @@ states solves
 P = S\, P\, S^\top + \sigma_\varepsilon^2\, b\, b^\top + \sigma_\eta^2\, I
 ```
 
-and the movements have
+and the errors $y_t$ (and so the movements, which differ from them by a constant) have
 
 ```math
 \sigma_y^2 = \mathbf 1^\top P\, \mathbf 1 + \sigma_\varepsilon^2, \qquad
 R(1) = \frac{\mathbf 1^\top S\, P\, \mathbf 1 - \sigma_\varepsilon^2\, \mathbf 1^\top b}{\sigma_y^2}
 ```
 
-where $R(1)$ is the correlation between successive movements. Without vision the same
+where $R(1)$ is the correlation between successive Trials. Without vision the same
 holds with $b = 0$ and $S$ the diagonal matrix of the retentions. (`#[check-stationary]`:
 four parameter sets, with and without vision; all 16 z-scores at most 2.0 in size.)
 
 **The link to the one-state Model.** With a shared planning noise neither state can be
 switched off, so the one-state Model is not a special case. When $A_f = A_s = A$, the
 plan $x^f_t + x^s_t$ follows the one-state Model with adaptation rate $B_f + B_s$ and
-planning noise $\sqrt 2\, \sigma_\eta$. (`#[check-equal-retention]`: noise-free
+planning noise $\sqrt 2\, \sigma_\eta$, whose movement is this Model's $y_t - p_t$.
+(`#[check-equal-retention]`: noise-free
 movements of the two Simulators differ by at most 1.4e-11; with noise, the steady-state
 values above equal the one-state formulas' to four decimals.)
 

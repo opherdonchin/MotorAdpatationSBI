@@ -43,7 +43,7 @@ def schedule_of(p, v):
     return {"p": np.asarray(p, dtype=float), "v": np.asarray(v)}
 
 
-def movements(rng, theta, schedule, size=()):
+def errors(rng, theta, schedule, size=()):
     observations, _ = mdl.simulate_sitting(rng, theta, schedule, size)
     return observations["y"]
 
@@ -76,27 +76,29 @@ def test_the_simulator_returns_observations_and_ground_truth(rng):
     assert [ground_truth[name] for name in mdl.PARAMETERS] == theta.tolist()
 
 
-def test_with_negligible_execution_noise_the_movement_is_the_sum_of_the_states(rng):
+def test_with_negligible_execution_noise_the_error_is_the_plan_plus_perturbation(rng):
     schedule = schedule_of(np.ones(30), np.ones(30))
     observations, ground_truth = mdl.simulate_sitting(
         rng, [0.6, 0.99, 0.2, 0.02, 0.05, tiny], schedule
     )
     np.testing.assert_allclose(
-        observations["y"], ground_truth["x_fast"] + ground_truth["x_slow"], atol=1e-9
+        observations["y"] - schedule["p"],
+        ground_truth["x_fast"] + ground_truth["x_slow"],
+        atol=1e-9,
     )
 
 
 def test_one_sitting_and_many_sittings_have_the_documented_shapes(rng):
     schedule = schedule_of(np.zeros(30), np.ones(30))
-    assert movements(rng, theta, schedule).shape == (30,)
-    assert movements(rng, theta, schedule, size=(7,)).shape == (7, 30)
-    assert movements(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
+    assert errors(rng, theta, schedule).shape == (30,)
+    assert errors(rng, theta, schedule, size=(7,)).shape == (7, 30)
+    assert errors(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
 
 
 def test_the_same_generator_state_gives_the_same_sitting():
     schedule = schedule_of(np.repeat([0.0, 1.0, -1.0], 10), np.ones(30))
-    y1 = movements(np.random.default_rng(root_seed), theta, schedule)
-    y2 = movements(np.random.default_rng(root_seed), theta, schedule)
+    y1 = errors(np.random.default_rng(root_seed), theta, schedule)
+    y2 = errors(np.random.default_rng(root_seed), theta, schedule)
     np.testing.assert_array_equal(y1, y2)
 
 
@@ -135,21 +137,23 @@ def test_with_equal_retentions_the_movement_is_that_of_the_one_state_model(rng):
         np.repeat([0.0, 1.0, 0.0, -1.0], 20),
         np.r_[np.ones(40), np.zeros(20), np.ones(20)],
     )
-    y_two = movements(rng, [A, np.nextafter(A, 1), Bf, Bs, tiny, tiny], schedule)
+    y_two = errors(rng, [A, np.nextafter(A, 1), Bf, Bs, tiny, tiny], schedule)
     y_one = one_state.simulate_sitting(rng, [A, Bf + Bs, tiny, tiny], schedule)[0]["y"]
-    np.testing.assert_allclose(y_two, y_one, atol=1e-9)
+    # The one-state Model records the movement, this one the error (issue #34).
+    np.testing.assert_allclose(y_two - schedule["p"], y_one, atol=1e-9)
 
 
 def test_after_a_short_reversal_the_movement_recovers_spontaneously(rng):
-    # Adaptation to +1 moves y toward -1. A short reversal brings y back to about zero
+    # Adaptation to +1 moves the movement toward -1. A short reversal brings it back to
+    # about zero
     # by pushing the fast state the other way; without vision the fast state then
     # decays and the slow state's adaptation reappears (Smith et al. 2006).
     schedule = schedule_of(
         np.r_[np.ones(200), -np.ones(12), np.zeros(40)],
         np.r_[np.ones(212), np.zeros(40)],
     )
-    y = movements(rng, [0.6, 0.99, 0.2, 0.02, tiny, tiny], schedule)
-    no_vision = y[212:]
+    y = errors(rng, [0.6, 0.99, 0.2, 0.02, tiny, tiny], schedule)
+    no_vision = y[212:]  # p is 0 without vision, so y is the movement there
     assert no_vision.min() < no_vision[0] - 0.1
 
 
@@ -205,4 +209,4 @@ def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):
 def test_prior_draws_can_be_simulated(rng):
     schedule = des.sample_schedule(rng, schedule_design)
     for draw in mdl.sample_prior(rng, 5, prior):
-        assert np.all(np.isfinite(movements(rng, draw, schedule)))
+        assert np.all(np.isfinite(errors(rng, draw, schedule)))
