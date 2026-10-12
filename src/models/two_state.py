@@ -139,8 +139,8 @@ def sample_prior(rng, size, prior):
 
         logit_Af  = N(mu_logit_Af, sigma_logit_Af)
         logit_Bf  = N(mu_logit_Bf, sigma_logit_Bf)
-        d_A       = exp(N(mu_log_A_diff, sigma_log_A_diff))
-        d_B       = exp(N(mu_log_B_diff, sigma_log_B_diff))
+        d_A       = exp(N(mu_log_d_A, sigma_log_d_A))
+        d_B       = exp(N(mu_log_d_B, sigma_log_d_B))
         Af        = special.expit(logit_Af)
         As        = special.expit(logit_Af + d_A)
         Bf        = special.expit(logit_Bf)
@@ -159,9 +159,9 @@ def sample_prior(rng, size, prior):
     prior : dict of float
         The Prior's constants, exactly these keys: ``mu_logit_Af`` and
         ``sigma_logit_Af`` (mean and standard deviation of logit(Af));
-        ``mu_log_A_diff`` and ``sigma_log_A_diff`` (of the log of
+        ``mu_log_d_A`` and ``sigma_log_d_A`` (of the log of
         logit(As) - logit(Af)); ``mu_logit_Bf`` and ``sigma_logit_Bf`` (of logit(Bf));
-        ``mu_log_B_diff`` and ``sigma_log_B_diff`` (of the log of
+        ``mu_log_d_B`` and ``sigma_log_d_B`` (of the log of
         logit(Bf) - logit(Bs)); ``mu_log_s_epsilon`` and ``sigma_log_s_epsilon`` (of
         log(s_epsilon)); ``mu_log_ratio`` and ``sigma_log_ratio`` (of
         log(s_eta / s_epsilon)).
@@ -180,12 +180,12 @@ def sample_prior(rng, size, prior):
     keys = {
         "mu_logit_Af",
         "sigma_logit_Af",
-        "mu_log_A_diff",
-        "sigma_log_A_diff",
+        "mu_log_d_A",
+        "sigma_log_d_A",
         "mu_logit_Bf",
         "sigma_logit_Bf",
-        "mu_log_B_diff",
-        "sigma_log_B_diff",
+        "mu_log_d_B",
+        "sigma_log_d_B",
         "mu_log_s_epsilon",
         "sigma_log_s_epsilon",
         "mu_log_ratio",
@@ -196,9 +196,9 @@ def sample_prior(rng, size, prior):
             f"prior must have exactly the keys {sorted(keys)}, got {sorted(prior)}"
         )
     logit_Af = rng.normal(prior["mu_logit_Af"], prior["sigma_logit_Af"], size)
-    d_A = np.exp(rng.normal(prior["mu_log_A_diff"], prior["sigma_log_A_diff"], size))
+    d_A = np.exp(rng.normal(prior["mu_log_d_A"], prior["sigma_log_d_A"], size))
     logit_Bf = rng.normal(prior["mu_logit_Bf"], prior["sigma_logit_Bf"], size)
-    d_B = np.exp(rng.normal(prior["mu_log_B_diff"], prior["sigma_log_B_diff"], size))
+    d_B = np.exp(rng.normal(prior["mu_log_d_B"], prior["sigma_log_d_B"], size))
     log_s_epsilon = rng.normal(
         prior["mu_log_s_epsilon"], prior["sigma_log_s_epsilon"], size
     )

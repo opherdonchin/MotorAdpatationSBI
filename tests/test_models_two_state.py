@@ -18,12 +18,12 @@ theta = np.array([0.6, 0.99, 0.2, 0.02, 0.02, 0.15])
 prior = {
     "mu_logit_Af": 1.52,
     "sigma_logit_Af": 0.34,
-    "mu_log_A_diff": 1.19,
-    "sigma_log_A_diff": 0.27,
+    "mu_log_d_A": 1.19,
+    "sigma_log_d_A": 0.27,
     "mu_logit_Bf": -1.41,
     "sigma_logit_Bf": 0.4,
-    "mu_log_B_diff": 1.22,
-    "sigma_log_B_diff": 0.26,
+    "mu_log_d_B": 1.22,
+    "sigma_log_d_B": 0.26,
     "mu_log_s_epsilon": -1.9,
     "sigma_log_s_epsilon": 0.4,
     "mu_log_ratio": -2.2,
@@ -197,9 +197,7 @@ def test_prior_draws_have_the_documented_shape_domains_and_ordering(rng):
 
 def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):
     with pytest.raises(ValueError, match="exactly the keys"):
-        mdl.sample_prior(
-            rng, 10, {k: v for k, v in prior.items() if k != "mu_log_A_diff"}
-        )
+        mdl.sample_prior(rng, 10, {k: v for k, v in prior.items() if k != "mu_log_d_A"})
     with pytest.raises(ValueError, match="exactly the keys"):
         mdl.sample_prior(rng, 10, {**prior, "mu_logit_C": 0.0})
 
