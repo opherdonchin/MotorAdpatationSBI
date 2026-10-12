@@ -20,7 +20,8 @@ improve slow learning in cerebellar patients?*, bioRxiv,
 [doi:10.1101/2020.07.03.185959](https://doi.org/10.1101/2020.07.03.185959). The form
 below was read from the paper's public model code,
 [thomashulst/paper-slowlearning](https://github.com/thomashulst/paper-slowlearning)
-(`modelStateSpace.txt`), not from the lab's private repository. It is the two-state
+(`modelStateSpace.txt`). On 2026-10-12, with Opher's permission, it was compared with
+the lab's private code, and the two agree on the Model. It is the two-state
 model of Smith, Ghazizadeh and Shadmehr (2006, PLoS Biology,
 [doi:10.1371/journal.pbio.0040179](https://doi.org/10.1371/journal.pbio.0040179)) with
 planning and execution noise.
