@@ -2,7 +2,8 @@
 
 The one-state Model of visuomotor adaptation of van der Vliet et al. (2018, eNeuro,
 [doi:10.1523/ENEURO.0170-18.2018](https://doi.org/10.1523/ENEURO.0170-18.2018)),
-equations 1 to 4, with a vision flag. Why this form:
+equations 1 to 4, with a vision flag and with the error as the observed variable. Why
+this form:
 [decision 0005](../decisions/0005-one-state-model-published-form.md). Terms such as
 Sitting, Schedule and Block: [glossary](../glossary.md).
 
@@ -15,8 +16,8 @@ x_1 \sim \mathcal N(0, \sigma_\eta^2)
 ```
 
 ```math
-y_t = x_t + \varepsilon_t, \qquad e_t = y_t + p_t, \qquad
-x_{t+1} = A\, x_t - B\, v_t\, e_t + \eta_t
+y_t = x_t + p_t + \varepsilon_t, \qquad
+x_{t+1} = A\, x_t - B\, v_t\, y_t + \eta_t
 ```
 
 with $\varepsilon_t \sim \mathcal N(0, \sigma_\varepsilon^2)$ and
@@ -26,10 +27,9 @@ the perturbation size, so $p_t \in \lbrace 0, +1, -1 \rbrace$.
 | Symbol | Meaning | Domain |
 |---|---|---|
 | $x_t$ | aiming angle: the movement plan (hidden) | |
-| $y_t$ | movement angle: what the subject did (recorded) | |
+| $y_t$ | error: where the cursor went, relative to the target (recorded) | |
 | $p_t$ | perturbation applied to the cursor (part of the Condition) | $0$, $+1$ or $-1$ |
 | $v_t$ | vision flag: 1 if the cursor is shown, 0 if not (part of the Condition) | $0$ or $1$ |
-| $e_t$ | error: where the cursor went, relative to the target | |
 | $A$ | retention: fraction of the plan kept from one Trial to the next | between 0 and 1 |
 | $B$ | adaptation rate: fraction of the error corrected | between 0 and 1 |
 | $\sigma_\eta$ | planning noise: standard deviation of the noise in the plan | positive |
@@ -37,9 +37,16 @@ the perturbation size, so $p_t \in \lbrace 0, +1, -1 \rbrace$.
 
 The Schedule of a Sitting is $p_t$ and $v_t$ on every Trial.
 
-The execution noise $\varepsilon_t$ is part of the movement, and so of the error, so it is
-fed back into the next plan. On a no-vision Trial ($v_t = 0$) there is no error to learn
-from: the plan decays by $A$ and picks up planning noise.
+**The recorded $y_t$ is the error,** and the learning term is $B\, y_t$. The movement
+angle, what the subject did, is $y_t - p_t = x_t + \varepsilon_t$. A learner compensates
+by moving towards $-p$, which brings the error towards 0. (Until 2026-10-12 the recorded
+$y_t$ was the movement angle; see the amendment in
+[decision 0005](../decisions/0005-one-state-model-published-form.md).)
+
+The execution noise $\varepsilon_t$ is part of the error, so it is fed back into the next
+plan. On a no-vision Trial ($v_t = 0$) there is no error to learn from: the plan decays
+by $A$ and picks up planning noise. $y_t$ is still recorded; the Schedule Design below
+sets $p_t = 0$ on those Trials, so there it is the movement.
 
 **Code.** [src/models/one_state.py](../../src/models/one_state.py) names the Task the Model
 is written for, `TASK`, the visuomotor adaptation Task of
@@ -56,18 +63,21 @@ parameter values and the plans `x`). Where each piece lives:
 Checked against the Simulator in
 [notebooks/working/one_state_simulator.ipynb](../../notebooks/working/one_state_simulator.ipynb).
 
-**Without noise,** with vision and a constant perturbation $p$, the movement approaches a
+**Without noise,** with vision and a constant perturbation $p$, the error approaches a
 fixed point geometrically:
 
 ```math
-y_{t+1} - y^* = (A - B)\,(y_t - y^*), \qquad y^* = -\frac{B\, p}{1 - A + B}
+y_{t+1} - y^* = (A - B)\,(y_t - y^*), \qquad y^* = \frac{(1 - A)\, p}{1 - A + B}
 ```
 
-Without vision it only decays: $y_{t+1} = A\, y_t$. (`#[check-noise-free]`: largest
-difference from the Simulator 6e-12.)
+The error does not go to 0: what is left, $y^*$, is the part of the perturbation that
+forgetting undoes on every Trial. The plan settles at $x^* = y^* - p = -Bp / (1 - A + B)$.
+Without vision the movement only decays: $y_{t+1} - p = A\,(y_t - p)$.
+(`#[check-noise-free]`: largest difference from the Simulator 6e-12.)
 
-**With noise,** under a constant perturbation the movements settle into a stationary
-fluctuation around the fixed point. With vision the plan follows
+**With noise,** under a constant perturbation the errors settle into a stationary
+fluctuation around the fixed point. Adding the constant $p$ changes neither a variance
+nor a correlation, so the formulas are the same for errors as for movements. With vision the plan follows
 $x_{t+1} - x^* = (A - B)(x_t - x^*) - B\,\varepsilon_t + \eta_t$, so its variance is
 $V_x = (\sigma_\eta^2 + B^2 \sigma_\varepsilon^2) / (1 - (A - B)^2)$ and
 
@@ -76,7 +86,7 @@ $V_x = (\sigma_\eta^2 + B^2 \sigma_\varepsilon^2) / (1 - (A - B)^2)$ and
 R(1) = \frac{(A - B)\, V_x - B\, \sigma_\varepsilon^2}{\sigma_y^2}
 ```
 
-where $R(1)$ is the correlation between successive movements. The $-B\sigma_\varepsilon^2$
+where $R(1)$ is the correlation between successive errors. The $-B\sigma_\varepsilon^2$
 term is the execution noise of one Trial being corrected on the next. Without vision
 ($B$ drops out):
 

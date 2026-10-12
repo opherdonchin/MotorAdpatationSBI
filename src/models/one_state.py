@@ -23,9 +23,11 @@ def simulate_sitting(rng, theta, schedule, size=()):
     Runs the Model of decision 0005 forward, one Trial at a time::
 
         x[0] ~ N(0, sigma_eta^2)
-        y[t] = x[t] + epsilon[t],                 epsilon[t] ~ N(0, sigma_epsilon^2)
-        e[t] = y[t] + p[t]
-        x[t+1] = A x[t] - B v[t] e[t] + eta[t],   eta[t] ~ N(0, sigma_eta^2)
+        y[t] = x[t] + p[t] + epsilon[t],          epsilon[t] ~ N(0, sigma_epsilon^2)
+        x[t+1] = A x[t] - B v[t] y[t] + eta[t],   eta[t] ~ N(0, sigma_eta^2)
+
+    The observed y is the error: where the cursor went, relative to the target. The
+    movement is y - p.
 
     Several Sittings that share the parameter values and the Schedule are simulated at
     once (vectorized over `size`); the loop over Trials is the Model's recursion.
@@ -40,8 +42,9 @@ def simulate_sitting(rng, theta, schedule, size=()):
         planning and execution noise, each positive. In units of the perturbation size.
     schedule : dict
         The Schedule: one array of shape (T,) per name in the Task's
-        `CONDITION_VARS`, and no others. ``schedule["p"]`` is the perturbation on each Trial, added to the
-        movement to give the error. ``schedule["v"]`` is the vision flag on each Trial,
+        `CONDITION_VARS`, and no others. ``schedule["p"]`` is the perturbation on each
+        Trial, added to the movement to give the error. ``schedule["v"]`` is the vision
+        flag on each Trial,
         0 or 1: 1 if the cursor is shown, so the subject learns from the error; 0 if
         not, so the plan only decays and picks up planning noise.
     size : tuple of int, optional
@@ -51,8 +54,8 @@ def simulate_sitting(rng, theta, schedule, size=()):
     Returns
     -------
     observations : dict
-        One array per name in the Task's `OBSERVATION_VARS`: ``"y"``, the movement angle
-        on every Trial of every Sitting (float, shape (*size, T)). Together with the
+        One array per name in the Task's `OBSERVATION_VARS`: ``"y"``, the error on
+        every Trial of every Sitting (float, shape (*size, T)). Together with the
         Schedule, this is the Sitting.
     ground_truth : dict
         What produced the Sittings and is not observed: the parameter values, one float
@@ -100,9 +103,8 @@ def simulate_sitting(rng, theta, schedule, size=()):
     plan = rng.normal(0.0, sigma_eta, size)  # the first plan
     for t in range(len(p)):
         x[..., t] = plan
-        y[..., t] = plan + rng.normal(0.0, sigma_epsilon, size)
-        e = y[..., t] + p[t]
-        plan = A * plan - B * v[t] * e + rng.normal(0.0, sigma_eta, size)
+        y[..., t] = plan + p[t] + rng.normal(0.0, sigma_epsilon, size)
+        plan = A * plan - B * v[t] * y[..., t] + rng.normal(0.0, sigma_eta, size)
     ground_truth = {**dict(zip(PARAMETERS, theta.tolist())), "x": x}
     return {"y": y}, ground_truth
 

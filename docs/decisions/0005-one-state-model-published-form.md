@@ -10,10 +10,11 @@ in a different convention. The lab already has code for it (`state-space-models`
 also handles trials without visual feedback. And the simulated sittings of 0002 had no
 such trials, which left the ratio of the two noises almost unidentified.
 
-**Decision:** Use the published form, with a vision flag.
+**Decision:** Use the published form, with a vision flag, and with the error as the
+observed variable.
 
 ```math
-x_{t+1} = A\, x_t - B\, v_t\, e_t + \eta_t, \qquad y_t = x_t + \varepsilon_t, \qquad e_t = y_t + p_t
+x_{t+1} = A\, x_t - B\, v_t\, y_t + \eta_t, \qquad y_t = x_t + p_t + \varepsilon_t
 ```
 
 with $\eta_t \sim \mathcal N(0, \sigma_\eta^2)$ and
@@ -22,19 +23,30 @@ $\varepsilon_t \sim \mathcal N(0, \sigma_\varepsilon^2)$, all independent.
 | Symbol | Meaning |
 |---|---|
 | $x_t$ | aiming angle on trial $t$: the movement plan (hidden) |
-| $y_t$ | movement angle: what the subject actually did (observed) |
+| $y_t$ | error: where the cursor went relative to the target (observed) |
 | $p_t$ | perturbation applied to the cursor |
-| $e_t$ | error: where the cursor went relative to the target |
 | $v_t$ | vision flag: 1 if the cursor was shown, 0 if not |
 | $A$ | retention: the fraction of the plan kept from one trial to the next |
 | $B$ | adaptation rate: the fraction of the error corrected |
 | $\sigma_\eta$ | planning noise: standard deviation of the noise in the plan |
 | $\sigma_\varepsilon$ | execution noise: standard deviation of the noise in the movement |
 
-- **Sign.** The error is $y_t + p_t$ and it is subtracted, so a learner compensates by
-  moving to $y = -p$. (In 0002 the error was $p_t - y_t$ and a learner moved to $+p$.)
-- **Where the execution noise goes.** $\varepsilon_t$ is part of $y_t$, and $y_t$ is
-  part of the error, so the execution noise of a trial is fed back into the next plan.
+- **The observed variable is the error.** *Amended 2026-10-12* (Opher,
+  [issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)): in all our
+  Models $y_t$ is the error, so that the learning term is $B\, y_t$, as in the two-state
+  Model (decision 0008, proposed in
+  [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29)). The movement angle, what the subject
+  actually did, is $y_t - p_t = x_t + \varepsilon_t$. Before the amendment $y_t$ was the
+  movement angle and the error was a separate symbol, $e_t = y_t + p_t$, as the paper
+  writes it. The Model is the same; only what is recorded changed, by the known $p_t$.
+- **Sign.** The error is the movement plus the perturbation and it is subtracted, so a
+  learner compensates by moving to $-p$, which brings the error towards 0. (In 0002 the
+  error was the perturbation minus the movement and a learner moved to $+p$.)
+- **Where the execution noise goes.** $\varepsilon_t$ is part of the error $y_t$, so the
+  execution noise of a trial is fed back into the next plan.
+- **Trials without vision.** $y_t$ is defined on them too: it is where the cursor would
+  have gone. Schedules here set $p_t = 0$ on those trials, so there $y_t$ is the
+  movement.
 - **No-vision trials.** When $v_t = 0$ the subject sees no error and does not learn from
   that trial: the plan only decays by $A$ and picks up planning noise.
 - **Parameters.** $\theta = (A, B, \sigma_\eta, \sigma_\varepsilon)$, in this order in
@@ -83,12 +95,19 @@ smallest proportion is 0.12. Each single proportion is below 0.1 in 9% of sittin
 above 0.7 in 0.06%. Concentration 2 would let one kind reach about 0.7, at the cost of
 more sittings in which some kind is nearly absent. (One-off calculation, 2026-10-03.)
 
-**Why:** Using the published form means the model, the symbols and the sign are the
-ones in the paper and in the lab's code, and the lab's data (movement angles,
-perturbations, vision flags) can be used without conversion. The vision flag is needed
+**Why:** Using the published form means the model and the sign are the ones in the
+paper and in the lab's code. The symbols are the paper's except for $y_t$, which the
+paper uses for the movement angle and we, like the lab, use for the error; with one
+meaning of $y$ in every Model, a Sitting can be read without asking which Model it is
+for. Data recorded as movement angles are converted by adding the perturbation, and
+which of the two a data file holds is checked when it is first read. The vision flag is needed
 for those data in any case, and no-vision trials are what let the two noises be told
 apart: without correction the planning noise accumulates from trial to trial and shows
 up as correlation between successive movements, while execution noise does not.
+
+*Alternative to the 2026-10-12 amendment:* keeping $y_t$ as the movement here and using
+the error only in the two-state Model (rejected: two meanings of `y` in one Task, and a
+Sitting given to the wrong Inference Engine would be wrong without any error message).
 
 *Alternatives:* keeping the convention of 0002 (no change to code already written, but a
 private dialect of a published model); a vision flag in the model with all-vision
@@ -111,5 +130,8 @@ neighbouring blocks must differ (it caps the share of any one kind at one half).
   paper separated them with 900 trials, 275 of them without vision; sittings here cover
   that range (about 230 to 1,440 trials). Identification is measured for these
   schedules, not taken from the paper.
+- *From the 2026-10-12 amendment:* Sittings and Inference Engines made before it hold or
+  expect movement angles and are regenerated: the Simulated Experiment
+  `one_state_random_blocks_test` and the Inference Engine `posterior_random_blocks`.
 - Sittings of up to about 1,500 trials make each simulation, and each input to the
   network, about five times longer than in the first attempt.

@@ -38,7 +38,7 @@ def schedule_of(p, v):
     return {"p": np.asarray(p, dtype=float), "v": np.asarray(v)}
 
 
-def movements(rng, theta, schedule, size=()):
+def errors(rng, theta, schedule, size=()):
     observations, _ = mdl.simulate_sitting(rng, theta, schedule, size)
     return observations["y"]
 
@@ -63,44 +63,47 @@ def test_the_simulator_returns_observations_and_ground_truth(rng):
     assert [ground_truth[name] for name in mdl.PARAMETERS] == theta.tolist()
 
 
-def test_with_negligible_execution_noise_the_movement_is_the_plan(rng):
-    schedule = schedule_of(np.ones(30), np.ones(30))
+def test_with_negligible_execution_noise_the_error_is_plan_plus_perturbation(rng):
+    schedule = schedule_of(np.repeat([0.0, 1.0, -1.0], 10), np.ones(30))
     observations, ground_truth = mdl.simulate_sitting(
         rng, [0.95, 0.2, 0.05, tiny], schedule
     )
-    np.testing.assert_allclose(observations["y"], ground_truth["x"], atol=1e-9)
+    np.testing.assert_allclose(
+        observations["y"], ground_truth["x"] + schedule["p"], atol=1e-9
+    )
 
 
 def test_one_sitting_and_many_sittings_have_the_documented_shapes(rng):
     schedule = schedule_of(np.zeros(30), np.ones(30))
-    assert movements(rng, theta, schedule).shape == (30,)
-    assert movements(rng, theta, schedule, size=(7,)).shape == (7, 30)
-    assert movements(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
+    assert errors(rng, theta, schedule).shape == (30,)
+    assert errors(rng, theta, schedule, size=(7,)).shape == (7, 30)
+    assert errors(rng, theta, schedule, size=(2, 3)).shape == (2, 3, 30)
 
 
 def test_the_same_generator_state_gives_the_same_sitting():
     schedule = schedule_of(np.repeat([0.0, 1.0, -1.0], 10), np.ones(30))
-    y1 = movements(np.random.default_rng(root_seed), theta, schedule)
-    y2 = movements(np.random.default_rng(root_seed), theta, schedule)
+    y1 = errors(np.random.default_rng(root_seed), theta, schedule)
+    y2 = errors(np.random.default_rng(root_seed), theta, schedule)
     np.testing.assert_array_equal(y1, y2)
 
 
-def test_without_noise_a_learner_moves_to_the_fixed_point_geometrically(rng):
+def test_without_noise_the_error_shrinks_to_its_fixed_point_geometrically(rng):
     # With vision and a constant p, y[t+1] - y* = (A - B) (y[t] - y*),
-    # where y* = -B p / (1 - A + B).
+    # where y* = (1 - A) p / (1 - A + B). The first error is p (the plan starts at 0).
     A, B = 0.95, 0.2
-    y = movements(rng, [A, B, tiny, tiny], schedule_of(np.ones(40), np.ones(40)))
-    y_star = -B / (1 - A + B)
-    expected = y_star + (0.0 - y_star) * (A - B) ** np.arange(40)
+    y = errors(rng, [A, B, tiny, tiny], schedule_of(np.ones(40), np.ones(40)))
+    y_star = (1 - A) / (1 - A + B)
+    expected = y_star + (1.0 - y_star) * (A - B) ** np.arange(40)
     np.testing.assert_allclose(y, expected, atol=1e-9)
 
 
 def test_without_vision_the_plan_only_decays(rng):
-    # Adapt for 30 trials with vision, then 20 trials without: y[t+1] = A y[t].
+    # Adapt for 30 trials with vision, then 20 trials without. The movement y - p is
+    # the plan, and it decays: y[t+1] - p = A (y[t] - p).
     A, B = 0.95, 0.2
     schedule = schedule_of(np.ones(50), np.r_[np.ones(30), np.zeros(20)])
-    y = movements(rng, [A, B, tiny, tiny], schedule)
-    np.testing.assert_allclose(y[31:], A * y[30:-1], atol=1e-9)
+    y = errors(rng, [A, B, tiny, tiny], schedule)
+    np.testing.assert_allclose(y[31:] - 1.0, A * (y[30:-1] - 1.0), atol=1e-9)
 
 
 @pytest.mark.parametrize(
@@ -152,4 +155,4 @@ def test_a_prior_with_missing_or_extra_constants_is_rejected(rng):
 def test_prior_draws_can_be_simulated(rng):
     schedule = des.sample_schedule(rng, schedule_design)
     for draw in mdl.sample_prior(rng, 5, prior):
-        assert np.all(np.isfinite(movements(rng, draw, schedule)))
+        assert np.all(np.isfinite(errors(rng, draw, schedule)))

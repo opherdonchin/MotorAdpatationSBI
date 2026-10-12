@@ -9,5 +9,6 @@ perturbation size. Terms: docs/glossary.md.
 # p: perturbation of the cursor; v: vision flag, 1 if the cursor is shown, 0 if not.
 CONDITION_VARS = ("p", "v")
 
-# y: movement angle.
+# y: error, where the cursor went relative to the target. On a Trial without vision the
+# cursor is not shown, and y is where it would have gone. The movement angle is y - p.
 OBSERVATION_VARS = ("y",)
