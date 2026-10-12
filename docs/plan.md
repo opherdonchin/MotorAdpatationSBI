@@ -2,87 +2,94 @@
 
 Current goals and next steps. Rewritten in place; see git history for earlier versions.
 
+**Rewritten 2026-10-12, and not yet confirmed by Opher.** The earlier plan made
+agreement with the exact Kalman likelihood part of the first goal and put a fit in HSSM
+second. On 2026-10-11 Opher chose the two-state Model as the next step and said the
+comparison with exact answers interests him less for now. The goals below follow that.
+The order of goals 2 and 3 after the two-state work is my proposal.
+
 ## Current goals
 
-1. **Quick win: BayesFlow parameter recovery on a one-state model.** The one-state
-   motor-adaptation Model with planning and execution noise
-   ([docs/models/one_state.md](models/one_state.md),
-   [decision 0005](decisions/0005-one-state-model-published-form.md)), on Schedules of
-   random Blocks and varying length. BayesFlow first learns the posterior directly, to
-   see early whether the parameters can be recovered, and then a likelihood-to-evidence
-   ratio (NRE), which is what hierarchical models need. Success is good parameter
-   recovery and calibration, and agreement with the exact Kalman likelihood, which is
-   built afterwards as an independent check.
-2. **Next quick win:** the same learned likelihood used inside HSSM for a small
-   hierarchical fit.
-3. **Side project:** a working process that keeps the human fully in the loop and
+We are finding out whether the whole approach is feasible: simulation-based inference
+with BayesFlow, for motor-adaptation Models, ending in hierarchical analyses. Validated
+answers come after that, and what is skipped on the way is listed under *Debt*.
+
+1. **Posterior networks are feasible for our Models.** A network trained once on
+   simulated Sittings gives a calibrated posterior for a new Sitting, at a cost in time
+   and memory we can afford.
+   - One-state Model: done
+     ([notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb)).
+   - Two-state Model: in progress
+     ([issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28)).
+2. **A learned likelihood is feasible, and usable in a hierarchical fit.** A
+   likelihood-to-evidence ratio estimator (NRE) for the one-state Model, then that
+   estimator inside HSSM or PyMC for a small hierarchical fit. This is the project's
+   purpose (*Use* in [AGENTS.md](../AGENTS.md)) and the part not yet tried.
+3. **Validation against exact answers.** The one-state and two-state Models are linear
+   and Gaussian, so a Kalman filter gives their exact likelihood. Deferred; see *Debt*.
+4. **Side project:** a working process that keeps the human fully in the loop and
    produces shareable documentation as a byproduct.
 
 ## Current state
 
 - Process: [docs/process.md](process.md); project rules: [AGENTS.md](../AGENTS.md).
-- Environment built and tested (pixi, GPU JAX, BayesFlow, PyMC).
-- Human-in-the-loop toolkit built (scope #5 closed): skills, templates, scripts and
-  hooks in `.github/skills/` and `.claude/`; wiki skeleton live.
-- Scope #12 (`one_state` analysis): the first attempt, PR #13, was closed unmerged as too
-  large and too fast. Its code (simulator, Kalman likelihood, exact-posterior checks) is
-  on the branch `sim/one-state-kalman`, unmerged. The scope was changed on the issue and
-  agreed: one method per PR, background first; BayesFlow on the simulations before the
-  exact machinery, which becomes a separate validation stage.
-- Decision [0005](decisions/0005-one-state-model-published-form.md) (accepted) fixes the
-  model, priors and schedules; it supersedes 0002.
-- Stage 1 of #12: steps C1 (the Simulator) and C2 (Prior and Schedule Design) merged,
-  with the code in the layout of decision
-  [0006](decisions/0006-models-tasks-and-designs.md): `src/designs/`, `src/models/`.
-- Wiki pages waiting for Opher: drafts `Code-one-state-model`,
-  `Code-visuomotor-adaptation-designs`, `Code-environment`, `Code-one-state-posterior`,
-  `Concept-flow-matching` (rewritten 2026-10-11 in terms of distributions),
-  `Concept-bayesflow-make-simulator`, `Concept-gru`; `Code-experiments` is
-  `needs-review` (one argument added). The other concept pages are `understood`.
-- The project's terms are in `docs/glossary.md`; the layout in `AGENTS.md` follows them
-  (PR #19, merged). Wiki: `Concept-vocabulary` (draft).
-- Official pymc-extras 0.15.1 works with the pinned PyMC 6.3 and reproduced the
-  one-state likelihood in a one-off test; proposed to Opher as the exact reference for
-  stage 2 (a dependency and a class, so not added without his agreement).
-- Process: every explanation now has a *Wiki pages* section, and wiki pages have a
-  `not-written` status
-  ([PR #25](https://github.com/opherdonchin/MotorAdpatationSBI/pull/25), merged).
-- Open issues: resources in the wiki (#2), large-data storage policy (#3),
+  Environment built and tested (pixi, GPU JAX, BayesFlow, PyMC).
+- One-state Model ([docs/models/one_state.md](models/one_state.md), decisions
+  [0005](decisions/0005-one-state-model-published-form.md),
+  [0006](decisions/0006-models-tasks-and-designs.md),
+  [0007](decisions/0007-summary-network-for-sittings.md), all accepted): Simulator,
+  Prior, Schedule Design, Simulated Experiments and a posterior network. Recovery is
+  good for all four parameters and calibration passes, narrowly for `B`. Not compared
+  with an exact posterior.
+- Two-state Model ([issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28), agreed; its *Done when* rewritten
+  2026-10-12 around feasibility, convergence and calibration):
+  - [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29): decision record 0008, revised after Opher's review (his
+    ranges for the four rates, translated step by step; code names `Af`, `As`, `Bf`,
+    `Bs`, `s_eta`, `s_epsilon`). Waiting for him.
+  - [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30), built on #29: Simulator, Prior Sampler, their Checks (all
+    pass) and the Model page, brought in line with the revised record. Opher reviews
+    it after #29.
+- [PR #33](https://github.com/opherdonchin/MotorAdpatationSBI/pull/33): the process rule for debt (below). Waiting for Opher.
+- Scope [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12) (`one_state` analysis) is still open. Its step C3c (the
+  likelihood-ratio estimator) is goal 2 here; its stage 2 (validation) is goal 3 and is
+  recorded as debt. The issue should be rewritten or split to match this plan.
+- Wiki. Waiting for Opher: drafts `Concept-two-state-model` (part of PR #29),
+  `Guide-one-state-model`, `Code-visuomotor-adaptation-designs`, `Code-environment`,
+  `Code-one-state-posterior`, `Concept-bayesflow-make-simulator`, `Concept-gru`;
+  `needs-review`: `Code-experiments`, `Code-process-scripts`. `needs-revision` (I owe a
+  rewrite): `Concept-flow-matching`.
+- Other open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11),
   sequential training and fitting in BayesFlow and PyMC (#23).
 
+## Debt
+
+Skipped on purpose and still owed ([docs/process.md](process.md), *Debt*, proposed in
+[PR #33](https://github.com/opherdonchin/MotorAdpatationSBI/pull/33)).
+
+- [#31](https://github.com/opherdonchin/MotorAdpatationSBI/issues/31) (validation): the one-state posterior network has not been
+  compared with an exact posterior; calibration for `B` was at the edge of detection.
+- [#32](https://github.com/opherdonchin/MotorAdpatationSBI/issues/32) (validation): no exact reference is planned for the two-state
+  posterior network.
+
 ## Next steps
 
-0. **Next win, chosen by Opher (2026-10-11): the same posterior approach on a two-state
-   Model.** Scope: [issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28), agreed. Three pull requests:
-   - the Model and its Prior, decision record 0008:
-     [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29), waiting for review (the Prior's numbers are a proposal);
-   - the Simulator, Prior Sampler and their Checks, all passing:
-     [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30), built on #29, waiting for review;
-   - the posterior notebook, branch `sbi/two-state-posterior`: next. Before it, agree
-     where the transforms between parameters and unbounded quantities live, and
-     whether the Prior should let the fast and slow time constants overlap.
-
-   The remaining steps of #12 below wait.
-1. Step C3 of #12, one method per PR:
-   - C3a: `simulate_experiment` in `motor_sbi`, and saving a Simulated Experiment (Sittings
-     and Ground Truth apart) under `data/simulated/`; merged (PR #22).
-   - C3b: a BayesFlow posterior network on full-length Sittings, without downsampling
-     and without padding ([decision 0007](decisions/0007-summary-network-for-sittings.md));
-     merged ([PR #24](https://github.com/opherdonchin/MotorAdpatationSBI/pull/24)).
-     Good recovery of all four parameters; calibration passes, narrowly for `B`.
-     Finalized notebook:
-     [notebooks/one_state_posterior.ipynb](../notebooks/one_state_posterior.ipynb).
-     Open after the merge:
-     [PR #26](https://github.com/opherdonchin/MotorAdpatationSBI/pull/26) (what we saw
-     at each Check; decision 0007 marked accepted) and
-     [PR #27](https://github.com/opherdonchin/MotorAdpatationSBI/pull/27) (a
-     `needs-revision` wiki status; the status board lists `not-written` pages).
-   - C3c: the likelihood-ratio estimator.
-2. Stage 2 of #12, validation by independent means: brute-force likelihood; Kalman
-   filter; exact fits in PyMC; the lab's `pymc_extras` model brought up to date.
-3. Decide the PyMC sampler setup for notebooks: test multicore sampling alongside JAX
-   on each platform (Linux with GPUs, Windows without) (#9).
-4. Test the compaction hooks in a live compaction (#10); Opher triggers `/compact`.
-5. Hooks for other agents: instructions and configuration for Copilot and Codex (#11).
+1. **Two-state Model** ([issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28)).
+   - Settle [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29), then [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30).
+   - Agree where the transforms between the six parameters and the six unbounded
+     quantities live (two functions in `src/models/two_state.py` would be new helpers).
+   - The posterior notebook, branch `sbi/two-state-posterior`: a working copy of the
+     one-state notebook with the two-state Model. Done when feasibility, convergence
+     and calibration each have a clear answer.
+   - Afterwards, with both notebooks in front of us: what moves into `src/motor_sbi/`.
+2. **Likelihood-ratio estimator for the one-state Model** (step C3c of #12): a concept
+   page first, since the method is new to Opher; then a scope issue.
+3. **A small hierarchical fit** with that estimator in HSSM or PyMC. Needs #4 (numpy
+   conflict between BayesFlow and HSSM) and #9 (sampler setup) resolved first.
+4. **Decide when to pay the validation debt** (#31, #32): before goal 2's results are
+   relied on, or after the hierarchical fit shows the approach is worth validating.
+5. Rewrite `Concept-flow-matching`, probably with a small notebook that trains a flow
+   on a known normal posterior.
+6. Smaller process items: test the compaction hooks (#10); hooks for Copilot and Codex
+   (#11); whether the one-state code is renamed to `s_eta` and `s_epsilon`.
