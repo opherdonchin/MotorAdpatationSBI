@@ -59,11 +59,13 @@ answers come after that, and what is skipped on the way is listed under *Debt*.
   `Code-one-state-posterior`, `Concept-bayesflow-make-simulator`, `Concept-gru`;
   `needs-review`: `Code-experiments`, `Code-process-scripts`. `needs-revision` (I owe a
   rewrite): `Concept-flow-matching`.
-- **Two conventions for `y` at once.** Opher decided (2026-10-12) that the observed `y`
-  is the error in all our Models. The two-state Model is written that way; the
-  one-state Model still records the movement until
-  [issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34). Sittings of one Model must not be given to an Inference
-  Engine of the other.
+- **`y` is the error in all our Models** (Opher, 2026-10-12). The two-state Model is
+  written that way. The one-state Model is being changed in
+  [PR #35](https://github.com/opherdonchin/MotorAdpatationSBI/pull/35) ([issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)), which Opher asked for ahead of
+  the two-state posterior notebook: code, decision 0005, Model page and wiki are
+  changed, and the posterior notebook is being run again. Until it merges, `main`'s
+  one-state Model still records the movement, and Sittings of one Model must not be
+  given to an Inference Engine of the other.
 - Other open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11),
@@ -81,7 +83,11 @@ Skipped on purpose and still owed ([docs/process.md](process.md), *Debt*, propos
 
 ## Next steps
 
-1. **Two-state Model** ([issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28)).
+1. **One-state Model: `y` becomes the error** ([PR #35](https://github.com/opherdonchin/MotorAdpatationSBI/pull/35), [issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)):
+   finish the posterior notebook's re-run and its results, write the explanation, and
+   after the merge move the wiki's code pages to the `main` commit. #29, #30 and #35
+   overlap in a few lines; whichever merges later gets `main` merged into it.
+2. **Two-state Model** ([issue #28](https://github.com/opherdonchin/MotorAdpatationSBI/issues/28)).
    - Settle [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29), then [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30).
    - Agree where the transforms between the six parameters and the six unbounded
      quantities live (two functions in `src/models/two_state.py` would be new helpers).
@@ -89,9 +95,6 @@ Skipped on purpose and still owed ([docs/process.md](process.md), *Debt*, propos
      one-state notebook with the two-state Model. Done when feasibility, convergence
      and calibration each have a clear answer.
    - Afterwards, with both notebooks in front of us: what moves into `src/motor_sbi/`.
-2. **One-state Model: `y` becomes the error** ([issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)): decision
-   0005 amended, code and Model page changed, the posterior notebook run again (about
-   1.2 hours). Best done before the likelihood-ratio estimator is built on that Model.
 3. **Likelihood-ratio estimator for the one-state Model** (step C3c of #12): a concept
    page first, since the method is new to Opher; then a scope issue.
 4. **A small hierarchical fit** with that estimator in HSSM or PyMC. Needs #4 (numpy
