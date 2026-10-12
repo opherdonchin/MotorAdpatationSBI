@@ -45,7 +45,8 @@ answers come after that, and what is skipped on the way is listed under *Debt*.
   2026-10-12 around feasibility, convergence and calibration):
   - [PR #29](https://github.com/opherdonchin/MotorAdpatationSBI/pull/29): decision record 0008, revised after Opher's review (his
     ranges for the four rates, translated step by step; code names `Af`, `As`, `Bf`,
-    `Bs`, `s_eta`, `s_epsilon`). Waiting for him.
+    `Bs`, `s_eta`, `s_epsilon`; the observed `y` is the error). Compared with the lab's
+    code, with his permission. Waiting for him.
   - [PR #30](https://github.com/opherdonchin/MotorAdpatationSBI/pull/30), built on #29: Simulator, Prior Sampler, their Checks (all
     pass) and the Model page, brought in line with the revised record. Opher reviews
     it after #29.
@@ -58,6 +59,11 @@ answers come after that, and what is skipped on the way is listed under *Debt*.
   `Code-one-state-posterior`, `Concept-bayesflow-make-simulator`, `Concept-gru`;
   `needs-review`: `Code-experiments`, `Code-process-scripts`. `needs-revision` (I owe a
   rewrite): `Concept-flow-matching`.
+- **Two conventions for `y` at once.** Opher decided (2026-10-12) that the observed `y`
+  is the error in all our Models. The two-state Model is written that way; the
+  one-state Model still records the movement until
+  [issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34). Sittings of one Model must not be given to an Inference
+  Engine of the other.
 - Other open issues: resources in the wiki (#2), large-data storage policy (#3),
   BayesFlow/HSSM numpy conflict (#4), multicore PyMC sampling across platforms (#9),
   live test of the compaction hooks (#10), hooks for Copilot and Codex (#11),
@@ -83,13 +89,16 @@ Skipped on purpose and still owed ([docs/process.md](process.md), *Debt*, propos
      one-state notebook with the two-state Model. Done when feasibility, convergence
      and calibration each have a clear answer.
    - Afterwards, with both notebooks in front of us: what moves into `src/motor_sbi/`.
-2. **Likelihood-ratio estimator for the one-state Model** (step C3c of #12): a concept
+2. **One-state Model: `y` becomes the error** ([issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)): decision
+   0005 amended, code and Model page changed, the posterior notebook run again (about
+   1.2 hours). Best done before the likelihood-ratio estimator is built on that Model.
+3. **Likelihood-ratio estimator for the one-state Model** (step C3c of #12): a concept
    page first, since the method is new to Opher; then a scope issue.
-3. **A small hierarchical fit** with that estimator in HSSM or PyMC. Needs #4 (numpy
+4. **A small hierarchical fit** with that estimator in HSSM or PyMC. Needs #4 (numpy
    conflict between BayesFlow and HSSM) and #9 (sampler setup) resolved first.
-4. **Decide when to pay the validation debt** (#31, #32): before goal 2's results are
+5. **Decide when to pay the validation debt** (#31, #32): before goal 2's results are
    relied on, or after the hierarchical fit shows the approach is worth validating.
-5. Rewrite `Concept-flow-matching`, probably with a small notebook that trains a flow
+6. Rewrite `Concept-flow-matching`, probably with a small notebook that trains a flow
    on a known normal posterior.
-6. Smaller process items: test the compaction hooks (#10); hooks for Copilot and Codex
+7. Smaller process items: test the compaction hooks (#10); hooks for Copilot and Codex
    (#11); whether the one-state code is renamed to `s_eta` and `s_epsilon`.
