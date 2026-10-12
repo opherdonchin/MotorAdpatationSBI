@@ -165,6 +165,7 @@ New kinds are added here, when a real page needs one. Formats:
 | `stub` | agent | A page that exists only as a placeholder, still to be written. |
 | `draft` | agent | Written by the agent; the reviewer has not confirmed it. |
 | `understood` | reviewer only | The reviewer has read, edited and confirmed it. |
+| `needs-revision` | either | The reviewer has read it and it did not do its job, or the agent knows it falls short. The agent owes a rewrite. |
 | `needs-review` | either | Merged on the fast track, or the reviewer is no longer sure. |
 | `stale` | script | The code changed materially since the commit the page describes. |
 
@@ -172,7 +173,11 @@ New kinds are added here, when a real page needs one. Formats:
 it is what an explanation's *Wiki pages* section says of a page that is linked or
 proposed and does not exist.
 
-A generated *Status board* page lists the pages that exist by status.
+`needs-revision` and `needs-review` point in opposite directions: the first says the
+page must change, the second that the reviewer must read it again.
+
+A generated *Status board* page lists the pages that exist by status, and the
+`not-written` pages that some page links to.
 
 **Who writes.** The agent drafts pages; the reviewer edits them, in the browser or
 through the agent.
@@ -238,8 +243,8 @@ Project-specific skills (starting a notebook, for instance) are listed in `AGENT
   files, the plan, the latest journal entry, commits since the journal was updated,
   open PRs and issues, and the state of the wiki.
 - `wiki_status.py` reads each wiki page's header, counts the lines changed in a code
-  page's files since the commit it describes, marks stale pages and writes the status
-  board.
+  page's files since the commit it describes, marks stale pages, finds linked pages
+  that are not written, and writes the status board.
 
 **Three hooks** in `.claude/settings.json` run without anyone asking (Claude Code only):
 
