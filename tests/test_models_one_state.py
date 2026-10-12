@@ -1,8 +1,9 @@
 """Code tests for src/models/one_state.py: the Simulator and the Prior Sampler.
 
-The scientific checks are in notebooks/working/one_state_simulator.ipynb (the Simulator)
-and notebooks/working/one_state_priors.ipynb (the Prior); these are fast checks that the
-functions do what their docstrings say.
+The scientific checks were in the working notebooks one_state_simulator.ipynb (the
+Simulator) and one_state_priors.ipynb (the Prior), now removed (last versions: commit
+b3f1f45, notebooks/working/); their results are on docs/models/one_state.md. These are
+fast checks that the functions do what their docstrings say.
 """
 
 import numpy as np

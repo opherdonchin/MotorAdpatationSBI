@@ -1,7 +1,7 @@
 """Code tests for src/designs/: the visuomotor adaptation Task and its Schedule Generator.
 
-What the generated Schedules look like is in notebooks/working/one_state_priors.ipynb;
-these are fast checks that the code does what its docstrings say.
+What the generated Schedules look like is on docs/models/one_state.md (*Results* of the
+Schedule Design); these are fast checks that the code does what its docstrings say.
 """
 
 import numpy as np

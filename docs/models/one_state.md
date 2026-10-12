@@ -54,7 +54,8 @@ parameter values and the plans `x`). Where each piece lives:
 ## Derived properties
 
 Checked against the Simulator in
-[notebooks/working/one_state_simulator.ipynb](../../notebooks/working/one_state_simulator.ipynb).
+[notebooks/working/one_state_simulator.ipynb](https://github.com/opherdonchin/MotorAdpatationSBI/blob/b3f1f45/notebooks/working/one_state_simulator.ipynb)
+(a working notebook, since removed from `main`; the link is to its last version).
 
 **Without noise,** with vision and a constant perturbation $p$, the movement approaches a
 fixed point geometrically:
@@ -105,7 +106,8 @@ The Simulated Experiments that BayesFlow will be trained and tested on (scope
 issue [#12](https://github.com/opherdonchin/MotorAdpatationSBI/issues/12)) draw each
 Sitting's parameter values from this Prior and its Schedule from this Schedule Design,
 both from [decision 0005](../decisions/0005-one-state-model-published-form.md). Checks:
-[notebooks/working/one_state_priors.ipynb](../../notebooks/working/one_state_priors.ipynb).
+[notebooks/working/one_state_priors.ipynb](https://github.com/opherdonchin/MotorAdpatationSBI/blob/b3f1f45/notebooks/working/one_state_priors.ipynb)
+(a working notebook, since removed from `main`; the link is to its last version).
 
 **Prior.** Each part is normal on an unbounded scale, with the stated range as its
 central 95% interval; the constants are computed from the ranges in
