@@ -20,7 +20,8 @@ improve slow learning in cerebellar patients?*, bioRxiv,
 [doi:10.1101/2020.07.03.185959](https://doi.org/10.1101/2020.07.03.185959). The form
 below was read from the paper's public model code,
 [thomashulst/paper-slowlearning](https://github.com/thomashulst/paper-slowlearning)
-(`modelStateSpace.txt`), not from the lab's private repository. It is the two-state
+(`modelStateSpace.txt`). On 2026-10-12, with Opher's permission, it was compared with
+the lab's private code, and the two agree on the Model. It is the two-state
 model of Smith, Ghazizadeh and Shadmehr (2006, PLoS Biology,
 [doi:10.1371/journal.pbio.0040179](https://doi.org/10.1371/journal.pbio.0040179)) with
 planning and execution noise.
@@ -29,12 +30,12 @@ planning and execution noise.
 [0005](0005-one-state-model-published-form.md).
 
 ```math
-x^f_{t+1} = A_f\, x^f_t - B_f\, v_t\, e_t + \eta^f_t, \qquad
-x^s_{t+1} = A_s\, x^s_t - B_s\, v_t\, e_t + \eta^s_t
+x^f_{t+1} = A_f\, x^f_t - B_f\, v_t\, y_t + \eta^f_t, \qquad
+x^s_{t+1} = A_s\, x^s_t - B_s\, v_t\, y_t + \eta^s_t
 ```
 
 ```math
-y_t = x^f_t + x^s_t + \varepsilon_t, \qquad e_t = y_t + p_t
+y_t = x^f_t + x^s_t + p_t + \varepsilon_t
 ```
 
 with $\eta^f_t$ and $\eta^s_t$ each $\mathcal N(0, \sigma_\eta^2)$ and
@@ -43,15 +44,25 @@ $\varepsilon_t \sim \mathcal N(0, \sigma_\varepsilon^2)$, all independent.
 | Symbol | In code | Meaning |
 |---|---|---|
 | $x^f_t$, $x^s_t$ | `x_fast`, `x_slow` | the fast and the slow part of the movement plan on trial $t$ (hidden) |
-| $y_t$, $p_t$, $e_t$, $v_t$ | `y`, `p`, `e`, `v` | movement angle, perturbation, error and vision flag, as in 0005 |
+| $y_t$ | `y` | error: where the cursor went relative to the target, or would have gone when it is not shown (observed) |
+| $p_t$, $v_t$ | `p`, `v` | perturbation and vision flag, as in 0005 |
 | $A_f$, $A_s$ | `Af`, `As` | retention of the fast and of the slow state |
 | $B_f$, $B_s$ | `Bf`, `Bs` | adaptation rate of the fast and of the slow state |
 | $\sigma_\eta$ | `s_eta` | planning noise: standard deviation of the noise in each state |
 | $\sigma_\varepsilon$ | `s_epsilon` | execution noise: standard deviation of the noise in the movement |
 
+- **The observed variable is the error** (Opher, 2026-10-12). $y_t$ is the plan plus the
+  perturbation plus execution noise, and the learning term is $B\, y_t$. This is the
+  lab's convention. It departs from 0005, where $y_t$ is the movement,
+  $x_t + \varepsilon_t$, and the error is $e_t = y_t + p_t$. The two hold the same
+  information: the $y$ here is the $e$ of 0005, and the movement is $y_t - p_t$. The
+  one-state Model is to be brought to this convention
+  ([issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34)); until
+  then `y` means different things in the two Models.
 - **One error, two learners.** Both states learn from the same error, and that error
-  contains the execution noise, as in 0005. On a no-vision trial neither state learns;
-  each decays by its own retention.
+  contains the execution noise. On a no-vision trial neither state learns; each decays
+  by its own retention. A learner compensates by bringing the error to zero, which
+  means a plan of $-p$.
 - **Shared planning noise.** Each state has its own noise draw on every trial, with the
   same standard deviation. The plan $x^f_t + x^s_t$ therefore picks up noise of variance
   $2\sigma_\eta^2$ per trial.
@@ -66,7 +77,8 @@ $\varepsilon_t \sim \mathcal N(0, \sigma_\varepsilon^2)$, all independent.
 - **First state.** $x^f_1$ and $x^s_1$ each $\mathcal N(0, \sigma_\eta^2)$, independent,
   following 0005. (The paper gives each a wide normal prior and estimates it.)
 - **Units, Task and Schedules.** As in 0005: units of the perturbation size; the Task
-  and the Schedule Design of the one-state Model, unchanged.
+  and the Schedule Design of the one-state Model. On a no-vision trial the Schedule
+  sets $p_t$ to 0, so $y_t$ is then the movement.
 
 **Prior.** It is stated in three steps, so that each number can be traced.
 
@@ -156,19 +168,22 @@ always has its noise.
   variance $\sigma_\eta^2/(1 - A_s^2)$, so the match is close and not exact.)
 - *An exact link, used as a Check of the code:* at the edge of the domain, when $A_f$
   and $A_s$ are equal, the plan $x^f_t + x^s_t$ follows the one-state Model with
-  adaptation rate $B_f + B_s$ and planning noise $\sqrt 2\, \sigma_\eta$.
+  adaptation rate $B_f + B_s$ and planning noise $\sqrt 2\, \sigma_\eta$ (the one-state
+  movement being this Model's $y_t - p_t$).
 
 The Prior puts almost no weight near either case.
 
 **Why:**
 
-- *The published form* for the same reasons as in 0005: the symbols and sign are those
-  of the paper and of the lab's code, and the lab's data can be used without conversion.
+- *The published form,* with the error as the observed variable: the dynamics and sign
+  are those of the paper, and the observed variable is the one in the lab's code, so the
+  lab's data can be used without conversion.
 - *Shared planning noise* (Opher): it is the published form, and it is the simpler
   start, with six parameters instead of seven.
 - *Positive differences* (Opher): in the lab's experience this was the best
   parameterization for fitting in PyMC. The ordering holds by construction and nothing
-  is truncated or rejected to get it. The paper orders the states by truncating the
+  is truncated or rejected to get it. The fast rates are the ones drawn directly, and
+  the differences move the slow rates away from them (confirmed by Opher, 2026-10-12). The paper orders the states by truncating the
   slow rate's prior at the fast rate; a hierarchical version would be awkward with
   that, and ours is meant to become hierarchical.
 - *Ranges stated for the rates themselves, then translated* (Opher): the rates are what
@@ -178,13 +193,19 @@ The Prior puts almost no weight near either case.
   as fast as a "fast" one gives posteriors that are degenerate in ways that are hard to
   debug later.
 - *Log-normal differences:* positive, and normal on the log scale, so that the six
-  quantities the network works with are all normal under the Prior.
+  quantities the network works with are all normal under the Prior. Agreed by Opher
+  (2026-10-12).
 
 *Alternatives:* a planning noise for each state (seven parameters; left until the
 shared one is understood); ordering by truncation, as in the paper (see above); no
 ordering, with the labels sorted out afterwards (two modes in every posterior, which a
 posterior network learns poorly); a free first state for each state, as in the paper
-(two more parameters that one Sitting says little about); a difference that is normal
+(two more parameters that one Sitting says little about); drawing the slow adaptation
+rate directly and adding a positive difference to reach the fast one (it cannot give the
+ranges of step 1: the fast rate's logit would then vary at least as much as the slow
+one's, so $B_f$ would range over about 0.03 to 0.64 instead of 0.10 to 0.35; the rate
+drawn directly has to be the one with the narrower range on the logit scale, which is
+the fast one for both retention and adaptation rate); a difference that is normal
 and cut off at zero (it would reproduce the slow rates' ranges of step 1 more closely,
 but the quantity the network works with would no longer be normal); ranges stated
 directly for the differences (the first draft of this record: it let the slow time
@@ -203,6 +224,9 @@ constant fall to 6 trials and the fast one rise to 20).
 - The slow time constant reaches over a thousand trials at the top of the Prior, as
   long as the longest Sittings. Such values are hard to tell apart from perfect
   retention.
+- The one-state Model and its results are in the convention of 0005 until
+  [issue #34](https://github.com/opherdonchin/MotorAdpatationSBI/issues/34) is done.
+  Sittings of one Model must not be given to an Inference Engine of the other.
 - The names `Af`, `As`, `Bf`, `Bs`, `s_eta`, `s_epsilon` differ from the one-state
   Model's `A`, `B`, `sigma_eta`, `sigma_epsilon`. Whether the one-state code is renamed
   to `s_eta` and `s_epsilon` is open.
